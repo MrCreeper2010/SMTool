@@ -52,7 +52,10 @@ namespace SMT.scanners
                 {
                     Match Csrss_path = regex_path.Match(index);
 
-                    if (Csrss_path.Success)
+                    if (Csrss_path.Success
+                    && SMTHelper.prefetchfiles.Where(x => x
+                    .Contains(Path.GetFileName(Csrss_path.Value).ToUpper()))
+                    .FirstOrDefault() != null)
                     {
                         switch (SMTHelper.GetSign(Csrss_path.Value))
                         {
@@ -158,7 +161,7 @@ namespace SMT.scanners
                                             //!
                                             cheat_filename = remove_junk1.Replace(cheat_filename, "");
 
-                                            for (int j = 0; j < SMTHelper.prefetchfiles.Length; j++)
+                                            for (int j = 0; j < SMTHelper.prefetchfiles.Count; j++)
                                             {
                                                 if (SMTHelper.prefetchfiles[j].Contains(cheat_filename.ToUpper())
                                                 && File.GetLastWriteTime(SMTHelper.prefetchfiles[j]) >= SMTHelper.PC_StartTime())
@@ -385,33 +388,23 @@ namespace SMT.scanners
 
             #region Metodo carattere speciale + Regedit aperto
 
-            try
+            Parallel.ForEach(SMTHelper.prefetchfiles, (index) =>
             {
-                Parallel.ForEach(SMTHelper.prefetchfiles, (index) =>
-                {
-                    unicode_char = SMTHelper.ContainsUnicodeCharacter(index);
+                unicode_char = SMTHelper.ContainsUnicodeCharacter(index);
 
-                    if (File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
+                if (File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
+                {
+                    if (unicode_char)
                     {
-                        if (unicode_char)
-                        {
-                            SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Special char found", index));
-                        }
-                        else if (index.ToUpper().Contains("REGEDIT.EXE")
-                            && File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
-                        {
-                            SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Regedit opened after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
-                        }
+                        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Special char found", index));
                     }
-                });
-            }
-            catch (UnauthorizedAccessException)
-            {
-                SMT.RESULTS.Errors.Add("Prefetch's permissions was manipulated, please check prefetch's permissions and restart SMT");
-                ConsoleHelper.WriteLine("Prefetch's permissions was manipulated, please check prefetch's permissions and restart SMT", ConsoleColor.Yellow);
-                Console.ReadLine();
-                Environment.Exit(1);
-            }
+                    else if (index.ToUpper().Contains("REGEDIT.EXE")
+                        && File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
+                    {
+                        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Regedit opened after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
+                    }
+                }
+            });
 
             #endregion
 
@@ -536,9 +529,6 @@ namespace SMT.scanners
             Win32Api.USN_REASON_REPARSE_POINT_CHANGE |
             Win32Api.USN_REASON_STREAM_CHANGE |
             Win32Api.USN_REASON_CLOSE;
-
-            string[] GetTemp_files = Directory.GetFiles($@"C:\Users\{Environment.UserName}\AppData\Local\Temp");
-
             #endregion
 
             int cacls_counter = 0;
@@ -589,22 +579,15 @@ namespace SMT.scanners
                 throw new UsnJournalException(rtn);
             }
 
-            try
+            Parallel.For(0, SMTHelper.GetTemp_files.Count, (index) =>
             {
-                for (int j = 0; j < GetTemp_files.Length; j++)
+                if (SMTHelper.GetTemp_files[index].Contains("JNATIVEHOOK")
+                    && File.GetLastWriteTime(SMTHelper.GetTemp_files[index])
+                    >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
                 {
-                    if (GetTemp_files[j].ToUpper().Contains("JNATIVEHOOK")
-                        && File.GetLastWriteTime(GetTemp_files[j])
-                        >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
-                    {
-                        SMT.RESULTS.string_scan.Add(SMTHelper.Detection("Out of Instance", "Generic JNativeHook Clicker", File.GetLastWriteTime(GetTemp_files[j]).ToString()));
-                    }
+                    SMT.RESULTS.string_scan.Add(SMTHelper.Detection("Out of Instance", "Generic JNativeHook Clicker", File.GetLastWriteTime(SMTHelper.GetTemp_files[index]).ToString()));
                 }
-            }
-            catch
-            {
-                SMT.RESULTS.Errors.Add("%temp% unreachable!");
-            }
+            });
 
             if (cacls_counter >= 3)
             {

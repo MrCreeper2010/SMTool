@@ -31,7 +31,8 @@ namespace SMT.helpers
         public const int SC_CLOSE = 0xF060;
         public static Process pr = new Process();
         public static Random r = new Random();
-        public static string[] prefetchfiles = Directory.GetFiles(@"C:\Windows\Prefetch");
+        public static List<string> prefetchfiles = Directory.GetFiles(@"C:\Windows\Prefetch").ToList();
+        public static List<string> GetTemp_files = Directory.GetFiles($@"C:\Users\{Environment.UserName}\AppData\Local\Temp").ToList();
         public static string strings2, unprotect;
         public static int SMTDir = r.Next(1000, 9999);
         public static bool lsass = false, DPS = false, DNS = false, Javaw = false, DiagTrack = false;
@@ -42,10 +43,7 @@ namespace SMT.helpers
             return DateTime.Now.AddMilliseconds(-Environment.TickCount);
         }
 
-        public static void Wait()
-        {
-            Thread.Sleep(5000);
-        }
+        public static void Wait() => Thread.Sleep(5000);
 
         public static bool journal_returnconditions(Win32Api.UsnEntry d)
         {
@@ -257,33 +255,6 @@ namespace SMT.helpers
             pr.StartInfo.RedirectStandardOutput = true;
             pr.Start();
             pr.WaitForExit();
-        }
-
-        public static bool IsTherePrefetchValue(string original_path)
-        {
-            bool isPrefetchValue = false;
-            Regex regex = new Regex("\\\\.*?}");
-
-            Parallel.ForEach(prefetchfiles, (index) =>
-            {
-                if (index.Contains(Path.GetFileName(original_path))
-                    && File.GetLastWriteTime(index) >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
-                {
-                    Parallel.ForEach(Prefetch.PrefetchFile.Open(index).Filenames, (file_names) =>
-                    {
-                        if (Path.GetExtension(file_names).ToUpper() == Path.GetExtension(original_path))
-                        {
-                            string franco = regex.Replace(file_names, "C:");
-                            if (franco.ToUpper() == original_path.ToUpper())
-                            {
-                                isPrefetchValue = true;
-                            }
-                        }
-                    });
-                }
-            });
-
-            return isPrefetchValue;
         }
 
         public static string Detection(string detection_type, string detection, string time)

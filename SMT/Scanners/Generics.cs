@@ -189,7 +189,10 @@ namespace SMT
                     read_launcher_profiles.Close();
                 }
             }
-            catch { SMT.RESULTS.alts.Add("No Alt(s) found(s)"); }
+            catch 
+            { 
+                SMT.RESULTS.alts.Add("No Alt(s) found(s)"); 
+            }
 
             if (total_alts_ctr == 0)
             {

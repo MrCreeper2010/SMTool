@@ -19,6 +19,13 @@ namespace SMT
         /// - by MrCreeper2010
         /// </summary>
 
+        /*
+         * DA AGGIUNGERE/RIVEDERE:
+         * - Metodo java -jar (se un file SENZA JNativehook viene aperto con java -jar)
+         * - False-flags con gli antivirus + Incompatibilità con "Kaspersky"
+         */
+
+
         private static void ThrowException()
         {
             RESULTS.Errors.Add("An error occured meanwhile SMT was scanning, please restart SMT");
@@ -39,14 +46,19 @@ namespace SMT
         {
             try
             {
-                for (int j = 0; j < SMTHelper.prefetchfiles.Length; j++)
+                for (int j = 0; j < SMTHelper.prefetchfiles.Count; j++)
+                {
+
+                }
+
+                for (int j = 0; j < SMTHelper.GetTemp_files.Count; j++)
                 {
 
                 }
             }
             catch
             {
-                ConsoleHelper.WriteLine(@"Prefetch unreacheable", ConsoleColor.Yellow);
+                ConsoleHelper.WriteLine(@"[-] Prefetch or %temp% unreacheable, possible cacls method?", ConsoleColor.Yellow);
                 SMTHelper.Wait();
                 Environment.Exit(0);
             }
@@ -138,9 +150,10 @@ namespace SMT
                     ConsoleHelper.WriteLine($"- {recycleBin.Key} ({recycleBin.Value})");
                 }
 
-                ConsoleHelper.WriteLine("\nRecording Software(s):\n ", ConsoleColor.Yellow); //fatto
                 if (RESULTS.recording_softwares.Count > 0)
                 {
+                    ConsoleHelper.WriteLine("\nRecording Software(s):\n ", ConsoleColor.Yellow);
+
                     RESULTS.recording_softwares.ForEach(recording => ConsoleHelper.WriteLine("- " + recording));
                 }
                 else
@@ -171,18 +184,9 @@ namespace SMT
                 }
                 else
                 {
-                    Console.WriteLine("- No click devices found");
+                    Console.WriteLine("- No input devices found");
                 }
 
-                if (RESULTS.virtual_machine)
-                {
-                    ConsoleHelper.WriteLine("\n[!] Tool is running on Virtual Machine, please investigate", ConsoleColor.Red); //fatto
-                }
-
-                if (RESULTS.vpn)
-                {
-                    ConsoleHelper.WriteLine("\n[!] VPN Detected!", ConsoleColor.Red); //fatto
-                }
                 #endregion
 
                 #region Write Results (Check 2)
@@ -213,6 +217,11 @@ namespace SMT
                     RESULTS.suspy_files.Sort();
                     RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => ConsoleHelper.WriteLine("- " + suspy));
                 }
+                else
+                {
+                    ConsoleHelper.WriteLine("\nWarning:\n", ConsoleColor.Yellow);
+                    Console.WriteLine("- No suspicious file found, if user uses \"Kaspersky\" please disable it and rescan");
+                }
 
                 if (RESULTS.bypass_methods.Count > 0) // done
                 {
@@ -239,9 +248,9 @@ namespace SMT
 
                 #region Exit + Clean SMT files
                 ConsoleHelper.WriteLine("\nHave a nice day! developed by MrCreeper2010", ConsoleColor.Yellow);
-                Console.Write("\nPress ENTER to exit..");
+                Console.Write("\nPress any key to exit");
                 Console.ReadLine();
-                Console.Write("\nConfirm exit -> press ENTER..");
+                Console.Write("\nConfirm exit -> press any key");
                 Console.ReadLine();
                 generics.Clean();
                 #endregion
