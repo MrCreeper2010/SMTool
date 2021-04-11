@@ -15,3 +15,5 @@ C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\Release\SMT.cspr
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\Release\SMT.csproj.CopyComplete
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\Release\SMT.exe
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\Release\SMT.pdb
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Release\NLog.xml
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Release\System.Diagnostics.DiagnosticSource.xml

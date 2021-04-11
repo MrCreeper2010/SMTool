@@ -15,7 +15,6 @@ C:\Users\user\Desktop\SMT-v3.0-master\SMT\bin\Debug\ProcessHacker.Native.dll
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Debug\SMT.exe.config
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Debug\SMT.exe
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Debug\SMT.pdb
-C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Debug\K4os.Compression.LZ4.xml
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Debug\Pastel.xml
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Debug\System.Buffers.xml
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Debug\System.Memory.xml
@@ -30,3 +29,4 @@ C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\Debug\SMT.csproj
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\Debug\SMT.exe
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\Debug\SMT.pdb
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\Debug\SMT.csprojAssemblyReference.cache
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Debug\AuthenticodeExaminer.xml

@@ -550,10 +550,6 @@ namespace SMT.scanners
 
             NtfsUsnJournal.UsnJournalReturnCode rtn = journal.GetUsnJournalEntries(construct.CurrentJournalData, reasonMask, out List<Win32Api.UsnEntry> usnEntries, out Win32Api.USN_JOURNAL_DATA newUsnState, OverrideLastUsn: data.MaxUsn);
 
-            /*
-             * Controllare che Wmic funzioni bene
-             */
-
             if (rtn == NtfsUsnJournal.UsnJournalReturnCode.USN_JOURNAL_SUCCESS)
             {
                 Parallel.ForEach(usnEntries, (d) =>
@@ -568,13 +564,11 @@ namespace SMT.scanners
                         {
                             SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Wmic Method", d.Name, $"Wmic method started today {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                         }
-
-                        if (d.Reason == 2048 && d.Name == "Prefetch" && d.IsFolder)
+                        else if (d.Reason == 2048 && d.Name == "Prefetch" && d.IsFolder)
                         {
                             cacls_counter++;
                         }
-
-                        if (SMTHelper.journal_returnconditions(d)
+                        else if (SMTHelper.journal_returnconditions(d)
                             && !d.Name.ToUpper().Contains("JNATIVEHOOK")
                             && Path.GetExtension(d.Name.ToUpper()) != ".DLL")
                         {

@@ -106,7 +106,7 @@ namespace SMT
                     checks.DoStringScan,
                     checks.HeuristicCsrssCheck,
                     checks.USNJournal,
-                    checks.OtherChecks, 
+                    checks.OtherChecks,
                     checks.EventVwrCheck,
                     generics.GlobalGeneric_check,
                 };
