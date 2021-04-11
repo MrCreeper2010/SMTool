@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set di attributi. Modificare i valori di questi attributi per modificare le informazioni
 // associate a un assembly.
 [assembly: AssemblyTitle("SMT")]
-[assembly: AssemblyDescription("Free and open source SS Tool")]
+[assembly: AssemblyDescription("Free and open source ScreenShare Tool")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SMT")]
 [assembly: AssemblyProduct("SMT")]
-[assembly: AssemblyCopyright("Copyright ©  2018-2020")]
+[assembly: AssemblyCopyright("Copyright © 2018-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

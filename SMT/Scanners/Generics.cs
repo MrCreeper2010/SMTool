@@ -5,9 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -28,8 +25,110 @@ namespace SMT
 
         #endregion
 
-        public void Alts_check()
+        public void GlobalGeneric_check()
         {
+            #region Process Start Time
+
+            int explorerPID = Process.GetProcessesByName("explorer")[0].Id;
+
+            if (SMTHelper.MinecraftMainProcess != "")
+            {
+                int javaw = Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].Id;
+
+                SMT.RESULTS.processes_starts.Add("Javaw: ", Process.GetProcessById(javaw).StartTime.ToString());
+            }
+            else
+            {
+                SMT.RESULTS.processes_starts.Add("Javaw: ", "missed");
+            }
+
+            SMT.RESULTS.processes_starts.Add("Explorer: ", Process.GetProcessById(explorerPID).StartTime.ToString());
+            SMT.RESULTS.processes_starts.Add("System: ", SMTHelper.PC_StartTime().ToString());
+
+            #endregion
+
+            #region Get Input Devices
+
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PointingDevice");
+
+            List<ManagementObject> Mouse_device = searcher.Get().Cast<ManagementObject>().ToList();
+
+            Parallel.ForEach(Mouse_device, (index) =>
+            {
+                SMT.RESULTS.mouse.Add(index["Name"].ToString());
+            });
+
+            #endregion
+
+            #region Cestino
+
+            string[] recycleBinFolders = Directory.GetDirectories(@"C:\$Recycle.Bin\");
+
+            Parallel.ForEach(recycleBinFolders, (index) =>
+            {
+                FileInfo folderInfo = new FileInfo(index);
+                DateTime lastEditTime = File.GetLastWriteTime(@"C:\$Recycle.Bin\" + folderInfo.Name);
+
+                SMT.RESULTS.recyble_bins.Add(folderInfo.Name, lastEditTime.ToString());
+            });
+
+            #endregion
+
+            #region Recording Software
+
+            int recordingProcessesFound = 0;
+
+
+            //Check if there is 1 of this process's name in background
+            string[] recordingprocesses = new string[]
+            {
+                "obs64",
+                "obs32",
+                "Action",
+                "RadeonSettings",
+                "ShareX",
+                "NVIDIA Share",
+                "CamRecorder",
+                "Fraps",
+                "recorder"
+            };
+
+            Parallel.ForEach(recordingprocesses, (index) =>
+            {
+                if (Process.GetProcessesByName(index).Length != 0)
+                {
+                    SMT.RESULTS.recording_softwares.Add(index);
+                    recordingProcessesFound++;
+                }
+            });
+
+            #endregion
+
+            #region XRay Resource Pack
+
+            try
+            {
+                string[] Get_ResourcePacks = Directory.GetFiles($@"C:\Users\{Environment.UserName}\AppData\Roaming\.minecraft\resourcepacks\");
+                string ResourcePack_line = string.Empty;
+
+                Parallel.ForEach(Get_ResourcePacks, (resourcepack) =>
+                {
+                    FileInfo finfo = new FileInfo(resourcepack);
+                    if (File.ReadAllText(resourcepack).Contains(".json") && finfo.Length < 1000000)
+                    {
+                        SMT.RESULTS.xray_packs.Add(resourcepack);
+                    }
+                });
+            }
+            catch
+            {
+                SMT.RESULTS.xray_packs.Add("Nothing Found");
+            }
+
+            #endregion
+
+            #region Alts
+
             int total_alts_ctr = 0;
             string launcher_profiles_line = "";
 
@@ -50,7 +149,7 @@ namespace SMT
                             Regex junkstr_remover = new Regex(@"\"".*?\""");
                             Match alt = junkstr_remover.Match(remove_junk1);  //Remove " from name || - "MrCreeper2010" -> MrCreeper2010
 
-                            if(alt.Value.Length > 0
+                            if (alt.Value.Length > 0
                                 && alt.Value.Contains("HuzuniLite"))
                             {
                                 SMT.RESULTS.alts.Add("We've found a player's link reference: https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.npr.org%2Fsections%2Fthetwo-way%2F2014%2F02%2F18%2F279032024%2Ftheres-a-clown-shortage-who-will-fill-those-big-shoes&psig=AOvVaw137sutK9enXXoRBHvVVS_u&ust=1612855406714000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCPjrid3g2e4CFQAAAAAdAAAAABAD");
@@ -61,7 +160,7 @@ namespace SMT
                                 total_alts_ctr++;
                             }
                         }
-                        else if(launcher_profiles_line.Contains(",\"name\":"))
+                        else if (launcher_profiles_line.Contains(",\"name\":"))
                         {
                             Regex displayname_remove = new Regex(",\"name\".*?}");
                             Match mch = displayname_remove.Match(launcher_profiles_line);
@@ -97,138 +196,10 @@ namespace SMT
                 SMT.RESULTS.alts.Add("No Alt(s) found(s)");
             }
 
-            Console.WriteLine(SMTHelper.Detection("Stage Progress", "", "Alt(s) check completed"));
-        } //Refractored
+            #endregion
 
-        public void RecycleBin_check()
-        {
-            //Get all Directories from C:\$Recycle.bin and check latest modification
-
-            string[] recycleBinFolders = Directory.GetDirectories(@"C:\$Recycle.Bin\");
-            foreach (string recycleBinFolder in recycleBinFolders)
-            {
-                FileInfo folderInfo = new FileInfo(recycleBinFolder);
-                DateTime lastEditTime = File.GetLastWriteTime(@"C:\$Recycle.Bin\" + folderInfo.Name);
-
-                SMT.RESULTS.recyble_bins.Add(folderInfo.Name, lastEditTime.ToString());
-            }
-
-            Console.WriteLine(SMTHelper.Detection("Stage Progress", "", "Recycle.bin check completed"));
-        } //Refractored
-
-        public void checkRecordingSoftwares()
-        {
-            int recordingProcessesFound = 0;
-
-
-            //Check if there is 1 of this process's name in background
-            string[] recordingprocesses = new string[]
-            {
-                "obs64",
-                "obs32",
-                "Action",
-                "RadeonSettings",
-                "ShareX",
-                "NVIDIA Share",
-                "CamRecorder",
-                "Fraps",
-                "recorder"
-            };
-
-            Parallel.ForEach(recordingprocesses, (index) =>
-            {
-                if (Process.GetProcessesByName(index).Length != 0)
-                {
-                    SMT.RESULTS.recording_softwares.Add(index);
-                    recordingProcessesFound++;
-                }
-            });
-
-            Console.WriteLine(SMTHelper.Detection("Stage Progress", "", "Recording software check completed"));
-        } //Refractored
-
-        public void GetMouse()
-        {
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PointingDevice");
-
-            foreach (ManagementObject obj in searcher.Get())
-            {
-                SMT.RESULTS.mouse.Add(obj["Name"].ToString());
-            }
+            Console.WriteLine(SMTHelper.Detection("Stage Progress", "", "Generic checks completed"));
         }
-
-        public void isVM()
-        {
-            //Check if tool is running in VirtualMachine
-
-            // Thanks to https://stackoverflow.com/users/270348/robsiklos
-            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("Select * from Win32_ComputerSystem"))
-            {
-                using (ManagementObjectCollection items = searcher.Get())
-                {
-                    foreach (ManagementBaseObject item in items)
-                    {
-                        string manufacturer = item["Manufacturer"].ToString().ToLower();
-                        if ((manufacturer == "microsoft corporation" && item["Model"].ToString().ToUpperInvariant().Contains("VIRTUAL"))
-                        || manufacturer.Contains("vmware")
-                        || item["Model"].ToString() == "VirtualBox")
-                        {
-                            SMT.RESULTS.virtual_machine = true;
-                        }
-                    }
-                }
-            }
-        } //Refractored
-
-        public void isVPN()
-        {
-            //var host = Dns.GetHostEntry(Dns.GetHostName());
-            //foreach (var ip in host.AddressList)
-            //{
-            //    if (ip.AddressFamily == AddressFamily.InterNetwork)
-            //    {
-            //        SMT.RESULTS.bypass_methods.Add(WebHelper.DownloadString("https://iphub.info/?ip=185.189.112.89"));
-            //    }
-            //}
-        } //Refractored
-
-        public void GetXrayResourcePack()
-        {
-            ///<summary>
-            /// Get all json files in resource pack and check if pack's size is < 1000000kb
-            /// </summary>
-
-            try
-            {
-                string[] Get_ResourcePacks = Directory.GetFiles($@"C:\Users\{Environment.UserName}\AppData\Roaming\.minecraft\resourcepacks\");
-                string ResourcePack_line = string.Empty;
-
-                Parallel.ForEach(Get_ResourcePacks, (resourcepack) =>
-                {
-                    FileInfo finfo = new FileInfo(resourcepack);
-                    if (File.ReadAllText(resourcepack).Contains(".json") && finfo.Length < 1000000)
-                    {
-                        SMT.RESULTS.xray_packs.Add(resourcepack);
-                    }
-                });
-            }
-            catch { SMT.RESULTS.xray_packs.Add("Nothing Found"); }
-
-            Console.WriteLine(SMTHelper.Detection("Stage Progress", "", "Xray resource pack(s) check completed"));
-        } //Refractored
-
-        public void ProcessesStartup_Check()
-        {
-            //Get Process statup's time
-
-            int explorerPID = Process.GetProcessesByName("explorer")[0].Id;
-            int javaw = Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].Id;
-
-            SMT.RESULTS.processes_starts.Add("Explorer: ", Process.GetProcessById(explorerPID).StartTime.ToString());
-            SMT.RESULTS.processes_starts.Add("Javaw: ", Process.GetProcessById(javaw).StartTime.ToString());
-            SMT.RESULTS.processes_starts.Add("System: ", SMTHelper.PC_StartTime().ToString());
-
-        } //Refractored
 
         public void Clean()
         {

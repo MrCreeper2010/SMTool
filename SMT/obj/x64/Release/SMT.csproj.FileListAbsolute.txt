@@ -8,6 +8,11 @@ C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\x64\Release\SMT.
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\x64\Release\SMT.pdb
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\x64\Release\SMT.csproj.Fody.CopyLocal.cache
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\x64\Release\SMT.csprojAssemblyReference.cache
-C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\NtApiDotNet.xml
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\x64\Release\SMT.csproj.CopyComplete
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\Pastel.xml
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\K4os.Compression.LZ4.xml
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\System.Buffers.xml
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\System.Memory.xml
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\System.Numerics.Vectors.xml
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\NLog.xml

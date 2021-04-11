@@ -63,16 +63,6 @@ namespace SMT.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Byte[].
         /// </summary>
-        internal static byte[] sigcheck64 {
-            get {
-                object obj = ResourceManager.GetObject("sigcheck64", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Cerca una risorsa localizzata di tipo System.Byte[].
-        /// </summary>
         internal static byte[] strings2 {
             get {
                 object obj = ResourceManager.GetObject("strings2", resourceCulture);
@@ -83,9 +73,9 @@ namespace SMT.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Byte[].
         /// </summary>
-        internal static byte[] unprotecting_process {
+        internal static byte[] unprotect {
             get {
-                object obj = ResourceManager.GetObject("unprotecting_process", resourceCulture);
+                object obj = ResourceManager.GetObject("unprotect", resourceCulture);
                 return ((byte[])(obj));
             }
         }

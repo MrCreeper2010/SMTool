@@ -1,0 +1,376 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AuthenticodeExaminer</name>
+    </assembly>
+    <members>
+        <member name="T:AuthenticodeExaminer.AuthenticodeSignature">
+            <summary>
+            A class that represents an Authenticode signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.AuthenticodeSignature.SigningCertificate">
+            <summary>
+            Gets the X509 certificate used in the signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.AuthenticodeSignature.AdditionalCertificates">
+            <summary>
+            Gets a list of additional certificates provided by the signer in the signature used to assist in chain
+            building for the <see cref="P:AuthenticodeExaminer.AuthenticodeSignature.SigningCertificate"/>.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.AuthenticodeSignature.Contents">
+            <summary>
+            Provides the raw content of the signature, or null.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.AuthenticodeSignature.DigestAlgorithmName">
+            <summary>
+            Gets the algorithm used to hash the subject that is signed.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.AuthenticodeSignature.TimestampSignatures">
+            <summary>
+            Gets a list of counter timestamp signers.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.AuthenticodeSignature.PublisherInformation">
+            <summary>
+            Gets the signer-provided publisher information on the Authenticode signature.
+            See <see cref="T:AuthenticodeExaminer.PublisherInformation"/> for additional details.
+            </summary>
+        </member>
+        <member name="T:AuthenticodeExaminer.TimestampSignature">
+            <summary>
+            Represents a timestamp signature that has counter signed an Authenticode signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.TimestampSignature.SigningCertificate">
+            <summary>
+            Gets the X509 certificate used in the signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.TimestampSignature.AdditionalCertificates">
+            <summary>
+            Gets a list of additional certificates provided by the signer in the signature used to assist in chain
+            building for the <see cref="P:AuthenticodeExaminer.TimestampSignature.SigningCertificate"/>.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.TimestampSignature.Contents">
+            <summary>
+            Provides the raw content of the signature, or null.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.TimestampSignature.DigestAlgorithmName">
+            <summary>
+            Gets the algorithm used to hash the subject that is signed.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.TimestampSignature.TimestampDateTime">
+            <summary>
+            Gets a <c>DateTimeOffset</c> of the timestamp's value. This may be null if the timestamp
+            could not be parsed correctly.
+            </summary>
+        </member>
+        <member name="T:AuthenticodeExaminer.CmsSignatureBase">
+            <summary>
+            An abstract class for different signature implementations.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.CmsSignatureBase.DigestAlgorithm">
+            <inheritdoc/>
+        </member>
+        <member name="P:AuthenticodeExaminer.CmsSignatureBase.HashEncryptionAlgorithm">
+            <inheritdoc/>
+        </member>
+        <member name="P:AuthenticodeExaminer.CmsSignatureBase.UnsignedAttributes">
+            <inheritdoc/>
+        </member>
+        <member name="P:AuthenticodeExaminer.CmsSignatureBase.SignedAttributes">
+            <inheritdoc/>
+        </member>
+        <member name="P:AuthenticodeExaminer.CmsSignatureBase.SerialNumber">
+            <inheritdoc/>
+        </member>
+        <member name="P:AuthenticodeExaminer.CmsSignatureBase.Certificate">
+            <inheritdoc/>
+        </member>
+        <member name="P:AuthenticodeExaminer.CmsSignatureBase.Kind">
+            <inheritdoc/>
+        </member>
+        <member name="P:AuthenticodeExaminer.CmsSignatureBase.AdditionalCertificates">
+            <inheritdoc/>
+        </member>
+        <member name="P:AuthenticodeExaminer.CmsSignatureBase.Content">
+            <inheritdoc/>
+        </member>
+        <member name="P:AuthenticodeExaminer.CmsSignatureBase.DigestAlgorithmName">
+            <inheritdoc/>
+        </member>
+        <member name="M:AuthenticodeExaminer.CmsSignatureBase.GetNestedSignatures">
+            <inheritdoc />
+        </member>
+        <member name="T:AuthenticodeExaminer.AuthenticodeTimestampCmsSignature">
+            <summary>
+            A class representing a Authenticode timestamp signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.AuthenticodeTimestampCmsSignature.OwningSignature">
+            <summary>
+            Gets the signature that owns this timestamp signature.
+            </summary>
+        </member>
+        <member name="M:AuthenticodeExaminer.AuthenticodeTimestampCmsSignature.GetNestedSignatures">
+            <inheritdoc />
+        </member>
+        <member name="T:AuthenticodeExaminer.CmsSignature">
+            <summary>
+            A class that represents an Authenticode signature.
+            </summary>
+        </member>
+        <member name="M:AuthenticodeExaminer.CmsSignature.GetNestedSignatures">
+            <inheritdoc />
+        </member>
+        <member name="T:AuthenticodeExaminer.FileInspector">
+            <summary>
+            Inspects a file for Authenticode signatures.
+            </summary>
+        </member>
+        <member name="M:AuthenticodeExaminer.FileInspector.#ctor(System.String)">
+            <summary>
+            Creates a new instance of <see cref="T:AuthenticodeExaminer.FileInspector"/>.
+            </summary>
+            <param name="filePath">The path to the file to inspect.</param>
+        </member>
+        <member name="M:AuthenticodeExaminer.FileInspector.Validate(AuthenticodeExaminer.RevocationChecking)">
+            <summary>
+            Checks the file for a complete Authenticode signature.
+            </summary>
+            <param name="revocationChecking">Indicates how X509 certificate revocation checking should be performed.</param>
+            <returns>
+            Returns <see cref="F:AuthenticodeExaminer.SignatureCheckResult.Valid"/> if the file is correctly signed. Otherwise,
+            returns the failure.
+            </returns>
+        </member>
+        <member name="M:AuthenticodeExaminer.FileInspector.GetSignatures">
+            <summary>
+            Gets an enumeration of Authenticode signatures for the file.
+            </summary>
+            <returns>An enumeration of signatures.</returns>
+        </member>
+        <member name="T:AuthenticodeExaminer.ICmsSignature">
+            <summary>
+            An interface for low-level information about Authenticode signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.ICmsSignature.DigestAlgorithm">
+            <summary>
+            Gets the hashing digest algorithm of the signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.ICmsSignature.HashEncryptionAlgorithm">
+            <summary>
+            Gets the signing algorithm of the signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.ICmsSignature.UnsignedAttributes">
+            <summary>
+            Provides a list of unsigned, or unathenticated, attributes in the current signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.ICmsSignature.SignedAttributes">
+            <summary>
+            Provides a list of signed, or authenticated, attributes in the current signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.ICmsSignature.Certificate">
+            <summary>
+            Gets the X509 certificate used in the signature.
+            </summary>
+        </member>
+        <member name="M:AuthenticodeExaminer.ICmsSignature.GetNestedSignatures">
+            <summary>
+            Gets a list of sub-signatures, such as nested signatures or counter signatures.
+            </summary>
+            <returns>A read only list of immediate nested signatures.</returns>
+        </member>
+        <member name="P:AuthenticodeExaminer.ICmsSignature.Kind">
+            <summary>
+            Gets the kind of the signature. For more details, see <see cref="T:AuthenticodeExaminer.SignatureKind"/>.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.ICmsSignature.AdditionalCertificates">
+            <summary>
+            Gets a list of additional certificates in the signature used to assist in chain
+            building to the <see cref="P:AuthenticodeExaminer.ICmsSignature.Certificate"/>.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.ICmsSignature.DigestAlgorithmName">
+            <summary>
+            Gets a <see cref="T:System.Security.Cryptography.HashAlgorithmName"/> representation of the <see cref="P:AuthenticodeExaminer.ICmsSignature.DigestAlgorithm"/>.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.ICmsSignature.Content">
+            <summary>
+            Provides the raw value of the content of the signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.ICmsSignature.SerialNumber">
+            <summary>
+            Get the serial number of the certificate used to sign the signature.
+            </summary>
+        </member>
+        <member name="T:AuthenticodeExaminer.PublisherInformation">
+            <summary>
+            Provides information about the publisher information of an Authenticode signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.PublisherInformation.Description">
+            <summary>
+            Gets a signer-provided description of the Authenticode signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.PublisherInformation.UrlLink">
+            <summary>
+            Gets a signer-provided URL of the Authenticode signature.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.PublisherInformation.FileLink">
+            <summary>
+            Gets a signer-provided file of the Authenticode signature.
+            This option is deprecated in Authenticode.
+            </summary>
+        </member>
+        <member name="P:AuthenticodeExaminer.PublisherInformation.IsEmpty">
+            <summary>
+            Indicates if the current instance of <see cref="T:AuthenticodeExaminer.PublisherInformation"/> contains
+            any non-empty values.
+            </summary>
+        </member>
+        <member name="M:AuthenticodeExaminer.PublisherInformation.#ctor">
+            <summary>
+            Constructs an empty instance of <see cref="T:AuthenticodeExaminer.PublisherInformation"/>.
+            </summary>
+        </member>
+        <member name="M:AuthenticodeExaminer.PublisherInformation.#ctor(System.Security.Cryptography.AsnEncodedData)">
+            <summary>
+            Constructs a new instance of <see cref="T:AuthenticodeExaminer.PublisherInformation"/>
+            from ASN.1 encoded data.
+            </summary>
+            <param name="data">The ASN.1 encoded data for the publisher information.</param>
+        </member>
+        <member name="T:AuthenticodeExaminer.RevocationChecking">
+            <summary>
+            Indicates how revocation checking of the signing certificate should be performed when
+            authenticating an Authenticode signature using <see cref="M:AuthenticodeExaminer.FileSignatureVerifier.IsFileSignatureValid(System.String,AuthenticodeExaminer.RevocationChecking)"/>.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.RevocationChecking.None">
+            <summary>
+            Indicates that no revocation checking should be performed.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.RevocationChecking.Offline">
+            <summary>
+            Indicates that offline revocation checking should be performed, and contacting the Certificate Authority
+            for a CRL or OCSP response should not be done.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.RevocationChecking.Online">
+            <summary>
+            Indicates that offline revocation checking should be performed, and contacting the Certificate Authority
+            for a CRL or OCSP response should be done.
+            </summary>
+        </member>
+        <member name="T:AuthenticodeExaminer.SignatureCheckResult">
+            <summary>
+            Indicates the result when validating an Authenticode signed file.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureCheckResult.Valid">
+            <summary>
+            The signature is valid and trusted.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureCheckResult.NoSignature">
+            <summary>
+            The file does is not Authenticode signed.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureCheckResult.BadDigest">
+            <summary>
+            The file is signed, however the signed hash does not match the computed hash.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureCheckResult.UnknownProvider">
+            <summary>
+            The file has a signature, but a provider could not be found to verify its
+            authenticity.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureCheckResult.UntrustedRoot">
+            <summary>
+            The file is signed with an untrusted certificate.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureCheckResult.ExplicitDistrust">
+            <summary>
+            The file is signed, however is explicitly distrusted on this system.
+            </summary>
+        </member>
+        <member name="T:AuthenticodeExaminer.SignatureKind">
+            <summary>
+            A enumeration to indicate the kind of signature.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureKind.NestedSignature">
+            <summary>
+            The signature is a nested, or appended signature to an existing signature.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureKind.Signature">
+            <summary>
+            A root signature that is not contained in an existing signature.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureKind.AuthenticodeTimestamp">
+            <summary>
+            A legacy Authenticode-style timestamp signature.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureKind.Rfc3161Timestamp">
+            <summary>
+            An RFC3161 compliant timestamp signature.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureKind.AnySignature">
+            <summary>
+            A bitwise combination of any Authenticode signature.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureKind.AnyCounterSignature">
+            <summary>
+            A bitwise combination of any counter signature.
+            </summary>
+        </member>
+        <member name="F:AuthenticodeExaminer.SignatureKind.Any">
+            <summary>
+            Any kind of signature.
+            </summary>
+        </member>
+        <member name="T:AuthenticodeExaminer.SignatureTreeInspector">
+            <summary>
+            Provides low-level access to the Authenticode signatures in a file that allows
+            Inspecting the order and nesting of the signatures.
+            </summary>
+        </member>
+        <member name="M:AuthenticodeExaminer.SignatureTreeInspector.Extract(System.String)">
+            <summary>
+            Extracts the immediate root signatures from a file, or an empty collection if not signed.
+            </summary>
+            <param name="filePath">The path to the file to extract signatures from.</param>
+            <returns>A collection of signatures in the file.</returns>
+        </member>
+    </members>
+</doc>

@@ -1,7 +1,6 @@
 ﻿using AuthenticodeExaminer;
-using NtApiDotNet;
 using Pastel;
-using SMT.scanners;
+using SMT.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,17 +9,17 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ThreeOneThree.Proxima.Core;
 
 namespace SMT.helpers
 {
     public class SMTHelper
     {
-        #region Variables
+        #region Variabili varie
 
         // Thanks to https://stackoverflow.com/users/754438/renatas-mp
         [DllImport("user32.dll")] public static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
@@ -46,6 +45,28 @@ namespace SMT.helpers
         public static void Wait()
         {
             Thread.Sleep(5000);
+        }
+
+        public static bool journal_returnconditions(Win32Api.UsnEntry d)
+        {
+            bool true_or_false = false;
+
+            if (GlobalVariables.suspy_extension.Contains(Path.GetExtension(d.Name.ToUpper()))
+                        && TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp) >=
+                        Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
+            {
+                if (d.Name.ToUpper().Contains("JNATIVEHOOK")
+                    && Path.GetExtension(d.Name.ToUpper()) == ".DLL")
+                {
+                    true_or_false = true;
+                }
+                else if (Path.GetExtension(d.Name.ToUpper()) != ".DLL")
+                {
+                    true_or_false = true;
+                }
+            }
+
+            return true_or_false;
         }
 
         public static string GetPID(string process)
@@ -97,7 +118,7 @@ namespace SMT.helpers
                 unprotect = Path.Combine(Path.GetFullPath($@"C:\ProgramData\SMT-{SMTDir}"), "unprotect.exe");
 
                 File.WriteAllBytes(strings2, Properties.Resources.strings2);
-                File.WriteAllBytes(unprotect, Properties.Resources.unprotecting_process);
+                File.WriteAllBytes(unprotect, Properties.Resources.unprotect);
             }
             else
             {
@@ -124,10 +145,10 @@ namespace SMT.helpers
                 Arguments = $@"/C {arg}",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
-
             };
 
             Process check = Process.Start(scan);
+            check.PriorityClass = ProcessPriorityClass.RealTime;
             check.WaitForExit();
 
             if (check.ExitCode != 0)
@@ -175,6 +196,12 @@ namespace SMT.helpers
             {
                 process += "launcher";
             }
+            else
+            {
+                process += "";
+            }
+
+
             return process;
         }
 
@@ -192,54 +219,29 @@ namespace SMT.helpers
             return isMc;
         }
 
-        public static string CheaterJoke()
-        {
-            string Joke = "";
-            int counter = 0;
-            Random random = new Random();
-            int FraseRandom = random.Next(1, 40);
-
-            WebClient client = new WebClient();
-            using (Stream stream = client.OpenRead("https://pastebin.com/raw/FP7qvFYL"))
-            {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        ++counter;
-
-                        if (FraseRandom == counter)
-                        {
-                            Joke += line;
-                        }
-                    }
-                }
-            }
-
-            return Joke;
-        }
-
         public static string GetSign(string file)
         {
             string signature = "";
-
-            FileInspector extractor = new FileInspector(file);
-            SignatureCheckResult validationResult = extractor.Validate();
-
-            switch (validationResult)
+            if (File.Exists(file))
             {
-                case SignatureCheckResult.Valid:
-                    signature = "Signed";
-                    break;
-                case SignatureCheckResult.NoSignature:
-                    signature = "Unsigned";
-                    break;
-                case SignatureCheckResult.BadDigest:
-                    signature = "Fake";
-                    break;
-                default:
-                    break;
+                FileInspector extractor = new FileInspector(file);
+                SignatureCheckResult validationResult = extractor.Validate();
+
+                switch (validationResult)
+                {
+                    case SignatureCheckResult.Valid:
+                        signature = "Signed";
+                        break;
+                    case SignatureCheckResult.NoSignature:
+                        signature = "Unsigned";
+                        break;
+                    case SignatureCheckResult.BadDigest:
+                        signature = "Fake";
+                        break;
+                    default:
+                        signature = "Other type of signature";
+                        break;
+                }
             }
 
             return signature;
@@ -257,17 +259,6 @@ namespace SMT.helpers
             pr.WaitForExit();
         }
 
-        public static string SHA256CheckSum(string filePath)
-        {
-            using (SHA256 SHA256 = SHA256Managed.Create())
-            {
-                using (FileStream fileStream = File.OpenRead(filePath))
-                {
-                    return Convert.ToBase64String(SHA256.ComputeHash(fileStream));
-                }
-            }
-        }
-
         public static bool IsTherePrefetchValue(string original_path)
         {
             bool isPrefetchValue = false;
@@ -276,130 +267,23 @@ namespace SMT.helpers
             Parallel.ForEach(prefetchfiles, (index) =>
             {
                 if (index.Contains(Path.GetFileName(original_path))
-                    && File.GetLastWriteTime(index) >= PC_StartTime())
+                    && File.GetLastWriteTime(index) >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
                 {
-                    for (int i = 0; i < Prefetch.PrefetchFile.Open(index).Filenames.Count; i++)
+                    Parallel.ForEach(Prefetch.PrefetchFile.Open(index).Filenames, (file_names) =>
                     {
-                        if (Path.GetExtension(Prefetch.PrefetchFile.Open(index).Filenames[i]).ToUpper()
-                            == Path.GetExtension(original_path))
+                        if (Path.GetExtension(file_names).ToUpper() == Path.GetExtension(original_path))
                         {
-                            string franco = regex.Replace(Prefetch.PrefetchFile.Open(index).Filenames[i], "C:");
+                            string franco = regex.Replace(file_names, "C:");
                             if (franco.ToUpper() == original_path.ToUpper())
                             {
                                 isPrefetchValue = true;
                             }
                         }
-                    }
+                    });
                 }
             });
 
             return isPrefetchValue;
-        }
-
-        public static bool IsExternalClient(string SuspyFile)
-        {
-            bool isClient = false;
-
-            if (File.ReadLines(SuspyFile).First()[0] == 'M'
-                            && File.ReadLines(SuspyFile).First()[1] == 'Z'
-                            && File.ReadLines(SuspyFile).First().Contains("This program cannot be run in DOS mode")
-                            && File.ReadAllText(SuspyFile).Contains("__std_type_info_destroy_list")
-                            && File.ReadAllText(SuspyFile).Contains("__C_specific_handler")
-                            && File.ReadAllText(SuspyFile).Contains("memset")
-                            && (File.ReadAllText(SuspyFile).Contains("ReadProcessMemory")
-                            || File.ReadAllText(SuspyFile).Contains("WriteProcessMemory")
-                            || File.ReadAllText(SuspyFile).Contains("GetKeyState")
-                            || File.ReadAllText(SuspyFile).Contains("GetAsyncKeyState")
-                            || File.ReadAllText(SuspyFile).Contains("mouse_event")))
-            {
-                isClient = true;
-            }
-
-            return isClient;
-        }
-
-        public static NtFile OpenReparseDirectory(string volume)
-        {
-            return NtFile.Open($@"\??\{volume}\$Extend\$Reparse:$R:$INDEX_ALLOCATION", null, FileAccessRights.GenericRead | FileAccessRights.Synchronize,
-                FileShareMode.Read, FileOpenOptions.OpenForBackupIntent | FileOpenOptions.SynchronousIoNonAlert);
-        }
-
-        public static string GetDirectoryFromID(string journal_line, string filemissed)
-        {
-            string directory = "";
-            string directory2 = "";
-
-            if (journal_line.ToUpper().Contains(filemissed.ToUpper()))
-            {
-                Regex due_id = new Regex("\",00.*?,.*?0x");
-                Regex virgole_e_apostrofo = new Regex("\",");
-                Regex virgola = new Regex(",");
-                Regex apostrofo = new Regex("\"");
-                Regex space = new Regex(".*? .*? ");
-                Regex spazio = new Regex(" ");
-                Regex first_ID = new Regex(".*? ");
-                Regex second_ID = new Regex(" .*? ");
-
-                Match mch = due_id.Match(journal_line);
-                string dino = virgole_e_apostrofo.Replace(mch.Value, "");
-                dino = virgola.Replace(dino, " ");
-                Match mimmo = space.Match(dino);
-
-                Match primo = first_ID.Match(mimmo.Value);
-
-                Match secondo = second_ID.Match(mimmo.Value);
-
-                if (mimmo.Success
-                && primo.Success
-                && secondo.Success)
-                {
-                    string fringuello = spazio.Replace(primo.Value, "");
-                    string fringuello2 = spazio.Replace(secondo.Value, "");
-                    long dino_pino = Convert.ToInt64(fringuello, 16);
-                    long pino_dino = Convert.ToInt64(fringuello2, 16);
-
-                    try
-                    {
-                        using (NtFile file = NtFile.OpenFileById(OpenReparseDirectory("C:"), dino_pino, FileAccessRights.ReadAttributes | FileAccessRights.Synchronize,
-                        FileShareMode.None, FileOpenOptions.DirectoryFile | FileOpenOptions.SynchronousIoNonAlert | FileOpenOptions.OpenForBackupIntent))
-                        {
-                            string filename = file.GetWin32PathName(NtApiDotNet.Win32.Win32PathNameFlags.None, false).GetResultOrDefault(primo.Value);
-                            directory = filename;
-                        }
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-
-                    try
-                    {
-                        using (NtFile file = NtFile.OpenFileById(OpenReparseDirectory("C:"), pino_dino, FileAccessRights.ReadAttributes | FileAccessRights.Synchronize,
-                        FileShareMode.None, FileOpenOptions.DirectoryFile | FileOpenOptions.SynchronousIoNonAlert | FileOpenOptions.OpenForBackupIntent))
-                        {
-                            string filename = file.GetWin32PathName(NtApiDotNet.Win32.Win32PathNameFlags.None, false).GetResultOrDefault(secondo.Value);
-                            directory2 = filename;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-
-                if (directory2.Length > directory.Length)
-                {
-                    string sergio = virgola.Replace(filemissed, "");
-                    sergio = apostrofo.Replace(sergio, "");
-                    directory = directory2 + "\\" + sergio;
-                }
-                else
-                {
-                    string sergio = virgola.Replace(filemissed, "");
-                    sergio = apostrofo.Replace(sergio, "");
-                    directory = directory + "\\" + sergio;
-                }
-            }
-            return directory;
         }
 
         public static string Detection(string detection_type, string detection, string time)
@@ -418,12 +302,18 @@ namespace SMT.helpers
                     detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(235, 149, 50))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
                 case "Suspicious File":
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                    break;
+                case "Suspicious signature":
                     detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection}";
                     break;
                 case "Fake digital signature":
                     detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(254, 250, 212))} {"]".Pastel(Color.White)} {detection}";
                     break;
                 case "Out of Instance":
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                    break;
+                case "Unknow type of signature":
                     detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
                 case "In Instance":
@@ -440,11 +330,26 @@ namespace SMT.helpers
             return detection_return;
         }
 
+        public static string DownloadString(string url)
+        {
+            using (WebClient wc = new WebClient())
+            {
+                try
+                {
+                    return wc.DownloadString(url);
+                }
+                catch
+                {
+                    ConsoleHelper.WriteLine("Please check your connection!", ConsoleColor.Yellow);
+                    Thread.Sleep(5000);
+                    Environment.Exit(1);
+                    return string.Empty;
+                }
+            }
+        }
+
         public static void SaveAllFiles()
         {
-            Header header = new Header();
-            header.Stages(0, CheaterJoke() + "\n");
-
             //csrss
             try
             {
@@ -531,9 +436,9 @@ namespace SMT.helpers
                     SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {GetPID("DiagTrack")} > C:\ProgramData\SMT-{SMTHelper.SMTDir}\utcsvc.txt");
 
                     string[] DiagTrack_lines = File.ReadAllLines($@"C:\ProgramData\SMT-{SMTDir}\utcsvc.txt");
-                    if (DiagTrack_lines.Contains("cmd.exe")
-                        && DiagTrack_lines.Contains("del")
-                        && DiagTrack_lines.Contains(".pf"))
+                    if (DiagTrack_lines.ToList().Contains("cmd.exe")
+                        && DiagTrack_lines.ToList().Contains("del")
+                        && DiagTrack_lines.ToList().Contains(".pf"))
                     {
                         SMT.RESULTS.string_scan.Add("Found generic prefetch's file(s) Self-destruct");
                     }
@@ -544,21 +449,6 @@ namespace SMT.helpers
                 }
             }
             catch { }
-
-            if (SMTHelper.DPS)
-            {
-                Checks.StringScannerSystem("https://pastebin.com/raw/YtQUM50C", '§', $@"C:\ProgramData\SMT-{SMTHelper.SMTDir}\Specific.txt");
-            }
-
-            if (SMTHelper.lsass)
-            {
-                Checks.StringScannerSystem("https://pastebin.com/raw/BJ388A4H", '§', $@"C:\ProgramData\SMT-{SMTHelper.SMTDir}\dns.txt");
-            }
-
-            if (SMTHelper.DNS)
-            {
-                Checks.StringScannerSystem("https://pastebin.com/raw/BJ388A4H", '§', $@"C:\ProgramData\SMT-{SMTHelper.SMTDir}\Browser.txt");
-            }
         }
     }
 }

@@ -1,0 +1,7 @@
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT_Tests\bin\Release\SMT_Tests.exe.config
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT_Tests\bin\Release\SMT_Tests.exe
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT_Tests\bin\Release\SMT_Tests.pdb
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT_Tests\obj\Release\SMT_Tests.csprojAssemblyReference.cache
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT_Tests\obj\Release\SMT_Tests.csproj.CoreCompileInputs.cache
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT_Tests\obj\Release\SMT_Tests.exe
+C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT_Tests\obj\Release\SMT_Tests.pdb
