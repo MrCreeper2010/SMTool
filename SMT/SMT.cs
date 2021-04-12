@@ -115,12 +115,12 @@ namespace SMT
                      * JAVAW DA RIAGGIUNGERE
                      */
 
-                    checks.DoStringScan,
-                    checks.HeuristicCsrssCheck,
-                    checks.USNJournal,
+                    //checks.DoStringScan,
+                    //checks.HeuristicCsrssCheck,
+                    //checks.USNJournal,
                     checks.OtherChecks,
-                    checks.EventVwrCheck,
-                    generics.GlobalGeneric_check,
+                    //checks.EventVwrCheck,
+                    //generics.GlobalGeneric_check,
                 };
 
                 for (int j = 0; j < AllChecks.Length; j++)
@@ -257,7 +257,7 @@ namespace SMT
             }
             else
             {
-                ConsoleHelper.WriteLine("[!] Minecraft missed, press enter to exit", ConsoleColor.Yellow);
+                ConsoleHelper.WriteLine("[!] Minecraft missed, press any key to exit", ConsoleColor.Yellow);
                 Console.ReadLine();
                 Environment.Exit(0);
             }

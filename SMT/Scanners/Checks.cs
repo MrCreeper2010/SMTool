@@ -55,6 +55,10 @@ namespace SMT.scanners
                     if (Csrss_path.Success
                     && SMTHelper.prefetchfiles.Where(x => x
                     .Contains(Path.GetFileName(Csrss_path.Value).ToUpper()))
+                    .FirstOrDefault() != null
+                    && SMTHelper.prefetchfiles
+                    .Where(f => File.GetLastWriteTime(Csrss_path.Value)
+                    >= SMTHelper.PC_StartTime())
                     .FirstOrDefault() != null)
                     {
                         switch (SMTHelper.GetSign(Csrss_path.Value))
@@ -62,7 +66,7 @@ namespace SMT.scanners
                             case "Unsigned":
                                 if (!Csrss_path.Value.ToUpper().Contains("WINDOWS"))
                                 {
-                                    SMT.RESULTS.suspy_files.Add(SMTHelper.Detection("Suspicious File", Csrss_path.Value, "This file hasn't got any digital signature, please investigate"));
+                                    SMT.RESULTS.suspy_files.Add(SMTHelper.Detection("Suspicious File (Digital signature check)", Csrss_path.Value, "This file hasn't got any digital signature, please investigate"));
                                 }
                                 break;
                             case "Fake":
@@ -381,6 +385,8 @@ namespace SMT.scanners
             Console.WriteLine(SMTHelper.Detection("Stage Progress", "", "Eventvwr check completed"));
         } //Refractored
 
+        public static List<string> journal_names = new List<string>();
+
         public void OtherChecks()
         {
             Console.OutputEncoding = Encoding.Unicode;
@@ -392,21 +398,101 @@ namespace SMT.scanners
             {
                 unicode_char = SMTHelper.ContainsUnicodeCharacter(index);
 
-                if (File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
+                //if (File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
+                //{
+                //    if (unicode_char)
+                //    {
+                //        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Special char found", index));
+                //    }
+                //    else if (index.ToUpper().Contains("REGEDIT.EXE")
+                //        && File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
+                //    {
+                //        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Regedit opened after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
+                //    }
+                //}
+                if (File.GetLastWriteTime(index) >= SMTHelper.PC_StartTime()
+                && (index.ToUpper().Contains("JAVA.EXE")
+                || index.ToUpper().Contains("JAVAW.EXE")))
                 {
-                    if (unicode_char)
+                    Parallel.ForEach(Prefetch.PrefetchFile.Open(index).Filenames, (file_name) =>
                     {
-                        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Special char found", index));
-                    }
-                    else if (index.ToUpper().Contains("REGEDIT.EXE")
-                        && File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
-                    {
-                        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Regedit opened after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
-                    }
+                        string file_to_analyze = Regex.Replace(file_name, "\\\\VOLUME.*?\\\\", Path.GetPathRoot(Environment.SystemDirectory));
+
+                        if (File.Exists(file_to_analyze)
+                        && file_to_analyze != @"C:\$MFT")
+                        {
+                            try
+                            {
+                                var r = File.ReadLines(file_to_analyze)
+                                .First()[0] == 'P' &&
+                                File.ReadLines(file_to_analyze)
+                                .First()[1] == 'K';
+
+                                if (r)
+                                {
+                                    SMT.RESULTS.suspy_files.Add(SMTHelper.Detection("Suspicious File (Suspicious behavior)", $"{file_to_analyze} is runnable", "Found in \"JAVAW\"/\"JAVA\" Prefetch's log"));
+                                }
+                            }
+                            catch
+                            {
+
+                            }
+                        }
+                        else if (!File.Exists(file_to_analyze))
+                        {
+                            journal_names.Add(Path.GetFileName(file_to_analyze));
+                        }
+                    });
                 }
             });
 
             #endregion
+
+            #region Reasons
+            uint reasonMask =
+            Win32Api.USN_REASON_DATA_OVERWRITE |
+            Win32Api.USN_REASON_DATA_EXTEND |
+            Win32Api.USN_REASON_NAMED_DATA_OVERWRITE |
+            Win32Api.USN_REASON_NAMED_DATA_TRUNCATION |
+            Win32Api.USN_REASON_FILE_CREATE |
+            Win32Api.USN_REASON_FILE_DELETE |
+            Win32Api.USN_REASON_EA_CHANGE |
+            Win32Api.USN_REASON_SECURITY_CHANGE |
+            Win32Api.USN_REASON_RENAME_OLD_NAME |
+            Win32Api.USN_REASON_RENAME_NEW_NAME |
+            Win32Api.USN_REASON_INDEXABLE_CHANGE |
+            Win32Api.USN_REASON_BASIC_INFO_CHANGE |
+            Win32Api.USN_REASON_HARD_LINK_CHANGE |
+            Win32Api.USN_REASON_COMPRESSION_CHANGE |
+            Win32Api.USN_REASON_ENCRYPTION_CHANGE |
+            Win32Api.USN_REASON_OBJECT_ID_CHANGE |
+            Win32Api.USN_REASON_REPARSE_POINT_CHANGE |
+            Win32Api.USN_REASON_STREAM_CHANGE |
+            Win32Api.USN_REASON_CLOSE;
+            #endregion
+
+            Win32Api.USN_JOURNAL_DATA data = new Win32Api.USN_JOURNAL_DATA();
+
+            DriveConstruct construct = new DriveConstruct(Path.GetPathRoot(Environment.SystemDirectory));
+            NtfsUsnJournal journal = new NtfsUsnJournal(Path.GetPathRoot(Environment.SystemDirectory));
+
+            NtfsUsnJournal.UsnJournalReturnCode rtn = journal.GetUsnJournalEntries(construct.CurrentJournalData, reasonMask, out List<Win32Api.UsnEntry> usnEntries, out Win32Api.USN_JOURNAL_DATA newUsnState, OverrideLastUsn: data.MaxUsn);
+
+            List<string> cacls_string = new List<string>();
+
+            if (rtn == NtfsUsnJournal.UsnJournalReturnCode.USN_JOURNAL_SUCCESS)
+            {
+                Parallel.ForEach(usnEntries, (d) =>
+                {
+                    foreach (string s in journal_names)
+                    {
+                        if(d.Name.ToUpper() == s)
+                        {
+                            SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Deleted", d.Name, $"Found in \"JAVAW\"/\"JAVA\" Prefetch's log"));
+                        }
+                    }
+                });
+            }
 
             #region Wmic da regedit
 
@@ -540,23 +626,52 @@ namespace SMT.scanners
 
             NtfsUsnJournal.UsnJournalReturnCode rtn = journal.GetUsnJournalEntries(construct.CurrentJournalData, reasonMask, out List<Win32Api.UsnEntry> usnEntries, out Win32Api.USN_JOURNAL_DATA newUsnState, OverrideLastUsn: data.MaxUsn);
 
+            List<string> cacls_string = new List<string>();
+
             if (rtn == NtfsUsnJournal.UsnJournalReturnCode.USN_JOURNAL_SUCCESS)
             {
                 Parallel.ForEach(usnEntries, (d) =>
                 {
+                    foreach (string s in journal_names)
+                    {
+                        if (SMTHelper.journal_returnconditions(d)
+                            && !d.Name.ToUpper().Contains("JNATIVEHOOK")
+                            && Path.GetExtension(d.Name.ToUpper()) != ".DLL"
+                            && s == d.Name)
+                        {
+                            SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Deleted", d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                        }
+                    }
+
                     if (TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString("dd/MM/yyyy")
                     == DateTime.Now.ToString("dd/MM/yyyy")
                     && returnReason(d.Reason).Length > 0)
                     {
                         //wmic, eliminati, rinominati e spostati
 
-                        if (d.Reason == 2149581088)
+                        if (d.Reason == 2149581088
+                        && TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
+                        >= SMTHelper.PC_StartTime())
                         {
                             SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Wmic Method", d.Name, $"Wmic method started today {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                         }
-                        else if (d.Reason == 2048 && d.Name == "Prefetch" && d.IsFolder)
+                        else if (d.Reason == 2048
+                        && d.Name == "Prefetch"
+                        && d.IsFolder
+                        && TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
+                        >= SMTHelper.PC_StartTime()
+                        && !cacls_string.Contains(TimeZone.CurrentTimeZone.
+                        ToLocalTime(d.TimeStamp).ToString()))
                         {
+                            cacls_string.Add(TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString());
                             cacls_counter++;
+                        }
+                        else if (d.Reason == 4096
+                            && SMTHelper.journal_returnconditions(d)
+                            && !d.Name.ToUpper().Contains("JNATIVEHOOK")
+                            && Path.GetExtension(d.Name.ToUpper()) != ".DLL")
+                        {
+                            SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Moved/Renamed", d.Name, $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                         }
                         else if (SMTHelper.journal_returnconditions(d)
                             && !d.Name.ToUpper().Contains("JNATIVEHOOK")
@@ -571,6 +686,7 @@ namespace SMT.scanners
                             SMT.RESULTS.string_scan.Add(SMTHelper.Detection("Out of Instance", "Generic JNativeHook Clicker (deleted)", TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString()));
                         }
                     }
+
                 });
             }
             else
@@ -591,7 +707,7 @@ namespace SMT.scanners
 
             if (cacls_counter >= 3)
             {
-                SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Bypass method", "Cacls method started today", "This method blocks Prefetch's logs"));
+                SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Bypass method", "Cacls method started today", cacls_counter.ToString()));
             }
 
             Console.WriteLine(SMTHelper.Detection("Stage Progress", "", "USNJournal check completed"));
