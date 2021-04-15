@@ -1,0 +1,369 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.8": {
+      "FluentNHibernate/1.4.0": {
+        "type": "package",
+        "dependencies": {
+          "NHibernate": "3.3.1.4000"
+        },
+        "compile": {
+          "lib/net35/FluentNHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/net35/FluentNHibernate.dll": {}
+        }
+      },
+      "Iesi.Collections/3.2.0.4000": {
+        "type": "package",
+        "compile": {
+          "lib/Net35/Iesi.Collections.dll": {}
+        },
+        "runtime": {
+          "lib/Net35/Iesi.Collections.dll": {}
+        }
+      },
+      "LINQPad.NHibernate.FormatSQL/1.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net45/LINQPad.NHibernate.FormatSQL.dll": {}
+        },
+        "runtime": {
+          "lib/net45/LINQPad.NHibernate.FormatSQL.dll": {}
+        }
+      },
+      "LINQPad.Supporting.NHibernate/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FluentNHibernate": "1.4.0"
+        },
+        "compile": {
+          "lib/net451/LINQPad.Supporting.NHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/net451/LINQPad.Supporting.NHibernate.dll": {}
+        }
+      },
+      "NHibernate/3.3.1.4000": {
+        "type": "package",
+        "dependencies": {
+          "Iesi.Collections": "3.2.0.4000"
+        },
+        "compile": {
+          "lib/Net35/NHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/Net35/NHibernate.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.8/win": {
+      "FluentNHibernate/1.4.0": {
+        "type": "package",
+        "dependencies": {
+          "NHibernate": "3.3.1.4000"
+        },
+        "compile": {
+          "lib/net35/FluentNHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/net35/FluentNHibernate.dll": {}
+        }
+      },
+      "Iesi.Collections/3.2.0.4000": {
+        "type": "package",
+        "compile": {
+          "lib/Net35/Iesi.Collections.dll": {}
+        },
+        "runtime": {
+          "lib/Net35/Iesi.Collections.dll": {}
+        }
+      },
+      "LINQPad.NHibernate.FormatSQL/1.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net45/LINQPad.NHibernate.FormatSQL.dll": {}
+        },
+        "runtime": {
+          "lib/net45/LINQPad.NHibernate.FormatSQL.dll": {}
+        }
+      },
+      "LINQPad.Supporting.NHibernate/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FluentNHibernate": "1.4.0"
+        },
+        "compile": {
+          "lib/net451/LINQPad.Supporting.NHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/net451/LINQPad.Supporting.NHibernate.dll": {}
+        }
+      },
+      "NHibernate/3.3.1.4000": {
+        "type": "package",
+        "dependencies": {
+          "Iesi.Collections": "3.2.0.4000"
+        },
+        "compile": {
+          "lib/Net35/NHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/Net35/NHibernate.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.8/win-x64": {
+      "FluentNHibernate/1.4.0": {
+        "type": "package",
+        "dependencies": {
+          "NHibernate": "3.3.1.4000"
+        },
+        "compile": {
+          "lib/net35/FluentNHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/net35/FluentNHibernate.dll": {}
+        }
+      },
+      "Iesi.Collections/3.2.0.4000": {
+        "type": "package",
+        "compile": {
+          "lib/Net35/Iesi.Collections.dll": {}
+        },
+        "runtime": {
+          "lib/Net35/Iesi.Collections.dll": {}
+        }
+      },
+      "LINQPad.NHibernate.FormatSQL/1.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net45/LINQPad.NHibernate.FormatSQL.dll": {}
+        },
+        "runtime": {
+          "lib/net45/LINQPad.NHibernate.FormatSQL.dll": {}
+        }
+      },
+      "LINQPad.Supporting.NHibernate/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FluentNHibernate": "1.4.0"
+        },
+        "compile": {
+          "lib/net451/LINQPad.Supporting.NHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/net451/LINQPad.Supporting.NHibernate.dll": {}
+        }
+      },
+      "NHibernate/3.3.1.4000": {
+        "type": "package",
+        "dependencies": {
+          "Iesi.Collections": "3.2.0.4000"
+        },
+        "compile": {
+          "lib/Net35/NHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/Net35/NHibernate.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.8/win-x86": {
+      "FluentNHibernate/1.4.0": {
+        "type": "package",
+        "dependencies": {
+          "NHibernate": "3.3.1.4000"
+        },
+        "compile": {
+          "lib/net35/FluentNHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/net35/FluentNHibernate.dll": {}
+        }
+      },
+      "Iesi.Collections/3.2.0.4000": {
+        "type": "package",
+        "compile": {
+          "lib/Net35/Iesi.Collections.dll": {}
+        },
+        "runtime": {
+          "lib/Net35/Iesi.Collections.dll": {}
+        }
+      },
+      "LINQPad.NHibernate.FormatSQL/1.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net45/LINQPad.NHibernate.FormatSQL.dll": {}
+        },
+        "runtime": {
+          "lib/net45/LINQPad.NHibernate.FormatSQL.dll": {}
+        }
+      },
+      "LINQPad.Supporting.NHibernate/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FluentNHibernate": "1.4.0"
+        },
+        "compile": {
+          "lib/net451/LINQPad.Supporting.NHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/net451/LINQPad.Supporting.NHibernate.dll": {}
+        }
+      },
+      "NHibernate/3.3.1.4000": {
+        "type": "package",
+        "dependencies": {
+          "Iesi.Collections": "3.2.0.4000"
+        },
+        "compile": {
+          "lib/Net35/NHibernate.dll": {}
+        },
+        "runtime": {
+          "lib/Net35/NHibernate.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "FluentNHibernate/1.4.0": {
+      "sha512": "5LKDINUryDogx/GCFtB9avXJu8Dg4A/6k9I2T3Zz6P/C89MDrazhJuCnKcaiXZFqvOWeDpiFYDkZ3w6JYelQ4A==",
+      "type": "package",
+      "path": "fluentnhibernate/1.4.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fluentnhibernate.1.4.0.nupkg.sha512",
+        "fluentnhibernate.nuspec",
+        "lib/net35/FluentNHibernate.XML",
+        "lib/net35/FluentNHibernate.dll"
+      ]
+    },
+    "Iesi.Collections/3.2.0.4000": {
+      "sha512": "rFxBPA45TVgSCAN3LFZq67KwXXlgSvf0BErITSoY8HmZsnTrcsfi6xs78H39xVt/MnVasF8KgRTNLyi9S+BM3w==",
+      "type": "package",
+      "path": "iesi.collections/3.2.0.4000",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "iesi.collections.3.2.0.4000.nupkg.sha512",
+        "iesi.collections.nuspec",
+        "lib/Net35/Iesi.Collections.dll",
+        "lib/Net35/Iesi.Collections.xml"
+      ]
+    },
+    "LINQPad.NHibernate.FormatSQL/1.0.3": {
+      "sha512": "ijWWYFgl+K9+nxOiOKVe30vYMeghUnVYwLqPLDFaDc7pJBeLIA2JXiqQFWoj+YFw+xHPwaDPIwR7O2ggcrx1gg==",
+      "type": "package",
+      "path": "linqpad.nhibernate.formatsql/1.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/LINQPad.NHibernate.FormatSQL.dll",
+        "linqpad.nhibernate.formatsql.1.0.3.nupkg.sha512",
+        "linqpad.nhibernate.formatsql.nuspec"
+      ]
+    },
+    "LINQPad.Supporting.NHibernate/1.0.0": {
+      "sha512": "RpX/Kx3iMcCAgwuhJTzXvGfHciDAJm96qZD/ZlNDI10+qT2Kwkeg+UerNsMNDIQxAqPqLnY7KPpuVsn1J7snzg==",
+      "type": "package",
+      "path": "linqpad.supporting.nhibernate/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net451/LINQPad.Supporting.NHibernate.dll",
+        "linqpad.supporting.nhibernate.1.0.0.nupkg.sha512",
+        "linqpad.supporting.nhibernate.nuspec"
+      ]
+    },
+    "NHibernate/3.3.1.4000": {
+      "sha512": "/vwx8rKVRXdHruZ9IakpTlGDcjmz/d+rMF0sGyHWaPtkmlejb6xH1U4uwylvyXfHRynUofB7tEzNglJXqsv0wQ==",
+      "type": "package",
+      "path": "nhibernate/3.3.1.4000",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "ConfigurationTemplates/FireBird.cfg.xml",
+        "ConfigurationTemplates/MSSQL.cfg.xml",
+        "ConfigurationTemplates/MySql.cfg.xml",
+        "ConfigurationTemplates/Oracle.cfg.xml",
+        "ConfigurationTemplates/PostgreSQL.cfg.xml",
+        "ConfigurationTemplates/SQLite.cfg.xml",
+        "ConfigurationTemplates/SybaseASE.cfg.xml",
+        "ConfigurationTemplates/SybaseSQLAnywhere.cfg.xml",
+        "NHibernate.license.txt",
+        "NHibernate.readme.html",
+        "NHibernate.releasenotes.txt",
+        "lib/Net35/NHibernate.dll",
+        "lib/Net35/NHibernate.xml",
+        "nhibernate-configuration.xsd",
+        "nhibernate-mapping.xsd",
+        "nhibernate.3.3.1.4000.nupkg.sha512",
+        "nhibernate.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.8": [
+      "LINQPad.NHibernate.FormatSQL >= 1.0.3",
+      "LINQPad.Supporting.NHibernate >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\user\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\SMT_Tests.csproj",
+      "projectName": "SMT_Tests",
+      "projectPath": "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\SMT_Tests.csproj",
+      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\obj\\",
+      "projectStyle": "PackageReference",
+      "skipContentFileWrite": true,
+      "configFilePaths": [
+        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net48"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net48": {
+          "projectReferences": {}
+        }
+      }
+    },
+    "frameworks": {
+      "net48": {
+        "dependencies": {
+          "LINQPad.NHibernate.FormatSQL": {
+            "target": "Package",
+            "version": "[1.0.3, )"
+          },
+          "LINQPad.Supporting.NHibernate": {
+            "target": "Package",
+            "version": "[1.0.0, )"
+          }
+        }
+      }
+    },
+    "runtimes": {
+      "win": {
+        "#import": []
+      },
+      "win-x64": {
+        "#import": []
+      },
+      "win-x86": {
+        "#import": []
+      }
+    }
+  }
+}

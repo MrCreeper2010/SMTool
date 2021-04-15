@@ -1,4 +1,5 @@
 ﻿using SMT.helpers;
+using SMT.Helpers;
 using SMT.scanners;
 using System;
 using System.Collections.Generic;
@@ -115,12 +116,12 @@ namespace SMT
                      * JAVAW DA RIAGGIUNGERE
                      */
 
-                    //checks.DoStringScan,
-                    //checks.HeuristicCsrssCheck,
-                    //checks.USNJournal,
+                    checks.DoStringScan,
+                    checks.HeuristicCsrssCheck,
+                    checks.USNJournal,
                     checks.OtherChecks,
-                    //checks.EventVwrCheck,
-                    //generics.GlobalGeneric_check,
+                    checks.EventVwrCheck,
+                    generics.GlobalGeneric_check,
                 };
 
                 for (int j = 0; j < AllChecks.Length; j++)
@@ -132,18 +133,29 @@ namespace SMT
 
                 stopwatch.Stop();
 
+                /*
+                    Sono felice che tu abbia aperto il codice sorgente per consultare qualche
+                    riga del mio tool, ma il Webhook di Discord altro non fa che memorizzare
+                    all'interno di un bot Discord per l'appunto, solamente quanto il tuo check
+                    è durato.
+                 */
+
+                DiscordWebhook.sendMessage($"L'utente con HWID: {SMTHelper.HardwareID()} ha totalizzato {stopwatch.ElapsedMilliseconds}ms!");
+
                 Console.Clear();
                 ConsoleHelper.WriteLine($"[?] Press enter to print results (Time elapsed from start scanning: {stopwatch.ElapsedMilliseconds}ms)", ConsoleColor.Yellow);
                 Console.ReadLine();
 
                 #endregion
 
+                //string value_to_return = "";
+
                 #region Write Results (Check 1)
                 ConsoleHelper.WriteLine("Generic Informations: \n", ConsoleColor.Green);
 
                 ConsoleHelper.WriteLine("Alts:\n", ConsoleColor.Yellow); //fatto
                 RESULTS.alts.Distinct().ToList().ForEach(alt => ConsoleHelper.WriteLine("- " + alt));
-
+                
                 ConsoleHelper.WriteLine("\nRecycle.bin:\n", ConsoleColor.Yellow); //fatto
                 foreach (KeyValuePair<string, string> recycleBin in RESULTS.recyble_bins)
                 {
@@ -158,7 +170,7 @@ namespace SMT
                 }
                 else
                 {
-                    Console.Write("- No Recording Software(s) found");
+                    Console.WriteLine("- No Recording Software(s) found");
                 }
 
                 ConsoleHelper.WriteLine("\nProcess(es) Start Time:\n", ConsoleColor.Yellow); //fatto
@@ -237,6 +249,7 @@ namespace SMT
 
                 #endregion
 
+                //PastebinUploader.PastebinExample(value_to_return).GetAwaiter().GetResult();
                 #region Nothing Found
                 if (RESULTS.possible_replaces.Count == 0 && RESULTS.suspy_files.Count == 0
                      && RESULTS.event_viewer_entries.Count == 0

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -243,6 +244,89 @@ namespace SMT.helpers
             }
 
             return signature;
+        }
+
+        public static string formatToPastebin()
+        {
+            string value_to_return = "";
+
+            Results RESULTS = new Results();
+
+            #region Write Results (Check 1)
+
+            value_to_return += "Generic Informations: \n";
+
+            value_to_return +=  "Alts:\n"; //fatto
+            RESULTS.alts.Distinct().ToList().ForEach(alt => value_to_return += alt + "\n");
+
+            #endregion
+
+            /*
+            #region Write Results (Check 2)
+
+            value_to_return += "\n Checks:";
+
+            if (RESULTS.Errors.Count > 0) // done
+            {
+                RESULTS.Errors.Distinct().ToList().ForEach(jna => value_to_return += jna + "\n");
+            }
+
+            if (RESULTS.possible_replaces.Count > 0) // done
+            {
+                value_to_return += "File's actions file:\n";
+                RESULTS.possible_replaces.Sort();
+                RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => value_to_return += replace + "\n");
+            }
+
+            if (RESULTS.event_viewer_entries.Count > 0) // done
+            {
+                value_to_return += "\nBad Eventvwr log(s):\n";
+                RESULTS.event_viewer_entries.Distinct().ToList().ForEach(eventvwr => value_to_return += eventvwr + "\n");
+            }
+
+            if (RESULTS.suspy_files.Count > 0) // done
+            {
+                value_to_return += "\nSuspy files: \n";
+                RESULTS.suspy_files.Sort();
+                RESULTS.suspy_files.Distinct().ToList().ForEach(eventvwr => value_to_return += eventvwr + "\n");
+            }
+            else
+            {
+                value_to_return += "\nWarning:\n";
+                value_to_return += "- No suspicious file found, if user uses \"Kaspersky\" please disable it and rescan";
+            }
+
+            if (RESULTS.bypass_methods.Count > 0) // done
+            {
+                value_to_return += "\nBypass methods:\n";
+                RESULTS.bypass_methods.Distinct().ToList().ForEach(eventvwr => value_to_return += eventvwr + "\n");
+            }
+
+            if (RESULTS.string_scan.Count > 0) // done
+            {
+                value_to_return += "\nString Scan:\n";
+                RESULTS.string_scan.Distinct().ToList().ForEach(eventvwr => value_to_return += eventvwr + "\n");
+            }
+
+            #endregion
+            */
+
+            return value_to_return;
+        }
+
+        public static string HardwareID()
+        {
+            string return_value = "";
+
+            var mbs = new ManagementObjectSearcher("Select ProcessorId From Win32_processor");
+            ManagementObjectCollection mbsList = mbs.Get();
+            foreach (ManagementObject mo in mbsList)
+            {
+                return_value = mo["ProcessorId"].ToString();
+                break;
+            }
+
+            return return_value;
         }
 
         public static void UnProtectProcess(int PID)

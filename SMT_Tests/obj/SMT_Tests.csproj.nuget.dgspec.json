@@ -1,0 +1,61 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\SMT_Tests.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\SMT_Tests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\SMT_Tests.csproj",
+        "projectName": "SMT_Tests",
+        "projectPath": "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\SMT_Tests.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "configFilePaths": [
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {
+          "dependencies": {
+            "LINQPad.NHibernate.FormatSQL": {
+              "target": "Package",
+              "version": "[1.0.3, )"
+            },
+            "LINQPad.Supporting.NHibernate": {
+              "target": "Package",
+              "version": "[1.0.0, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

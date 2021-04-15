@@ -392,61 +392,113 @@ namespace SMT.scanners
             Console.OutputEncoding = Encoding.Unicode;
             bool unicode_char = false;
 
-            #region Metodo carattere speciale + Regedit aperto
+            #region Metodo carattere speciale + Regedit aperto + Java/Javaw
 
             Parallel.ForEach(SMTHelper.prefetchfiles, (index) =>
             {
                 unicode_char = SMTHelper.ContainsUnicodeCharacter(index);
 
-                //if (File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
-                //{
-                //    if (unicode_char)
-                //    {
-                //        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Special char found", index));
-                //    }
-                //    else if (index.ToUpper().Contains("REGEDIT.EXE")
-                //        && File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
-                //    {
-                //        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Regedit opened after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
-                //    }
-                //}
-                if (File.GetLastWriteTime(index) >= SMTHelper.PC_StartTime()
-                && (index.ToUpper().Contains("JAVA.EXE")
-                || index.ToUpper().Contains("JAVAW.EXE")))
+                if(File.GetLastWriteTime(index) >= SMTHelper.PC_StartTime())
                 {
-                    Parallel.ForEach(Prefetch.PrefetchFile.Open(index).Filenames, (file_name) =>
+                    if (File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
                     {
-                        string file_to_analyze = Regex.Replace(file_name, "\\\\VOLUME.*?\\\\", Path.GetPathRoot(Environment.SystemDirectory));
-
-                        if (File.Exists(file_to_analyze)
-                        && file_to_analyze != @"C:\$MFT")
+                        if (unicode_char)
                         {
-                            try
-                            {
-                                var r = File.ReadLines(file_to_analyze)
-                                .First()[0] == 'P' &&
-                                File.ReadLines(file_to_analyze)
-                                .First()[1] == 'K';
+                            SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Special char found", index));
+                        }
+                        else if (index.ToUpper().Contains("REGEDIT.EXE")
+                            && File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
+                        {
+                            SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection("Bypass method", "Regedit opened after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
+                        }
+                    }
 
-                                if (r)
+                    #region Check java -jar (specifico)
+
+                    /*
+                    if(index.ToUpper().Contains("JAVA.EXE"))
+                    {
+                        Parallel.ForEach(Prefetch.PrefetchFile.Open(index).Filenames, (file_name) =>
+                        {
+                            string file_to_analyze = Regex.Replace(file_name, "\\\\VOLUME.*?\\\\", Path.GetPathRoot(Environment.SystemDirectory));
+
+                            if (File.Exists(file_to_analyze)
+                            && file_to_analyze != @"C:\$MFT")
+                            {
+                                try
                                 {
-                                    SMT.RESULTS.suspy_files.Add(SMTHelper.Detection("Suspicious File (Suspicious behavior)", $"{file_to_analyze} is runnable", "Found in \"JAVAW\"/\"JAVA\" Prefetch's log"));
+                                    var isJavaExecutable = File.ReadLines(file_to_analyze)
+                                    .First()[0] == 'P' &&
+                                    File.ReadLines(file_to_analyze)
+                                    .First()[1] == 'K';
+
+                                    string[] mucca = File.ReadAllLines(file_to_analyze);
+
+                                    if (isJavaExecutable && mucca.Contains("keymaster"))
+                                    {
+                                        SMT.RESULTS.suspy_files.Add(SMTHelper.Detection("Suspicious File (Suspicious behavior)", $"{file_to_analyze} is runnable", "Found in \"JAVA\" Prefetch's log"));
+                                    }
+                                }
+                                catch
+                                {
+
                                 }
                             }
-                            catch
+                            else if (!File.Exists(file_to_analyze))
                             {
-
+                                journal_names.Add(Path.GetFileName(file_to_analyze));
                             }
-                        }
-                        else if (!File.Exists(file_to_analyze))
+                        });
+                    }
+                    */
+
+                    #endregion
+
+                    #region Check del regsvr32 e rundll
+
+                    /*
+                    else if(index.ToUpper().Contains("REGSVR32.EXE") || index.ToUpper().Contains("RUNDLL32.EXE"))
+                    {
+                        Parallel.ForEach(Prefetch.PrefetchFile.Open(index).Filenames, (file_name) =>
                         {
-                            journal_names.Add(Path.GetFileName(file_to_analyze));
-                        }
-                    });
+                            string file_to_analyze = Regex.Replace(file_name, "\\\\VOLUME.*?\\\\", Path.GetPathRoot(Environment.SystemDirectory));
+
+                            if (File.Exists(file_to_analyze)
+                            && file_to_analyze != @"C:\$MFT")
+                            {
+                                try
+                                {
+                                    //var isJavaExecutable = File.ReadLines(file_to_analyze)
+                                    //.First()[0] == 'P' &&
+                                    //File.ReadLines(file_to_analyze)
+                                    //.First()[1] == 'K';
+
+                                    //if (isJavaExecutable)
+                                    //{
+                                    //    SMT.RESULTS.suspy_files.Add(SMTHelper.Detection("Suspicious File (Suspicious behavior)", $"{file_to_analyze} is runnable", "Found in \"JAVAW\"/\"JAVA\" Prefetch's log"));
+                                    //}
+                                }
+                                catch
+                                {
+
+                                }
+                            }
+                            else if (!File.Exists(file_to_analyze))
+                            {
+                                journal_names.Add(Path.GetFileName(file_to_analyze));
+                            }
+                        });
+                    }
+                    */
+
+                    #endregion
                 }
             });
 
             #endregion
+
+            /*
+            #region Java/Javaw files eliminati check
 
             #region Reasons
             uint reasonMask =
@@ -493,6 +545,9 @@ namespace SMT.scanners
                     }
                 });
             }
+
+            #endregion
+            */
 
             #region Wmic da regedit
 

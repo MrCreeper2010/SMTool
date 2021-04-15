@@ -52,5 +52,13 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="LINQPad.NHibernate.FormatSQL">
+      <Version>1.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="LINQPad.Supporting.NHibernate">
+      <Version>1.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

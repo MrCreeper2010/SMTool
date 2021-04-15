@@ -152,7 +152,7 @@ namespace SMT
                             if (alt.Value.Length > 0
                                 && alt.Value.Contains("HuzuniLite"))
                             {
-                                SMT.RESULTS.alts.Add("We've found a player's link reference: https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.npr.org%2Fsections%2Fthetwo-way%2F2014%2F02%2F18%2F279032024%2Ftheres-a-clown-shortage-who-will-fill-those-big-shoes&psig=AOvVaw137sutK9enXXoRBHvVVS_u&ust=1612855406714000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCPjrid3g2e4CFQAAAAAdAAAAABAD");
+                                SMT.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
                             }
                             else if (alt.Value.Length > 0)
                             {
@@ -174,10 +174,9 @@ namespace SMT
                             alt_finito = remove_apostrofi.Replace(alt_finito, "");
                             alt_finito = remove_virgole.Replace(alt_finito, "");
 
-                            if (alt_finito.Length > 0
-                                && alt_finito.Contains("HuzuniLite"))
+                            if (alt_finito.Length > 0 && alt_finito.Contains("HuzuniLite"))
                             {
-                                SMT.RESULTS.alts.Add("We've found a player's link reference: https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.npr.org%2Fsections%2Fthetwo-way%2F2014%2F02%2F18%2F279032024%2Ftheres-a-clown-shortage-who-will-fill-those-big-shoes&psig=AOvVaw137sutK9enXXoRBHvVVS_u&ust=1612855406714000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCPjrid3g2e4CFQAAAAAdAAAAABAD");
+                                SMT.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
                             }
                             else if (alt_finito.Length > 0)
                             {
