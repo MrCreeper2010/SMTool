@@ -17,3 +17,22 @@ C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\Release\SMT.exe
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\Release\SMT.pdb
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Release\NLog.xml
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\Release\System.Diagnostics.DiagnosticSource.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\SMT.exe.config
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\SMT.exe
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\SMT.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\AuthenticodeExaminer.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\NLog.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\Pastel.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\System.Buffers.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\System.Diagnostics.DiagnosticSource.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\System.Memory.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\System.Numerics.Vectors.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Release\SMT.csprojAssemblyReference.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Release\SMT.Properties.Resources.resources
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Release\SMT.csproj.GenerateResource.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Release\SMT.csproj.CoreCompileInputs.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Release\SMT.csproj.Fody.CopyLocal.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Release\SMT.csproj.CopyComplete
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Release\SMT.exe
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Release\SMT.pdb

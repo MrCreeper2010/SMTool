@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "1hNyhbF0tAoR63ctbJW0hv+9AOus/5xfdAF2sZvdFvl4hqHoYAgC98rWENs2sD7BvjyU+plB/0Bw5wlb/4dkyQ==",
+  "dgSpecHash": "JfzPFuXOO/reDjNtOkqRoiw0MxRk6WhBskn6e3rrrsCGPUe0zfaZhMgwEOzF2IdQ8T4cpPo7kp9SRMx/ut3o8g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\SMT_Tests.csproj",
+  "projectFilePath": "C:\\Users\\Mattia\\Documents\\Progetti\\Progetti C#\\SMTool\\SMT_Tests\\SMT_Tests.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\user\\.nuget\\packages\\fluentnhibernate\\1.4.0\\fluentnhibernate.1.4.0.nupkg.sha512",
-    "C:\\Users\\user\\.nuget\\packages\\iesi.collections\\3.2.0.4000\\iesi.collections.3.2.0.4000.nupkg.sha512",
-    "C:\\Users\\user\\.nuget\\packages\\linqpad.nhibernate.formatsql\\1.0.3\\linqpad.nhibernate.formatsql.1.0.3.nupkg.sha512",
-    "C:\\Users\\user\\.nuget\\packages\\linqpad.supporting.nhibernate\\1.0.0\\linqpad.supporting.nhibernate.1.0.0.nupkg.sha512",
-    "C:\\Users\\user\\.nuget\\packages\\nhibernate\\3.3.1.4000\\nhibernate.3.3.1.4000.nupkg.sha512"
+    "C:\\Users\\Mattia\\.nuget\\packages\\fluentnhibernate\\1.4.0\\fluentnhibernate.1.4.0.nupkg.sha512",
+    "C:\\Users\\Mattia\\.nuget\\packages\\iesi.collections\\3.2.0.4000\\iesi.collections.3.2.0.4000.nupkg.sha512",
+    "C:\\Users\\Mattia\\.nuget\\packages\\linqpad.nhibernate.formatsql\\1.0.3\\linqpad.nhibernate.formatsql.1.0.3.nupkg.sha512",
+    "C:\\Users\\Mattia\\.nuget\\packages\\linqpad.supporting.nhibernate\\1.0.0\\linqpad.supporting.nhibernate.1.0.0.nupkg.sha512",
+    "C:\\Users\\Mattia\\.nuget\\packages\\nhibernate\\3.3.1.4000\\nhibernate.3.3.1.4000.nupkg.sha512"
   ],
   "logs": []
 }

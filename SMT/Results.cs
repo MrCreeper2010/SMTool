@@ -10,8 +10,6 @@ namespace SMT
         public Dictionary<string, string> recyble_bins { get; set; } = new Dictionary<string, string>();
         public List<string> xray_packs { get; set; } = new List<string>();
         public List<string> recording_softwares { get; set; } = new List<string>();
-        public bool virtual_machine { get; set; } = false;
-        public bool vpn { get; set; } = false;
         public Dictionary<string, string> processes_starts { get; set; } = new Dictionary<string, string>();
         #endregion
 
@@ -24,7 +22,5 @@ namespace SMT
         #endregion
 
         public List<string> Errors { get; set; } = new List<string>();
-
-        public List<string> Scan_Speed { get; set; } = new List<string>();
     }
 }

@@ -114,7 +114,7 @@
       <HintPath>..\packages\Pastel.2.1.0\lib\netstandard2.0\Pastel.dll</HintPath>
     </Reference>
     <Reference Include="Prefetch">
-      <HintPath>..\..\..\..\..\desktop\Prefetch.dll</HintPath>
+      <HintPath>..\..\..\Costanti\Prefetch.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -273,10 +273,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ThreeOneThree.Proxima.Agent">
-      <HintPath>..\..\..\..\..\desktop\Costanti\ThreeOneThree.Proxima.Agent.dll</HintPath>
+      <HintPath>..\..\..\Costanti\ThreeOneThree.Proxima.Agent.dll</HintPath>
     </Reference>
     <Reference Include="ThreeOneThree.Proxima.Core">
-      <HintPath>..\..\..\..\..\desktop\Costanti\ThreeOneThree.Proxima.Core.dll</HintPath>
+      <HintPath>..\..\..\Costanti\ThreeOneThree.Proxima.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

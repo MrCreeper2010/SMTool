@@ -311,20 +311,20 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\user\\.nuget\\packages\\": {}
+    "C:\\Users\\Mattia\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\SMT_Tests.csproj",
+      "projectUniqueName": "C:\\Users\\Mattia\\Documents\\Progetti\\Progetti C#\\SMTool\\SMT_Tests\\SMT_Tests.csproj",
       "projectName": "SMT_Tests",
-      "projectPath": "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\SMT_Tests.csproj",
-      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\Documents\\Others\\Progetti\\SMT-v3.0-master\\SMT_Tests\\obj\\",
+      "projectPath": "C:\\Users\\Mattia\\Documents\\Progetti\\Progetti C#\\SMTool\\SMT_Tests\\SMT_Tests.csproj",
+      "packagesPath": "C:\\Users\\Mattia\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Mattia\\Documents\\Progetti\\Progetti C#\\SMTool\\SMT_Tests\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "configFilePaths": [
-        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Mattia\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

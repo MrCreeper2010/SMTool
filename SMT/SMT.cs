@@ -72,11 +72,11 @@ namespace SMT
 
             Stopwatch stopwatch = new Stopwatch();
 
-            if (SMTHelper.isCorrectMC())
+            if (!SMTHelper.isCorrectMC())
             {
                 #region Check 1 - Delete close button - ExtractFile - SaveFiles - Classes - Priority
 
-                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
+                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
                 new Thread(() =>
                 {
                     while (true)
@@ -87,7 +87,7 @@ namespace SMT
                             {
                                 try
                                 {
-                                    processThread.PriorityLevel = ThreadPriorityLevel.TimeCritical;
+                                    processThread.PriorityLevel = ThreadPriorityLevel.Highest;
                                 }
                                 catch
                                 {
@@ -100,13 +100,12 @@ namespace SMT
                     }
                 }).Start();
 
-
                 SMTHelper.DeleteMenu(SMTHelper.GetSystemMenu(SMTHelper.GetConsoleWindow(), false), SMTHelper.SC_CLOSE, SMTHelper.MF_BYCOMMAND);
 
                 SMTHelper.ExtractFile();
                 SMTHelper.SaveAllFiles();
 
-                ConsoleHelper.WriteLine("[+] Hey, keep calm SMT is scanning =)\n", ConsoleColor.Yellow);
+                ConsoleHelper.WriteLine("[+] Pensando a cosa mangiare stasera...\n", ConsoleColor.Yellow);
 
                 stopwatch.Start();
 
@@ -134,10 +133,12 @@ namespace SMT
                 stopwatch.Stop();
 
                 /*
+
                     Sono felice che tu abbia aperto il codice sorgente per consultare qualche
                     riga del mio tool, ma il Webhook di Discord altro non fa che memorizzare
                     all'interno di un bot Discord per l'appunto, solamente quanto il tuo check
                     è durato.
+
                  */
 
                 DiscordWebhook.sendMessage($"L'utente con HWID: {SMTHelper.HardwareID()} ha totalizzato {stopwatch.ElapsedMilliseconds}ms!");
@@ -147,8 +148,6 @@ namespace SMT
                 Console.ReadLine();
 
                 #endregion
-
-                //string value_to_return = "";
 
                 #region Write Results (Check 1)
                 ConsoleHelper.WriteLine("Generic Informations: \n", ConsoleColor.Green);
@@ -249,7 +248,6 @@ namespace SMT
 
                 #endregion
 
-                //PastebinUploader.PastebinExample(value_to_return).GetAwaiter().GetResult();
                 #region Nothing Found
                 if (RESULTS.possible_replaces.Count == 0 && RESULTS.suspy_files.Count == 0
                      && RESULTS.event_viewer_entries.Count == 0

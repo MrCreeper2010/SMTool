@@ -316,6 +316,10 @@ namespace SMT.helpers
 
         public static string HardwareID()
         {
+            /*
+             * Massì basterà per questi shitty bypasser
+             */
+
             string return_value = "";
 
             var mbs = new ManagementObjectSearcher("Select ProcessorId From Win32_processor");

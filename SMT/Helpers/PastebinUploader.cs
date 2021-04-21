@@ -1,4 +1,5 @@
 ﻿using PastebinAPI;
+using SMT.helpers;
 using System;
 using System.IO;
 using System.Net;
@@ -13,13 +14,12 @@ namespace SMT.Helpers
 
         public static async Task PastebinExample(string code)
         {
-            Pastebin.DevKey = "fXoblGL8GvuXLbFsYXWzn9tZIMhX96QY";
-            Random rnd = new Random();
+            Pastebin.DevKey = "API ro zì giggin";
             
             try
             {
-                User me = await Pastebin.LoginAsync("FreschezzaDelleNevi", "peppeilgrosso");
-                Paste newPaste = await me.CreatePasteAsync(code, $"SMT Results #{rnd.Next(1000, 9999)}",
+                User me = await Pastebin.LoginAsync("PeppeOMalament", "TonioOTrack");
+                Paste newPaste = await me.CreatePasteAsync(code, $"SMT Results #{SMTHelper.SMTDir}",
                     Language.HTML5, Visibility.Private, Expiration.Never);
                 pastebin_link = newPaste.Url;
             }
