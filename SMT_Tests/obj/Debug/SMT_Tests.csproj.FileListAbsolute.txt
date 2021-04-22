@@ -1,0 +1,13 @@
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\SMT_Tests.exe.config
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\SMT_Tests.exe
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\SMT_Tests.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\FluentNHibernate.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\Iesi.Collections.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\LINQPad.NHibernate.FormatSQL.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\LINQPad.Supporting.NHibernate.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\NHibernate.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Debug\SMT_Tests.csprojAssemblyReference.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Debug\SMT_Tests.csproj.CoreCompileInputs.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Debug\SMT_Tests.csproj.CopyComplete
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Debug\SMT_Tests.exe
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Debug\SMT_Tests.pdb

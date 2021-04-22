@@ -14,7 +14,12 @@ namespace SMT_Tests
     {
         static void Main()
         {
-            
+            SignEX sign = new SignEX(8780);
+            string dstrna = "luy";
+            byte[] to_read = Encoding.Default.GetBytes(dstrna);
+            byte[] to_write = Encoding.Default.GetBytes("ddddddddddddd");
+
+            Console.WriteLine(sign.WriteBytes(to_read, to_write));
 
             Console.WriteLine("done");
             Console.ReadLine();
