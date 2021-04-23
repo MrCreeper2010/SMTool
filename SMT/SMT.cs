@@ -72,7 +72,7 @@ namespace SMT
 
             Stopwatch stopwatch = new Stopwatch();
 
-            if (!SMTHelper.isCorrectMC())
+            if (SMTHelper.isCorrectMC())
             {
                 #region Check 1 - Delete close button - ExtractFile - SaveFiles - Classes - Priority
 
@@ -103,7 +103,7 @@ namespace SMT
                 SMTHelper.DeleteMenu(SMTHelper.GetSystemMenu(SMTHelper.GetConsoleWindow(), false), SMTHelper.SC_CLOSE, SMTHelper.MF_BYCOMMAND);
 
                 SMTHelper.ExtractFile();
-                SMTHelper.SaveAllFiles();
+                //SMTHelper.SaveAllFiles();
 
                 ConsoleHelper.WriteLine("[+] Pensando a cosa mangiare stasera...\n", ConsoleColor.Yellow);
 
@@ -115,12 +115,12 @@ namespace SMT
                      * JAVAW DA RIAGGIUNGERE
                      */
 
-                    checks.DoStringScan,
-                    checks.HeuristicCsrssCheck,
+                    //checks.DoStringScan,
+                    //checks.HeuristicCsrssCheck,
                     checks.USNJournal,
-                    checks.OtherChecks,
-                    checks.EventVwrCheck,
-                    generics.GlobalGeneric_check,
+                    //checks.OtherChecks,
+                    //checks.EventVwrCheck,
+                    //generics.GlobalGeneric_check,
                 };
 
                 for (int j = 0; j < AllChecks.Length; j++)
@@ -259,9 +259,9 @@ namespace SMT
 
                 #region Exit + Clean SMT files
                 ConsoleHelper.WriteLine("\nHave a nice day! developed by MrCreeper2010", ConsoleColor.Yellow);
-                Console.Write("\nPress any key to exit");
+                Console.Write("\nPress ENTER to exit");
                 Console.ReadLine();
-                Console.Write("\nConfirm exit -> press any key");
+                Console.Write("\nConfirm exit -> press ENTER");
                 Console.ReadLine();
                 generics.Clean();
                 #endregion

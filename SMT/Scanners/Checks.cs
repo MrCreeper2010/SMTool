@@ -642,6 +642,9 @@ namespace SMT.scanners
                 case 2149581088:
                     return_value = "Wmic";
                     break;
+                case 2147516928:
+                    return_value = "Residui java-jar o programma in JAVA";
+                    break;
             }
 
             return return_value;
@@ -673,6 +676,7 @@ namespace SMT.scanners
             #endregion
 
             int cacls_counter = 0;
+            int javajar_counter = 0;
 
             Win32Api.USN_JOURNAL_DATA data = new Win32Api.USN_JOURNAL_DATA();
 
@@ -687,17 +691,6 @@ namespace SMT.scanners
             {
                 Parallel.ForEach(usnEntries, (d) =>
                 {
-                    foreach (string s in journal_names)
-                    {
-                        if (SMTHelper.journal_returnconditions(d)
-                            && !d.Name.ToUpper().Contains("JNATIVEHOOK")
-                            && Path.GetExtension(d.Name.ToUpper()) != ".DLL"
-                            && s == d.Name)
-                        {
-                            SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Deleted", d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
-                        }
-                    }
-
                     if (TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString("dd/MM/yyyy")
                     == DateTime.Now.ToString("dd/MM/yyyy")
                     && returnReason(d.Reason).Length > 0)
@@ -709,6 +702,16 @@ namespace SMT.scanners
                         >= SMTHelper.PC_StartTime())
                         {
                             SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Wmic Method", d.Name, $"Wmic method started today {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                        }
+                        else if (
+                        d.Reason == 2147516928
+                        && d.Name.ToUpper().Contains("JAR_CACHE")
+                        && Path.GetExtension(d.Name).Contains("tmp")
+                        && TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
+                        >= SMTHelper.PC_StartTime())
+                        {
+                            javajar_counter++;
+                            SMT.RESULTS.alts.Add(d.Reason.ToString());
                         }
                         else if (d.Reason == 2048
                         && d.Name == "Prefetch"
@@ -762,7 +765,12 @@ namespace SMT.scanners
 
             if (cacls_counter >= 3)
             {
-                SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Bypass method", "Cacls method started today", cacls_counter.ToString()));
+                SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Bypass method", "Cacls method started today", "No more informations"));
+            }
+
+            if(javajar_counter >= 2)
+            {
+                SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection("Bypass method", "Java-jar method started today", "(BETA Method)"));
             }
 
             Console.WriteLine(SMTHelper.Detection("Stage Progress", "", "USNJournal check completed"));
