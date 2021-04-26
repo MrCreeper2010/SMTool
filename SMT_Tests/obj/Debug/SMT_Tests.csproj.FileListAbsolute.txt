@@ -11,3 +11,11 @@ C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Debug\SMT_Te
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Debug\SMT_Tests.csproj.CopyComplete
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Debug\SMT_Tests.exe
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Debug\SMT_Tests.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\DotNet.Glob.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\System.Buffers.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\System.Memory.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\NLog.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\ThreeOneThree.Proxima.Agent.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\ThreeOneThree.Proxima.Core.dll

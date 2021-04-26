@@ -200,7 +200,7 @@ namespace SMT
 
             #endregion
 
-            Console.WriteLine(SMTHelper.Detection("Stage Progress", "", "Generic checks completed"));
+            Console.WriteLine(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.STAGE_PRC, "", "Generic checks completed"));
         }
 
         public void Clean()

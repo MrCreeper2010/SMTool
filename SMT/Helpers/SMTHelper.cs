@@ -10,6 +10,7 @@ using System.Linq;
 using System.Management;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -38,6 +39,22 @@ namespace SMT.helpers
         public static int SMTDir = r.Next(1000, 9999);
         public static bool lsass = false, DPS = false, DNS = false, Javaw = false, DiagTrack = false;
         #endregion
+
+        public enum DETECTION_VALUES
+        {
+            FILE_DELETED = 0,
+            FILE_MOVED_RENAMED = 1,
+            BYPASS_METHOD = 2,
+            SUSP_BEHAVIOR = 3, //Suspicious File (Suspicious behavior)
+            UNSIGNED = 4, //Suspicious File (Digital signature check)
+            SUSP_SIGN = 5,
+            FAKE_SIGN = 6,
+            UNKN_SIGN = 7,
+            OUT_INSTANCE = 8,
+            IN_INSTANCE = 9,
+            WMIC = 10, //DA ELIMINARE
+            STAGE_PRC = 11,
+        };
 
         public static DateTime PC_StartTime()
         {
@@ -246,6 +263,9 @@ namespace SMT.helpers
             return signature;
         }
 
+        #region codice morto
+
+        /*
         public static string formatToPastebin()
         {
             string value_to_return = "";
@@ -309,10 +329,12 @@ namespace SMT.helpers
             }
 
             #endregion
-            */
 
             return value_to_return;
         }
+        */
+
+        #endregion
 
         public static string HardwareID()
         {
@@ -345,48 +367,64 @@ namespace SMT.helpers
             pr.WaitForExit();
         }
 
-        public static string Detection(string detection_type, string detection, string time)
+        public static string Detection(DETECTION_VALUES detection_type, string detection, string time)
         {
             string detection_return = "";
 
             switch (detection_type)
             {
-                case "Deleted":
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 52, 52))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                #region File types
+
+                case DETECTION_VALUES.FILE_DELETED:
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"DELETED".Pastel(Color.FromArgb(240, 52, 52))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
-                case "Bypass method":
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 52, 52))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                case DETECTION_VALUES.BYPASS_METHOD:
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"BYPASS METHOD".Pastel(Color.FromArgb(240, 52, 52))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
-                case "Moved/Renamed":
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(235, 149, 50))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                case DETECTION_VALUES.FILE_MOVED_RENAMED:
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"MOVED OR RENAMED".Pastel(Color.FromArgb(235, 149, 50))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
-                case "Suspicious File (Digital signature check)":
+
+                #endregion
+
+                #region Signature type
+
+                case DETECTION_VALUES.UNSIGNED:
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"UNSIGNED".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                    break;
+                case DETECTION_VALUES.SUSP_BEHAVIOR:
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"SUSPY BEHAVIOR".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                    break;
+                //case DETECTION_VALUES.SUSP_SIGN: //TODO
+                //    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection}";
+                //    break;
+                case DETECTION_VALUES.FAKE_SIGN:
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"FAKE SIGNATURE".Pastel(Color.FromArgb(254, 250, 212))} {"]".Pastel(Color.White)} {detection}";
+                    break;
+                case DETECTION_VALUES.UNKN_SIGN:
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"UNKNOW SIGNATURE".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                    break;
+
+                #endregion
+
+                #region Others
+
+                case DETECTION_VALUES.OUT_INSTANCE:
                     detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
-                case "Suspicious File (Suspicious behavior)":
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
-                    break;
-                case "Suspicious signature":
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection}";
-                    break;
-                case "Fake digital signature":
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(254, 250, 212))} {"]".Pastel(Color.White)} {detection}";
-                    break;
-                case "Out of Instance":
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
-                    break;
-                case "Unknow type of signature":
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
-                    break;
-                case "In Instance":
+                case DETECTION_VALUES.IN_INSTANCE:
                     detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(0, 230, 64))} {"]".Pastel(Color.White)} {detection}";
                     break;
-                case "Wmic Method":
+
+                case DETECTION_VALUES.WMIC:
                     detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(140, 20, 252))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
-                case "Stage Progress":
+
+                case DETECTION_VALUES.STAGE_PRC:
                     detection_return = $@"{"[".Pastel(Color.White)}{$"+".Pastel(Color.FromArgb(0, 230, 64))}{"]".Pastel(Color.White)} -> { $"{time}".Pastel(Color.FromArgb(165, 229, 250))}";
                     break;
+
+                    #endregion
             }
 
             return detection_return;
@@ -408,6 +446,31 @@ namespace SMT.helpers
                     return string.Empty;
                 }
             }
+        }
+
+        public static bool IsFileLocked(FileInfo file)
+        {
+            try
+            {
+                using (FileStream stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    stream.Close();
+                }
+            }
+            catch (IOException)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static string calcoloSHA256(FileStream file)
+        {
+            var sha = new SHA256Managed();
+
+            byte[] bytes = sha.ComputeHash(file);
+            return BitConverter.ToString(bytes).Replace("-", "").ToLower();
         }
 
         public static void SaveAllFiles()

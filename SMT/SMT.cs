@@ -22,7 +22,6 @@ namespace SMT
 
         /*
          * DA AGGIUNGERE/RIVEDERE:
-         * - Metodo java -jar (se un file SENZA JNativehook viene aperto con java -jar)
          * - False-flags con gli antivirus + Incompatibilità con "Kaspersky"
          */
 
@@ -109,6 +108,13 @@ namespace SMT
 
                 stopwatch.Start();
 
+                int workerThreads, complete;
+                ThreadPool.GetMinThreads(out workerThreads, out complete);
+
+                // Comment out this line to see the difference...
+                // WIth this commented out, the second iteration will be immediate
+                ThreadPool.SetMinThreads(200, complete);
+
                 Action[] AllChecks = new Action[]
                 {
                     /*
@@ -117,8 +123,8 @@ namespace SMT
 
                     //checks.DoStringScan,
                     //checks.HeuristicCsrssCheck,
-                    checks.USNJournal,
-                    //checks.OtherChecks,
+                    //checks.USNJournal,
+                    checks.OtherChecks,
                     //checks.EventVwrCheck,
                     //generics.GlobalGeneric_check,
                 };
@@ -169,6 +175,8 @@ namespace SMT
                 }
                 else
                 {
+                    ConsoleHelper.WriteLine("\nRecording Software(s):\n ", ConsoleColor.Yellow);
+
                     Console.WriteLine("- No Recording Software(s) found");
                 }
 
