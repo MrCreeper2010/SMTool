@@ -516,7 +516,45 @@ namespace SMT.scanners
 
             #endregion
 
-            Console.WriteLine(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.STAGE_PRC, "", "Prefetch, regedit, macro checks completed"));
+            #region PcaClient e MountVol
+
+            var get_PCACLIENT = File.ReadAllLines($@"C:\ProgramData\SMT-{SMTHelper.SMTDir}\explorer.txt");
+
+            Regex correctPath = new Regex("[A-Z]:\\\\.*?,");
+            Regex mountvol_Method = new Regex("^\\\\\\\\?\\\\.+.Volume.+.\\\\.+.$");
+
+            Parallel.ForEach(get_PCACLIENT, (index) =>
+            {
+                if (index.ToLower().Contains("pcaclient")
+                && index.ToLower().Contains("trace")
+                && index.Length > 27)
+                {
+                    var path = correctPath.Match(index);
+
+                    if (path.Success && path.Value.Length > 0)
+                    {
+                        string d = path.Value;
+                        d = d.Remove(d.Length - 1, 1) + "";
+
+                        SMT.RESULTS.pcaclient.Add(d);
+                    }
+                }
+                else if (index.ToLower().Contains(@"\\?\volume{")
+                && index.ToLower().Contains("-")
+                && index.Length >= 50)
+                {
+                    var volume = mountvol_Method.Match(index);
+
+                    if (volume.Success && volume.Value.Length > 0)
+                    {
+                        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Mountvol method found", "No more Informations"));
+                    }
+                }
+            });
+
+            #endregion
+
+            Console.WriteLine(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.STAGE_PRC, "", "Other checks completed"));
         } //Refractored
 
         public string returnReason(uint value)
@@ -571,7 +609,6 @@ namespace SMT.scanners
             #endregion
 
             int cacls_counter = 0;
-            int javajar_counter = 0;
 
             Win32Api.USN_JOURNAL_DATA data = new Win32Api.USN_JOURNAL_DATA();
 
@@ -591,8 +628,6 @@ namespace SMT.scanners
                     && returnReason(d.Reason).Length > 0)
                     {
                         //wmic, eliminati, rinominati e spostati
-
-                        //DA AGGIUSTARE QUESTO FOTTUTO SPAGHETTINO CODE
 
                         if (d.Reason == 2149581088
                         && TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
@@ -622,6 +657,11 @@ namespace SMT.scanners
                             && !d.Name.ToUpper().Contains("JNATIVEHOOK")
                             && Path.GetExtension(d.Name.ToUpper()) != ".DLL")
                         {
+                            if (SMTHelper.getCommand(Path.GetPathRoot(Environment.SystemDirectory), d.FileReferenceNumber.ToString()) != "")
+                            {
+                                SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.FILE_DELETED, SMTHelper.getCommand(Path.GetPathRoot(Environment.SystemDirectory), d.FileReferenceNumber.ToString()), $"mammt nuda {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                            }
+
                             SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.FILE_DELETED, d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                         }
                         else if (SMTHelper.journal_returnconditions(d)
@@ -653,13 +693,6 @@ namespace SMT.scanners
             if (cacls_counter >= 3)
             {
                 SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Cacls method started today", "No more informations"));
-            }
-
-            //JAVA -JAR NON FUNZIONANTE
-
-            if (javajar_counter >= 2)
-            {
-                SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Java -jar method started today", "(ALFA Method)"));
             }
 
             Console.WriteLine(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.STAGE_PRC, "", "USNJournal check completed"));

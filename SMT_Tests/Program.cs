@@ -1,67 +1,53 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
+using ThreeOneThree.Proxima.Agent;
+using ThreeOneThree.Proxima.Core;
 
 namespace SMT_Tests
 {
     class Program
     {
-        public static bool IsFileLocked(FileInfo file)
-        {
-            try
-            {
-                using (FileStream stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None))
-                {
-                    stream.Close();
-                }
-            }
-            catch (IOException)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public static string calcoloSHA256(FileStream file)
-        {
-            var sha = new SHA256Managed();
-
-            byte[] bytes = sha.ComputeHash(file);
-            return BitConverter.ToString(bytes).Replace("-", "").ToLower();
-        }
-
         static void Main()
         {
-            var version_Directories = Directory.GetDirectories($@"C:\Users\{Environment.UserName}\AppData\Roaming\.minecraft\versions");
-            int inUsingFile = 0;
+            #region Reasons
+            uint reasonMask =
+            Win32Api.USN_REASON_DATA_OVERWRITE |
+            Win32Api.USN_REASON_DATA_EXTEND |
+            Win32Api.USN_REASON_NAMED_DATA_OVERWRITE |
+            Win32Api.USN_REASON_NAMED_DATA_TRUNCATION |
+            Win32Api.USN_REASON_FILE_CREATE |
+            Win32Api.USN_REASON_FILE_DELETE |
+            Win32Api.USN_REASON_EA_CHANGE |
+            Win32Api.USN_REASON_SECURITY_CHANGE |
+            Win32Api.USN_REASON_RENAME_OLD_NAME |
+            Win32Api.USN_REASON_RENAME_NEW_NAME |
+            Win32Api.USN_REASON_INDEXABLE_CHANGE |
+            Win32Api.USN_REASON_BASIC_INFO_CHANGE |
+            Win32Api.USN_REASON_HARD_LINK_CHANGE |
+            Win32Api.USN_REASON_COMPRESSION_CHANGE |
+            Win32Api.USN_REASON_ENCRYPTION_CHANGE |
+            Win32Api.USN_REASON_OBJECT_ID_CHANGE |
+            Win32Api.USN_REASON_REPARSE_POINT_CHANGE |
+            Win32Api.USN_REASON_STREAM_CHANGE |
+            Win32Api.USN_REASON_CLOSE;
+            #endregion
 
-            WebClient wb = new WebClient();
-            var s = wb.DownloadString("https://pastebin.com/raw/0kjRrqiC");
+            Win32Api.USN_JOURNAL_DATA data = new Win32Api.USN_JOURNAL_DATA();
 
-            Parallel.ForEach(version_Directories, (index) =>
+            DriveConstruct construct = new DriveConstruct(Path.GetPathRoot(Environment.SystemDirectory));
+
+            NtfsUsnJournal journal = new NtfsUsnJournal(Path.GetPathRoot(Environment.SystemDirectory));
+            NtfsUsnJournal.UsnJournalReturnCode rtn = journal.GetUsnJournalEntries(construct.CurrentJournalData, reasonMask, out List<Win32Api.UsnEntry> usnEntries, out Win32Api.USN_JOURNAL_DATA newUsnState, OverrideLastUsn: data.MaxUsn);
+
+            if (rtn == NtfsUsnJournal.UsnJournalReturnCode.USN_JOURNAL_SUCCESS)
             {
-                var version_File = Directory.GetFiles(index, "*.jar");
-
-                for (int j = 0; j < version_File.Length; j++)
+                Parallel.ForEach(usnEntries, (d) =>
                 {
-                    if (IsFileLocked(new FileInfo(version_File[j])))
-                    {
-                        inUsingFile++;
-
-                        if (!s.Contains(calcoloSHA256(new FileStream(version_File[j], FileMode.Open))))
-                        {
-                            Console.WriteLine("NON legittimo");
-                        }
-                    }
-                }
-            });
-
-            if (inUsingFile > 1)
-            {
-                Console.WriteLine("Bypass grosso bro");
+                    if (d.Name.Contains("KOID"))
+                        Console.WriteLine(d.FileReferenceNumber);
+                });
             }
 
             Console.WriteLine("done");

@@ -281,6 +281,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\DiscordWebhook.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\GlobalVariables.cs" />
     <Compile Include="Helpers\PastebinUploader.cs" />
     <Compile Include="Helpers\VirtualDesktop.cs" />

@@ -37,7 +37,7 @@ namespace SMT.helpers
         public static List<string> GetTemp_files = Directory.GetFiles($@"C:\Users\{Environment.UserName}\AppData\Local\Temp").ToList();
         public static string strings2, unprotect;
         public static int SMTDir = r.Next(1000, 9999);
-        public static bool lsass = false, DPS = false, DNS = false, Javaw = false, DiagTrack = false;
+        public static bool lsass = false, DPS = false, explorer = false, DNS = false, Javaw = false, DiagTrack = false;
         #endregion
 
         public enum DETECTION_VALUES
@@ -219,6 +219,33 @@ namespace SMT.helpers
 
 
             return process;
+        }
+
+        public static string getCommand(string volume_name, string rfn)
+        {
+            string return_value = "";
+
+            Process p = new Process();
+            // Redirect the output stream of the child process.
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.FileName = "cmd.exe";
+            p.StartInfo.Arguments = $"/C fsutil file queryfilenamebyid {volume_name} {rfn}";
+            p.Start();
+
+            string output = p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+
+            if (!output.Contains(@"\\?\"))
+                return_value = "";
+            else
+            {
+                Regex rgx = new Regex("\\\\.*?$");
+                var d = rgx.Match(output);
+                return_value = d.Value;
+            }
+
+            return return_value;
         }
 
         public static string MinecraftMainProcess = GetCorrectMCProcess();
@@ -475,6 +502,8 @@ namespace SMT.helpers
 
         public static void SaveAllFiles()
         {
+            /*
+
             //csrss
             try
             {
@@ -574,6 +603,27 @@ namespace SMT.helpers
                 }
             }
             catch { }
+
+            */
+
+            //Explorer
+            try
+            {
+                if (Process.GetProcessesByName("explorer")[0].Id.ToString().Length > 0)
+                {
+                    //UnProtectProcess(Convert.ToInt32(GetPID("explorer")));
+                    SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -l 6 -pid {Process.GetProcessesByName("explorer")[0].Id} > C:\ProgramData\SMT-{SMTDir}\explorer.txt");
+                    explorer = true;
+                }
+                else
+                {
+                    SMT.RESULTS.bypass_methods.Add("Generic Bypass method (Explorer process missed)");
+                }
+            }
+            catch
+            {
+
+            }
         }
     }
 }

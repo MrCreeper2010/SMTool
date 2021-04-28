@@ -4,7 +4,9 @@ using SMT.scanners;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -71,7 +73,7 @@ namespace SMT
 
             Stopwatch stopwatch = new Stopwatch();
 
-            if (SMTHelper.isCorrectMC())
+            if (!SMTHelper.isCorrectMC())
             {
                 #region Check 1 - Delete close button - ExtractFile - SaveFiles - Classes - Priority
 
@@ -102,7 +104,7 @@ namespace SMT
                 SMTHelper.DeleteMenu(SMTHelper.GetSystemMenu(SMTHelper.GetConsoleWindow(), false), SMTHelper.SC_CLOSE, SMTHelper.MF_BYCOMMAND);
 
                 SMTHelper.ExtractFile();
-                //SMTHelper.SaveAllFiles();
+                SMTHelper.SaveAllFiles();
 
                 ConsoleHelper.WriteLine("[+] Pensando a cosa mangiare stasera...\n", ConsoleColor.Yellow);
 
@@ -111,8 +113,6 @@ namespace SMT
                 int workerThreads, complete;
                 ThreadPool.GetMinThreads(out workerThreads, out complete);
 
-                // Comment out this line to see the difference...
-                // WIth this commented out, the second iteration will be immediate
                 ThreadPool.SetMinThreads(200, complete);
 
                 Action[] AllChecks = new Action[]
@@ -133,6 +133,7 @@ namespace SMT
                 {
                     runCheckAsync(AllChecks[j]);
                 }
+
 
                 Task.WaitAll(tasks.ToArray());
 
@@ -160,7 +161,7 @@ namespace SMT
 
                 ConsoleHelper.WriteLine("Alts:\n", ConsoleColor.Yellow); //fatto
                 RESULTS.alts.Distinct().ToList().ForEach(alt => ConsoleHelper.WriteLine("- " + alt));
-                
+
                 ConsoleHelper.WriteLine("\nRecycle.bin:\n", ConsoleColor.Yellow); //fatto
                 foreach (KeyValuePair<string, string> recycleBin in RESULTS.recyble_bins)
                 {
@@ -204,6 +205,16 @@ namespace SMT
                 else
                 {
                     Console.WriteLine("- No input devices found");
+                }
+
+                ConsoleHelper.WriteLine("\nPcaClient files (no duplicated files):\n", ConsoleColor.Yellow); //fatto
+                if (RESULTS.pcaclient.Count > 0)
+                {
+                    RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => ConsoleHelper.WriteLine("- " + mouse));
+                }
+                else
+                {
+                    Console.WriteLine("- No PcaClient files found");
                 }
 
                 #endregion
