@@ -22,13 +22,16 @@ Lista features:
 - [X] Check per controllare se l'utente ha aperto regedit dopo Minecraft
 - [X] Check per trovare se il regedit è stato disabilitato
 - [X] Check del wmic (qualunque estensione e stream)
-- [ ] Check PcaClient
-- [ ] Check di alcune macro (sezione da aggiornare)
+
+Features da aggiungere nella prossima release (quelle con la spunta già sono state aggiunte ma non ufficialmente):
+
+- [X] Check PcaClient
+- [X] Check di alcune macro (sezione da aggiornare)
 - [ ] Check universale per i software di recoding
-- [ ] Check metodo mountvol
+- [X] Check metodo mountvol
 - [ ] Check metodo rundll32 e regsvc
 - [ ] Check metodo java -jar (senza JNativeHook)
-- [ ] Check universale per trovare QUALUNQUE ghost client di qualunque versione (sia optifine che vanilla)
+- [X] Check universale per trovare QUALUNQUE ghost client di qualunque versione (sia optifine che vanilla)
 - [ ] Check per le estensioni spoffate
 
 Official Telegram channel @SMTool
