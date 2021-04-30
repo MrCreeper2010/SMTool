@@ -26,3 +26,24 @@ C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Debug\System
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Debug\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\obj\x64\Debug\SMT.csprojAssemblyReference.cache
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Debug\NLog.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\SMT.exe.config
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\SMT.exe
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\SMT.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\AuthenticodeExaminer.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\NLog.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\Pastel.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\System.Buffers.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\System.Diagnostics.DiagnosticSource.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\System.Memory.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\System.Numerics.Vectors.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.csprojAssemblyReference.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.Properties.Resources.resources
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.csproj.GenerateResource.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.csproj.CoreCompileInputs.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.csproj.Fody.CopyLocal.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.csproj.CopyComplete
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.exe
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\SMT.exe.CodeAnalysisLog.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\SMT.exe.lastcodeanalysissucceeded

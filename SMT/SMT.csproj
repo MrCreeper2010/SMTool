@@ -16,6 +16,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -28,7 +29,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -77,7 +77,7 @@
     <LangVersion>8.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
-    <CodeAnalysisRuleSet>BasicDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
     <Optimize>false</Optimize>
   </PropertyGroup>
@@ -280,11 +280,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers\DiscordWebhook.cs" />
-    <Compile Include="Helpers\FileHelper.cs" />
-    <Compile Include="Helpers\GlobalVariables.cs" />
-    <Compile Include="Helpers\PastebinUploader.cs" />
-    <Compile Include="Helpers\VirtualDesktop.cs" />
+    <Compile Include="Classi utili\DiscordWebhook.cs" />
+    <Compile Include="Classi utili\GlobalVariables.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -293,11 +291,9 @@
     <Compile Include="Results.cs" />
     <Compile Include="Scanners\Checks.cs" />
     <Compile Include="Scanners\Generics.cs" />
-    <Compile Include="Helpers\ConsoleHelper.cs" />
-    <Compile Include="Header.cs" />
-    <Compile Include="Helpers\RegistryHelpercs.cs" />
-    <Compile Include="Helpers\SMTHelper.cs" />
-    <Compile Include="SMT.cs" />
+    <Compile Include="Initializer.cs" />
+    <Compile Include="Classi utili\Wrapper.cs" />
+    <Compile Include="SMT_Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

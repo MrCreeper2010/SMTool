@@ -40,7 +40,7 @@ namespace SMT.scanners
             GlobalVariables globalVariables = new GlobalVariables();
 
             Regex regex_path = new Regex(@"[A-Z]:\\.*?$");
-            string[] CSRSS_file = File.ReadAllLines($@"C:\ProgramData\SMT-{SMTHelper.SMTDir}\csrss.txt");
+            string[] CSRSS_file = File.ReadAllLines($@"C:\ProgramData\SMT-{Wrapper.SMTDir}\csrss.txt");
 
             Parallel.ForEach(CSRSS_file, (index) =>
             {
@@ -53,36 +53,51 @@ namespace SMT.scanners
                     Match Csrss_path = regex_path.Match(index);
 
                     if (Csrss_path.Success
-                    && SMTHelper.prefetchfiles.Where(x => x
+                    && Wrapper.prefetchfiles.Where(x => x
                     .Contains(Path.GetFileName(Csrss_path.Value).ToUpper()))
                     .FirstOrDefault() != null
-                    && SMTHelper.prefetchfiles
+                    && Wrapper.prefetchfiles
                     .Where(f => File.GetLastWriteTime(Csrss_path.Value)
-                    >= SMTHelper.PC_StartTime())
+                    >= Wrapper.PC_StartTime())
                     .FirstOrDefault() != null)
                     {
-                        switch (SMTHelper.GetSign(Csrss_path.Value))
+                        //var strings2 = Wrapper.calcoloSHA256(new FileStream(Csrss_path.Value, FileMode.Open));
+
+                        //foreach (var s in SMT.CsrssFiles_tocheck)
+                        //{
+                        //    if (Csrss_path.Value.ToUpper().Contains(s.ToUpper()))
+                        //    {
+                        //        SMT.RESULTS.alts.Add(s);
+                        //    }
+                        //}
+
+                        switch (Wrapper.GetSign(Csrss_path.Value))
                         {
                             case "Unsigned":
                                 if (!Csrss_path.Value.ToUpper().Contains("WINDOWS"))
                                 {
-                                    SMT.RESULTS.suspy_files.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.UNSIGNED, Csrss_path.Value, "This file hasn't got any digital signature, please investigate"));
+                                    //if(Csrss_path.Value.Contains("strings2.exe") 
+                                    //&& strings2 != "736f66305b85b1ff01b735491db3fae966815ba9ae830c3fec1ab750430f5cdf")
+                                    //{
+                                    SMT_Main.RESULTS.suspy_files.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.UNSIGNED, Csrss_path.Value, "This file hasn't got any digital signature, please investigate"));
+                                    //    SMT.RESULTS.alts.Add(strings2);
+                                    //}
                                 }
                                 break;
                             case "Fake":
-                                SMT.RESULTS.suspy_files.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.FAKE_SIGN, Csrss_path.Value, "File has got a fake/expired digital signature"));
+                                SMT_Main.RESULTS.suspy_files.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.FAKE_SIGN, Csrss_path.Value, "File has got a fake/expired digital signature"));
                                 break;
                             case "Other type of signature":
-                                SMT.RESULTS.suspy_files.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.UNKN_SIGN, Csrss_path.Value, "Suspicious digital signature's informations, please investigate"));
+                                SMT_Main.RESULTS.suspy_files.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.UNKN_SIGN, Csrss_path.Value, "Suspicious digital signature's informations, please investigate"));
                                 break;
                         }
                     }
                 }
             });
 
-            SMT.RESULTS.suspy_files.Sort();
+            SMT_Main.RESULTS.suspy_files.Sort();
 
-            Console.WriteLine(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.STAGE_PRC, "", "Suspicious file check completed"));
+            Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Suspicious file check completed"));
         } //Refractored
 
         public static void StringScannerSystem(string link, char separator, string result)
@@ -107,9 +122,9 @@ namespace SMT.scanners
 
             foreach (ManagementObject o in mngmtClass.GetInstances())
             {
-                if (Process.GetProcessesByName(SMTHelper.MinecraftMainProcess).Length > 0)
+                if (Process.GetProcessesByName(Wrapper.MinecraftMainProcess).Length > 0)
                 {
-                    if (o["Name"].Equals(SMTHelper.MinecraftMainProcess))
+                    if (o["Name"].Equals(Wrapper.MinecraftMainProcess))
                     {
                         if (o["CommandLine"].ToString().Contains(@"11.15.1.1722"))
                         {
@@ -165,26 +180,26 @@ namespace SMT.scanners
                                             //!
                                             cheat_filename = remove_junk1.Replace(cheat_filename, "");
 
-                                            for (int j = 0; j < SMTHelper.prefetchfiles.Count; j++)
+                                            for (int j = 0; j < Wrapper.prefetchfiles.Count; j++)
                                             {
-                                                if (SMTHelper.prefetchfiles[j].Contains(cheat_filename.ToUpper())
-                                                && File.GetLastWriteTime(SMTHelper.prefetchfiles[j]) >= SMTHelper.PC_StartTime())
+                                                if (Wrapper.prefetchfiles[j].Contains(cheat_filename.ToUpper())
+                                                && File.GetLastWriteTime(Wrapper.prefetchfiles[j]) >= Wrapper.PC_StartTime())
                                                 {
-                                                    SMT.RESULTS.string_scan.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.OUT_INSTANCE, cheat, "File: " + cheat_filename));
+                                                    SMT_Main.RESULTS.string_scan.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.OUT_INSTANCE, cheat, "File: " + cheat_filename));
                                                 }
                                             }
                                         }
                                         else if (count > 3)
                                         {
 
-                                            SMT.RESULTS.string_scan.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.OUT_INSTANCE, cheat, "User tried to bypass this check adding a lot of !"));
+                                            SMT_Main.RESULTS.string_scan.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.OUT_INSTANCE, cheat, "User tried to bypass this check adding a lot of !"));
                                         }
                                     }
                                 });
                             }
                             else if (link == "https://pastebin.com/raw/adJN0gu4")
                             {
-                                string[] DPS_file_lines = File.ReadAllLines($@"C:\ProgramData\SMT-{SMTHelper.SMTDir}\Specific.txt");
+                                string[] DPS_file_lines = File.ReadAllLines($@"C:\ProgramData\SMT-{Wrapper.SMTDir}\Specific.txt");
                                 Regex get_wmic_regex = new Regex(".*?/");
 
                                 Parallel.ForEach(DPS_file_lines, (index) =>
@@ -199,7 +214,7 @@ namespace SMT.scanners
                                         && mch.Value.Contains(":"))
                                         {
                                             //DPS
-                                            SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.WMIC, mch.Value, "Wmic started today or few days ago, please investigate #1"));
+                                            SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.WMIC, mch.Value, "Wmic started today or few days ago, please investigate #1"));
                                         }
                                     }
                                 });
@@ -208,14 +223,14 @@ namespace SMT.scanners
                             else if (link == "https://pastebin.com/raw/1LKLuNWh"
                                 && file_lines.ToLower().Contains(client_str))
                             {
-                                SMT.RESULTS.string_scan.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.OUT_INSTANCE, cheat, "(User isn't necessarily cheating)"));
+                                SMT_Main.RESULTS.string_scan.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.OUT_INSTANCE, cheat, "(User isn't necessarily cheating)"));
                             }
                             //else if (link == "https://pastebin.com/raw/uu6excEE"
                             //    && can_scan
                             //    && result.Contains(client_str)
                             //    && !cheat.Contains("Found Generic"))
                             //{
-                            //    SMT.RESULTS.string_scan.Add(SMTHelper.Detection("In Instance", cheat, "No more informations"));
+                            //    SMT.RESULTS.string_scan.Add(Wrapper.Detection("In Instance", cheat, "No more informations"));
                             //}
                         }
                     }
@@ -227,14 +242,14 @@ namespace SMT.scanners
                 if (result.Contains(keyValuePair.Key)
                 && link == "https://pastebin.com/raw/uu6excEE")
                 {
-                    SMT.RESULTS.string_scan.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.IN_INSTANCE, keyValuePair.Value, "No more informations"));
+                    SMT_Main.RESULTS.string_scan.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.IN_INSTANCE, keyValuePair.Value, "No more informations"));
                 }
             });
 
 
             for (int j = 0; j < clientsdetected.Count; j++)
             {
-                SMT.RESULTS.string_scan.Add(clientsdetected[j]);
+                SMT_Main.RESULTS.string_scan.Add(clientsdetected[j]);
             }
         } //Refractored
 
@@ -260,22 +275,22 @@ namespace SMT.scanners
 
             Parallel.ForEach(Security_entries, (index) =>
             {
-                if (index.InstanceId == 1102 && SMTHelper.PC_StartTime() < index.TimeGenerated)
+                if (index.InstanceId == 1102 && Wrapper.PC_StartTime() < index.TimeGenerated)
                 {
-                    SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Security logs deleted", "No more informations"));
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Security logs deleted", "No more informations"));
                 }
 
             });
 
             Parallel.ForEach(System_entries, (Security) =>
             {
-                if (Security.InstanceId == 104 && SMTHelper.PC_StartTime() <= Security.TimeGenerated)
+                if (Security.InstanceId == 104 && Wrapper.PC_StartTime() <= Security.TimeGenerated)
                 {
-                    SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "\"Security\" logs deleted", "No more informations"));
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "\"Security\" logs deleted", "No more informations"));
                 }
 
 #pragma warning disable CS0618 // Il tipo o il membro è obsoleto
-                else if (Security.EventID == 7031 && SMTHelper.PC_StartTime() <= Security.TimeGenerated)
+                else if (Security.EventID == 7031 && Wrapper.PC_StartTime() <= Security.TimeGenerated)
 #pragma warning restore CS0618 // Il tipo o il membro è obsoleto
                 {
                     foreach (byte single_bytes in Security.Data)
@@ -288,10 +303,10 @@ namespace SMT.scanners
             Parallel.ForEach(Application_entries, (Application_log) =>
             {
 #pragma warning disable CS0618 // Il tipo o il membro è obsoleto
-                if (Application_log.EventID == 3079 && SMTHelper.PC_StartTime() <= Application_log.TimeGenerated)
+                if (Application_log.EventID == 3079 && Wrapper.PC_StartTime() <= Application_log.TimeGenerated)
                 {
 #pragma warning restore CS0618 // Il tipo o il membro è obsoleto
-                    SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "USN Journal was deleted", Application_log.TimeGenerated.ToString()));
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "USN Journal was deleted", Application_log.TimeGenerated.ToString()));
                 }
             });
 
@@ -310,7 +325,7 @@ namespace SMT.scanners
                     continue;
                 }
 
-                if (entry.TimeCreated <= SMTHelper.PC_StartTime())
+                if (entry.TimeCreated <= Wrapper.PC_StartTime())
                 {
                     continue;
                 }
@@ -321,7 +336,7 @@ namespace SMT.scanners
 
                 if (Math.Abs((previousTime - newTime).TotalMinutes) > 5)
                 {
-                    SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "System time change", $"Old -> {previousTime} New -> {newTime}"));
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "System time change", $"Old -> {previousTime} New -> {newTime}"));
                 }
             }
 
@@ -335,9 +350,9 @@ namespace SMT.scanners
             {
                 for (EventRecord dodo = elReader.ReadEvent(); dodo != null; dodo = elReader.ReadEvent())
                 {
-                    if (SMTHelper.MinecraftMainProcess != "" && dodo.TimeCreated >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
+                    if (Wrapper.MinecraftMainProcess != "" && dodo.TimeCreated >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime)
                     {
-                        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Explorer was restarted after Minecraft", dodo.TimeCreated.ToString()));
+                        SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Explorer was restarted after Minecraft", dodo.TimeCreated.ToString()));
                     }
                 }
             }
@@ -349,16 +364,16 @@ namespace SMT.scanners
             switch (bytes)
             {
                 case "68080083000":
-                    SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "DPS was restarted", "No more informations"));
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "DPS was restarted", "No more informations"));
                     break;
                 case "800990970830118099000":
-                    SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "PcaSvc", "No more informations"));
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "PcaSvc", "No more informations"));
                     break;
                 case "680105097010308401140970990107000":
-                    SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "DiagTrack was restarted", "No more informations"));
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "DiagTrack was restarted", "No more informations"));
                     break;
                 case "830121011507709701050110000":
-                    SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled (Sysmain restarted)", "No more informations"));
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled (Sysmain restarted)", "No more informations"));
                     break;
             }
 
@@ -373,16 +388,16 @@ namespace SMT.scanners
                 {
                     DateTime UpdatedTime = (DateTime)dodo.TimeCreated;
 
-                    if (dodo.TimeCreated > SMTHelper.PC_StartTime() && UpdatedTime.AddMinutes(-5) > SMTHelper.PC_StartTime())
+                    if (dodo.TimeCreated > Wrapper.PC_StartTime() && UpdatedTime.AddMinutes(-5) > Wrapper.PC_StartTime())
                     {
-                        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "USB connected", dodo.TimeCreated.ToString()));
+                        SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "USB connected", dodo.TimeCreated.ToString()));
                     }
                 }
             }
 
             #endregion
 
-            Console.WriteLine(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.STAGE_PRC, "", "Eventvwr check completed"));
+            Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Eventvwr check completed"));
         } //Refractored
 
         public static List<string> journal_names = new List<string>();
@@ -394,20 +409,20 @@ namespace SMT.scanners
 
             #region Metodo carattere speciale + Regedit aperto + Java/Javaw
 
-            Parallel.ForEach(SMTHelper.prefetchfiles, (index) =>
+            Parallel.ForEach(Wrapper.prefetchfiles, (index) =>
             {
-                unicode_char = SMTHelper.ContainsUnicodeCharacter(index);
+                unicode_char = Wrapper.ContainsUnicodeCharacter(index);
 
-                if (File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
+                if (File.GetLastWriteTime(index) >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime)
                 {
                     if (unicode_char)
                     {
-                        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Special char found", index));
+                        SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Special char found", index));
                     }
                     else if (index.ToUpper().Contains("REGEDIT.EXE")
-                        && File.GetLastWriteTime(index) >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
+                        && File.GetLastWriteTime(index) >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime)
                     {
-                        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Regedit opened after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
+                        SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Regedit opened after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
                     }
                 }
             });
@@ -435,12 +450,12 @@ namespace SMT.scanners
                                 Match mch = jessica.Match(values);
                                 regedit_replace = DiscoC.Replace(mch.Value, "C:\\");
 
-                                SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.WMIC, regedit_replace, "Wmic started today or few days ago, please investigate #2"));
+                                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.WMIC, regedit_replace, "Wmic started today or few days ago, please investigate #2"));
                             }
                             else if (values.Contains(":")
                                 && !values.Contains(@"\Device\HarddiskVolume4\"))
                             {
-                                SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.WMIC, values, "Wmic started today or few days ago, please investigate #2"));
+                                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.WMIC, values, "Wmic started today or few days ago, please investigate #2"));
                             }
                         }
                     }
@@ -455,12 +470,12 @@ namespace SMT.scanners
 
             if (key.GetValue("EnablePrefetcher").ToString() != "3")
             {
-                SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", "No more informations"));
+                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", "No more informations"));
             }
 
-            if (SMTHelper.GetPID("SysMain") == " 0 ")
+            if (Wrapper.GetPID("SysMain") == " 0 ")
             {
-                SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", "No more informations"));
+                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", "No more informations"));
             }
 
             #endregion
@@ -468,16 +483,16 @@ namespace SMT.scanners
             #region Check delle macro
 
             if (Directory.Exists($@"C:\Users\{Environment.UserName}\AppData\Local\LGHUB\")
-                && (File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\LGHUB\settings.backup") >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime
-                || File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\LGHUB\settings.json") >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime))
+                && (File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\LGHUB\settings.backup") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime
+                || File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\LGHUB\settings.json") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime))
             {
-                SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, $@"Logitech macro detected!", "(BETA Method)"));
+                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, $@"Logitech macro detected!", "(BETA Method)"));
             }
             else if (Directory.Exists($@"C:\Users\{Environment.UserName}\AppData\Local\BY-COMBO2\")
-                && (File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\BY-COMBO2\pro.dct") >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime
-                || File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\BY-COMBO2\curid.dct") >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime))
+                && (File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\BY-COMBO2\pro.dct") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime
+                || File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\BY-COMBO2\curid.dct") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime))
             {
-                SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, $@"Glorious macro detected!", "(BETA Method)"));
+                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, $@"Glorious macro detected!", "(BETA Method)"));
             }
 
 
@@ -497,13 +512,13 @@ namespace SMT.scanners
 
                 for (int j = 0; j < version_File.Length; j++)
                 {
-                    if (SMTHelper.IsFileLocked(new FileInfo(version_File[j])))
+                    if (Wrapper.IsFileLocked(new FileInfo(version_File[j])))
                     {
                         inUsingFile++;
 
-                        if (!s.Contains(SMTHelper.calcoloSHA256(new FileStream(version_File[j], FileMode.Open))))
+                        if (!s.Contains(Wrapper.calcoloSHA256(new FileStream(version_File[j], FileMode.Open))))
                         {
-                            SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Modified minecraft's version", "No more Informations"));
+                            SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Modified minecraft's version", "No more Informations"));
                         }
                     }
                 }
@@ -511,14 +526,14 @@ namespace SMT.scanners
 
             if (inUsingFile > 1)
             {
-                SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "More than 1 version is used", "No more Informations"));
+                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "More than 1 version is used", "No more Informations"));
             }
 
             #endregion
 
             #region PcaClient e MountVol
 
-            var get_PCACLIENT = File.ReadAllLines($@"C:\ProgramData\SMT-{SMTHelper.SMTDir}\explorer.txt");
+            var get_PCACLIENT = File.ReadAllLines($@"C:\ProgramData\SMT-{Wrapper.SMTDir}\explorer.txt");
 
             Regex correctPath = new Regex("[A-Z]:\\\\.*?,");
             Regex mountvol_Method = new Regex("^\\\\\\\\?\\\\.+.Volume.+.\\\\.+.$");
@@ -536,7 +551,7 @@ namespace SMT.scanners
                         string d = path.Value;
                         d = d.Remove(d.Length - 1, 1) + "";
 
-                        SMT.RESULTS.pcaclient.Add(d);
+                        SMT_Main.RESULTS.pcaclient.Add(d);
                     }
                 }
                 else if (index.ToLower().Contains(@"\\?\volume{")
@@ -547,14 +562,14 @@ namespace SMT.scanners
 
                     if (volume.Success && volume.Value.Length > 0)
                     {
-                        SMT.RESULTS.bypass_methods.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Mountvol method found", "No more Informations"));
+                        SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Mountvol method found", "No more Informations"));
                     }
                 }
             });
 
             #endregion
 
-            Console.WriteLine(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.STAGE_PRC, "", "Other checks completed"));
+            Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Other checks completed"));
         } //Refractored
 
         public string returnReason(uint value)
@@ -631,15 +646,15 @@ namespace SMT.scanners
 
                         if (d.Reason == 2149581088
                         && TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
-                        >= SMTHelper.PC_StartTime())
+                        >= Wrapper.PC_StartTime())
                         {
-                            SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.WMIC, d.Name, $"Wmic method started today {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                            SMT_Main.RESULTS.possible_replaces.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.WMIC, d.Name, $"Wmic method started today {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                         }
                         else if (d.Reason == 2048
                         && d.Name == "Prefetch"
                         && d.IsFolder
                         && TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
-                        >= SMTHelper.PC_StartTime()
+                        >= Wrapper.PC_StartTime()
                         && !cacls_string.Contains(TimeZone.CurrentTimeZone.
                         ToLocalTime(d.TimeStamp).ToString()))
                         {
@@ -647,28 +662,28 @@ namespace SMT.scanners
                             cacls_counter++;
                         }
                         else if (d.Reason == 4096
-                            && SMTHelper.journal_returnconditions(d)
+                            && Wrapper.journal_returnconditions(d)
                             && !d.Name.ToUpper().Contains("JNATIVEHOOK")
                             && Path.GetExtension(d.Name.ToUpper()) != ".DLL")
                         {
-                            SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.FILE_MOVED_RENAMED, d.Name, $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                            SMT_Main.RESULTS.possible_replaces.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.FILE_MOVED_RENAMED, d.Name, $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                         }
-                        else if (SMTHelper.journal_returnconditions(d)
+                        else if (Wrapper.journal_returnconditions(d)
                             && !d.Name.ToUpper().Contains("JNATIVEHOOK")
                             && Path.GetExtension(d.Name.ToUpper()) != ".DLL")
                         {
-                            if (SMTHelper.getCommand(Path.GetPathRoot(Environment.SystemDirectory), d.FileReferenceNumber.ToString()) != "")
+                            if (Wrapper.getCommand(Path.GetPathRoot(Environment.SystemDirectory), d.FileReferenceNumber.ToString()) != "")
                             {
-                                SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.FILE_DELETED, SMTHelper.getCommand(Path.GetPathRoot(Environment.SystemDirectory), d.FileReferenceNumber.ToString()), $"mammt nuda {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                SMT_Main.RESULTS.possible_replaces.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.FILE_DELETED, Wrapper.getCommand(Path.GetPathRoot(Environment.SystemDirectory), d.FileReferenceNumber.ToString()), $"mammt nuda {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                             }
 
-                            SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.FILE_DELETED, d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                            SMT_Main.RESULTS.possible_replaces.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.FILE_DELETED, d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                         }
-                        else if (SMTHelper.journal_returnconditions(d)
+                        else if (Wrapper.journal_returnconditions(d)
                         && d.Name.ToUpper().Contains("JNATIVEHOOK")
                         && Path.GetExtension(d.Name.ToUpper()) == ".DLL")
                         {
-                            SMT.RESULTS.string_scan.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.OUT_INSTANCE, "Generic JNativeHook Clicker (deleted)", TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString()));
+                            SMT_Main.RESULTS.string_scan.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.OUT_INSTANCE, "Generic JNativeHook Clicker (deleted)", TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString()));
                         }
                     }
 
@@ -676,39 +691,39 @@ namespace SMT.scanners
             }
             else
             {
-                SMT.RESULTS.Errors.Add("USNJournal unreachable" + rtn.ToString());
+                SMT_Main.RESULTS.Errors.Add("USNJournal unreachable" + rtn.ToString());
                 throw new UsnJournalException(rtn);
             }
 
-            Parallel.For(0, SMTHelper.GetTemp_files.Count, (index) =>
+            Parallel.For(0, Wrapper.GetTemp_files.Count, (index) =>
             {
-                if (SMTHelper.GetTemp_files[index].Contains("JNATIVEHOOK")
-                    && File.GetLastWriteTime(SMTHelper.GetTemp_files[index])
-                    >= Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].StartTime)
+                if (Wrapper.GetTemp_files[index].Contains("JNATIVEHOOK")
+                    && File.GetLastWriteTime(Wrapper.GetTemp_files[index])
+                    >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime)
                 {
-                    SMT.RESULTS.string_scan.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.OUT_INSTANCE, "Generic JNativeHook Clicker", File.GetLastWriteTime(SMTHelper.GetTemp_files[index]).ToString()));
+                    SMT_Main.RESULTS.string_scan.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.OUT_INSTANCE, "Generic JNativeHook Clicker", File.GetLastWriteTime(Wrapper.GetTemp_files[index]).ToString()));
                 }
             });
 
             if (cacls_counter >= 3)
             {
-                SMT.RESULTS.possible_replaces.Add(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.BYPASS_METHOD, "Cacls method started today", "No more informations"));
+                SMT_Main.RESULTS.possible_replaces.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Cacls method started today", "No more informations"));
             }
 
-            Console.WriteLine(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.STAGE_PRC, "", "USNJournal check completed"));
+            Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "USNJournal check completed"));
         }
 
         public void DoStringScan()
         {
             List<Task> tasks = new List<Task>();
 
-            Task DPS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/adJN0gu4", '§', $@"C:\ProgramData\SMT-{SMTHelper.SMTDir}\Specific.txt"); });
+            Task DPS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/adJN0gu4", '§', $@"C:\ProgramData\SMT-{Wrapper.SMTDir}\Specific.txt"); });
             DPS.Start(); tasks.Add(DPS);
 
-            Task LSASS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/1LKLuNWh", '§', $@"C:\ProgramData\SMT-{SMTHelper.SMTDir}\Browser.txt"); });
+            Task LSASS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/1LKLuNWh", '§', $@"C:\ProgramData\SMT-{Wrapper.SMTDir}\Browser.txt"); });
             LSASS.Start(); tasks.Add(LSASS);
 
-            Task DNS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/1LKLuNWh", '§', $@"C:\ProgramData\SMT-{SMTHelper.SMTDir}\dns.txt"); });
+            Task DNS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/1LKLuNWh", '§', $@"C:\ProgramData\SMT-{Wrapper.SMTDir}\dns.txt"); });
             DNS.Start(); tasks.Add(DNS);
 
             Parallel.ForEach(tasks, index =>
@@ -716,7 +731,7 @@ namespace SMT.scanners
                 index.Wait();
             });
 
-            Console.WriteLine(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.STAGE_PRC, "", "Specific client check completed"));
+            Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Specific client check completed"));
         }
     }
 }

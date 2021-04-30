@@ -6,7 +6,7 @@ namespace SMT.Helpers
 {
     internal class DiscordWebhook
     {
-        public static string URL = SMTHelper.DownloadString("https://pastebin.com/raw/bQtuHGtA");
+        public static string URL = Wrapper.DownloadString("https://pastebin.com/raw/bQtuHGtA");
 
         public static byte[] initializeURL(string URL, NameValueCollection pairs)
         {

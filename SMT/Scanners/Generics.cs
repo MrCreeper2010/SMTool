@@ -31,19 +31,19 @@ namespace SMT
 
             int explorerPID = Process.GetProcessesByName("explorer")[0].Id;
 
-            if (SMTHelper.MinecraftMainProcess != "")
+            if (Wrapper.MinecraftMainProcess != "")
             {
-                int javaw = Process.GetProcessesByName(SMTHelper.MinecraftMainProcess)[0].Id;
+                int javaw = Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].Id;
 
-                SMT.RESULTS.processes_starts.Add("Javaw: ", Process.GetProcessById(javaw).StartTime.ToString());
+                SMT_Main.RESULTS.processes_starts.Add("Javaw: ", Process.GetProcessById(javaw).StartTime.ToString());
             }
             else
             {
-                SMT.RESULTS.processes_starts.Add("Javaw: ", "missed");
+                SMT_Main.RESULTS.processes_starts.Add("Javaw: ", "missed");
             }
 
-            SMT.RESULTS.processes_starts.Add("Explorer: ", Process.GetProcessById(explorerPID).StartTime.ToString());
-            SMT.RESULTS.processes_starts.Add("System: ", SMTHelper.PC_StartTime().ToString());
+            SMT_Main.RESULTS.processes_starts.Add("Explorer: ", Process.GetProcessById(explorerPID).StartTime.ToString());
+            SMT_Main.RESULTS.processes_starts.Add("System: ", Wrapper.PC_StartTime().ToString());
 
             #endregion
 
@@ -55,7 +55,7 @@ namespace SMT
 
             Parallel.ForEach(Mouse_device, (index) =>
             {
-                SMT.RESULTS.mouse.Add(index["Name"].ToString());
+                SMT_Main.RESULTS.mouse.Add(index["Name"].ToString());
             });
 
             #endregion
@@ -69,7 +69,7 @@ namespace SMT
                 FileInfo folderInfo = new FileInfo(index);
                 DateTime lastEditTime = File.GetLastWriteTime(@"C:\$Recycle.Bin\" + folderInfo.Name);
 
-                SMT.RESULTS.recyble_bins.Add(folderInfo.Name, lastEditTime.ToString());
+                SMT_Main.RESULTS.recyble_bins.Add(folderInfo.Name, lastEditTime.ToString());
             });
 
             #endregion
@@ -97,7 +97,7 @@ namespace SMT
             {
                 if (Process.GetProcessesByName(index).Length != 0)
                 {
-                    SMT.RESULTS.recording_softwares.Add(index);
+                    SMT_Main.RESULTS.recording_softwares.Add(index);
                     recordingProcessesFound++;
                 }
             });
@@ -116,13 +116,13 @@ namespace SMT
                     FileInfo finfo = new FileInfo(resourcepack);
                     if (File.ReadAllText(resourcepack).Contains(".json") && finfo.Length < 1000000)
                     {
-                        SMT.RESULTS.xray_packs.Add(resourcepack);
+                        SMT_Main.RESULTS.xray_packs.Add(resourcepack);
                     }
                 });
             }
             catch
             {
-                SMT.RESULTS.xray_packs.Add("Nothing Found");
+                SMT_Main.RESULTS.xray_packs.Add("Nothing Found");
             }
 
             #endregion
@@ -152,11 +152,11 @@ namespace SMT
                             if (alt.Value.Length > 0
                                 && alt.Value.Contains("HuzuniLite"))
                             {
-                                SMT.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
+                                SMT_Main.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
                             }
                             else if (alt.Value.Length > 0)
                             {
-                                SMT.RESULTS.alts.Add(alt.Value);
+                                SMT_Main.RESULTS.alts.Add(alt.Value);
                                 total_alts_ctr++;
                             }
                         }
@@ -176,11 +176,11 @@ namespace SMT
 
                             if (alt_finito.Length > 0 && alt_finito.Contains("HuzuniLite"))
                             {
-                                SMT.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
+                                SMT_Main.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
                             }
                             else if (alt_finito.Length > 0)
                             {
-                                SMT.RESULTS.alts.Add(alt_finito);
+                                SMT_Main.RESULTS.alts.Add(alt_finito);
                                 total_alts_ctr++;
                             }
                         }
@@ -190,24 +190,24 @@ namespace SMT
             }
             catch 
             { 
-                SMT.RESULTS.alts.Add("No Alt(s) found(s)"); 
+                SMT_Main.RESULTS.alts.Add("No Alt(s) found(s)"); 
             }
 
             if (total_alts_ctr == 0)
             {
-                SMT.RESULTS.alts.Add("No Alt(s) found(s)");
+                SMT_Main.RESULTS.alts.Add("No Alt(s) found(s)");
             }
 
             #endregion
 
-            Console.WriteLine(SMTHelper.Detection(SMTHelper.DETECTION_VALUES.STAGE_PRC, "", "Generic checks completed"));
+            Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Generic checks completed"));
         }
 
         public void Clean()
         {
             //Clean SMT's files
 
-            string SMT_dir = $@"C:\ProgramData\SMT-{SMTHelper.SMTDir}";
+            string SMT_dir = $@"C:\ProgramData\SMT-{Wrapper.SMTDir}";
             ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c rmdir /S /Q " + SMT_dir)
             {
                 RedirectStandardError = true,

@@ -16,3 +16,22 @@ C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\Syst
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\System.Numerics.Vectors.xml
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT\bin\x64\Release\NLog.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Release\SMT.exe.config
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Release\SMT.exe
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Release\SMT.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Release\AuthenticodeExaminer.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Release\NLog.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Release\Pastel.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Release\System.Buffers.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Release\System.Diagnostics.DiagnosticSource.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Release\System.Memory.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Release\System.Numerics.Vectors.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Release\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Release\SMT.csprojAssemblyReference.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Release\SMT.Properties.Resources.resources
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Release\SMT.csproj.GenerateResource.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Release\SMT.csproj.CoreCompileInputs.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Release\SMT.csproj.Fody.CopyLocal.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Release\SMT.csproj.CopyComplete
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Release\SMT.exe
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Release\SMT.pdb
