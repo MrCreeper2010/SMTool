@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "eMMNPJYjMeo+UVMEOG2IzjR3Jp02fsUcXHp70UrzbTA+qDyNWuP1WQeRb5msq6XLEas+YYHVEDq9jMzHR5bQbQ==",
+  "dgSpecHash": "1c0cNdqrEUCWsl5Z2ilMymi70h2CUD2VXWoFRO7LXtquyA4RCqOuK9US/qvO+b7V1zH+dRpiZwNikbUxMXtsaA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Mattia\\Documents\\Progetti\\Progetti C#\\SMTool\\SMT_Tests\\SMT_Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mattia\\.nuget\\packages\\dotnet.glob\\3.1.2\\dotnet.glob.3.1.2.nupkg.sha512",
+    "C:\\Users\\Mattia\\.nuget\\packages\\dotnetzip\\1.15.0\\dotnetzip.1.15.0.nupkg.sha512",
     "C:\\Users\\Mattia\\.nuget\\packages\\fluentnhibernate\\1.4.0\\fluentnhibernate.1.4.0.nupkg.sha512",
     "C:\\Users\\Mattia\\.nuget\\packages\\iesi.collections\\3.2.0.4000\\iesi.collections.3.2.0.4000.nupkg.sha512",
     "C:\\Users\\Mattia\\.nuget\\packages\\linqpad.nhibernate.formatsql\\1.0.3\\linqpad.nhibernate.formatsql.1.0.3.nupkg.sha512",

@@ -19,3 +19,6 @@ C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\System
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\NLog.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\ThreeOneThree.Proxima.Agent.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\ThreeOneThree.Proxima.Core.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\Prefetch.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\DotNetZip.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\DotNetZip.pdb

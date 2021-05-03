@@ -11,6 +11,8 @@ namespace SMT
     {
         public Initializer()
         {
+            Wrapper.WriteLine("Scusami bello fammi preparare la cintura per frustare questi shitty cheaters...\n", ConsoleColor.Cyan);
+
             #region Titolo e check versione
 
             string VERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;

@@ -11,6 +11,15 @@
           "lib/net46/DotNet.Glob.dll": {}
         }
       },
+      "DotNetZip/1.15.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/DotNetZip.dll": {}
+        },
+        "runtime": {
+          "lib/net40/DotNetZip.dll": {}
+        }
+      },
       "FluentNHibernate/1.4.0": {
         "type": "package",
         "dependencies": {
@@ -150,6 +159,15 @@
         },
         "runtime": {
           "lib/net46/DotNet.Glob.dll": {}
+        }
+      },
+      "DotNetZip/1.15.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/DotNetZip.dll": {}
+        },
+        "runtime": {
+          "lib/net40/DotNetZip.dll": {}
         }
       },
       "FluentNHibernate/1.4.0": {
@@ -293,6 +311,15 @@
           "lib/net46/DotNet.Glob.dll": {}
         }
       },
+      "DotNetZip/1.15.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/DotNetZip.dll": {}
+        },
+        "runtime": {
+          "lib/net40/DotNetZip.dll": {}
+        }
+      },
       "FluentNHibernate/1.4.0": {
         "type": "package",
         "dependencies": {
@@ -432,6 +459,15 @@
         },
         "runtime": {
           "lib/net46/DotNet.Glob.dll": {}
+        }
+      },
+      "DotNetZip/1.15.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/DotNetZip.dll": {}
+        },
+        "runtime": {
+          "lib/net40/DotNetZip.dll": {}
         }
       },
       "FluentNHibernate/1.4.0": {
@@ -582,6 +618,23 @@
         "lib/netcoreapp2.1/DotNet.Glob.dll",
         "lib/netstandard1.1/DotNet.Glob.dll",
         "lib/netstandard2.1/DotNet.Glob.dll"
+      ]
+    },
+    "DotNetZip/1.15.0": {
+      "sha512": "sqVRN5V5NI/HM5Ll+Flr+u4fIf2pNiGSQr5pusAGCufYeEQ3Wn3yFlgw87iqHhbTkKQmCHZVsfBfRw05GSKG5g==",
+      "type": "package",
+      "path": "dotnetzip/1.15.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "dotnetzip.1.15.0.nupkg.sha512",
+        "dotnetzip.nuspec",
+        "lib/net40/DotNetZip.dll",
+        "lib/net40/DotNetZip.pdb",
+        "lib/net40/DotNetZip.xml",
+        "lib/netstandard2.0/DotNetZip.dll",
+        "lib/netstandard2.0/DotNetZip.pdb",
+        "lib/netstandard2.0/DotNetZip.xml"
       ]
     },
     "FluentNHibernate/1.4.0": {
@@ -827,6 +880,7 @@
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.8": [
       "DotNet.Glob >= 3.1.2",
+      "DotNetZip >= 1.15.0",
       "LINQPad.NHibernate.FormatSQL >= 1.0.3",
       "LINQPad.Supporting.NHibernate >= 1.0.0",
       "NLog >= 4.7.9",
@@ -869,6 +923,10 @@
           "DotNet.Glob": {
             "target": "Package",
             "version": "[3.1.2, )"
+          },
+          "DotNetZip": {
+            "target": "Package",
+            "version": "[1.15.0, )"
           },
           "LINQPad.NHibernate.FormatSQL": {
             "target": "Package",

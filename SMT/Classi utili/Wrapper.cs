@@ -3,6 +3,7 @@ using Pastel;
 using SMT.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -14,13 +15,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using ThreeOneThree.Proxima.Core;
 
 namespace SMT.helpers
 {
     public class Wrapper : GlobalVariables
     {
-        public static Results RESULTS = new Results();
+        public static readonly List<Task> tasks = new List<Task>();
 
         public enum DETECTION_VALUES
         {
@@ -40,6 +42,57 @@ namespace SMT.helpers
 
         #region Console Utilities
 
+        public static string randomStr()
+        {
+            Random r = new Random();
+
+            string return_value = "";
+            string all_strings = "abcdefhilmnopqrstuvzABCDEFGHILMNOPQRSTUVZ";
+
+            for (int j = 0; j < 5; j++)
+            {
+                return_value += all_strings[r.Next(1, 42)];
+            }
+
+            return return_value;
+        }
+
+        public static string returnReason(uint value)
+        {
+            string return_value = "";
+
+            switch (value)
+            {
+                case 2147484160:
+                    return_value = "File Deleted";
+                    break;
+                case 2048:
+                    return_value = "Cacls";
+                    break;
+                case 4096:
+                    return_value = "Old name";
+                    break;
+                case 8192:
+                    return_value = "New name";
+                    break;
+                case 2149581088:
+                    return_value = "Wmic";
+                    break;
+            }
+
+            return return_value;
+        }
+
+        public static void doScan()
+        {
+            Parallel.For(0, CheckActions_List.Length, (j) =>
+            {
+                runCheckAsync(CheckActions_List[j]);
+            });
+
+            Task.WaitAll(tasks.ToArray());
+        }
+
         public static void WriteLine(string text, ConsoleColor consoleColor = ConsoleColor.White)
         {
             ConsoleColor backupColor = Console.ForegroundColor;
@@ -58,7 +111,7 @@ namespace SMT.helpers
 
         private static void ThrowException()
         {
-            RESULTS.Errors.Add("An error occured meanwhile SMT was scanning, please restart SMT");
+            SMT_Main.RESULTS.Errors.Add("An error occured meanwhile SMT was scanning, please restart SMT");
         }
 
         public static void runCheckAsync(Action check)
@@ -66,12 +119,11 @@ namespace SMT.helpers
             try
             {
 #pragma warning disable CS1998 // Il metodo asincrono non contiene operatori 'await', pertanto verrà eseguito in modo sincrono
-                SMT_Main.tasks.Add(Task.Factory.StartNew(async () => check()));
+                tasks.Add(Task.Factory.StartNew(async () => check()));
 #pragma warning restore CS1998 // Il metodo asincrono non contiene operatori 'await', pertanto verrà eseguito in modo sincrono
             }
             catch { ThrowException(); }
         }
-
 
         public static bool GL_Contains(string source, string toCheck)
         {
@@ -155,7 +207,7 @@ namespace SMT.helpers
             }
             else
             {
-                RESULTS.Errors.Add(@"C:\ProgramData directory doesn't exist, please create it and restart smt");
+                SMT_Main.RESULTS.Errors.Add(@"C:\ProgramData directory doesn't exist, please create it and restart smt");
                 WriteLine(@"C:\ProgramData directory doesn't exist, please create it and restart smt", ConsoleColor.Yellow);
                 Console.ReadLine();
             }
@@ -186,7 +238,7 @@ namespace SMT.helpers
 
             if (check.ExitCode != 0)
             {
-                RESULTS.Errors.Add("AntiSS Tool detected, please check programs in background, some checks will be skipped");
+                SMT_Main.RESULTS.Errors.Add("AntiSS Tool detected, please check programs in background, some checks will be skipped");
                 Console.WriteLine("There is a problem with some checks, please disable antivirus and restart SMT");
                 Console.ReadLine();
             }
@@ -351,8 +403,6 @@ namespace SMT.helpers
 
             }
 
-            /*
-
             //pcasvc (non scanna più)
             try
             {
@@ -362,7 +412,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT.RESULTS.bypass_methods.Add("Generic Bypass method (PcaSvc process missed)");
+                    SMT.SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (PcaSvc process missed)");
                 }
             }
             catch { }
@@ -378,7 +428,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT.RESULTS.bypass_methods.Add("Generic Bypass method (DPS process missed)");
+                    SMT.SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (DPS process missed)");
                 }
             }
             catch { }
@@ -406,7 +456,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT.RESULTS.bypass_methods.Add("Generic Bypass method (DNScache process missed)");
+                    SMT.SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (DNScache process missed)");
                 }
             }
             catch { }
@@ -424,17 +474,15 @@ namespace SMT.helpers
                         && DiagTrack_lines.ToList().Contains("del")
                         && DiagTrack_lines.ToList().Contains(".pf"))
                     {
-                        SMT.RESULTS.string_scan.Add("Found generic prefetch's file(s) Self-destruct");
+                        SMT.SMT_Main.RESULTS.string_scan.Add("Found generic prefetch's file(s) Self-destruct");
                     }
                 }
                 else
                 {
-                    SMT.RESULTS.bypass_methods.Add("Generic Bypass method (DiagTrack process missed)");
+                    SMT.SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (DiagTrack process missed)");
                 }
             }
             catch { }
-
-            */
 
             //Explorer
             try
@@ -447,7 +495,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    RESULTS.bypass_methods.Add("Generic Bypass method (Explorer process missed)");
+                    SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (Explorer process missed)");
                 }
             }
             catch
@@ -528,7 +576,7 @@ namespace SMT.helpers
             }
             else
             {
-                Wrapper.WriteLine("[!] Minecraft missed, press any key to exit", ConsoleColor.Yellow);
+                WriteLine("[!] Minecraft missed, press any key to exit", ConsoleColor.Yellow);
                 Console.ReadLine();
                 Environment.Exit(0);
 
@@ -536,6 +584,31 @@ namespace SMT.helpers
             }
 
             return return_value;
+        }
+
+        #endregion
+
+        #region DiscordWebHook
+
+        public static string URL = Wrapper.DownloadString("https://pastebin.com/raw/bQtuHGtA");
+
+        public static byte[] initializeURL(string URL, NameValueCollection pairs)
+        {
+            using (WebClient web = new WebClient())
+            {
+                return web.UploadValues(URL, pairs);
+            }
+        }
+
+        public static void sendMessage(string message)
+        {
+            initializeURL(URL, new NameValueCollection()
+            {
+                {
+                    "content",
+                     message
+                }
+            });
         }
 
         #endregion
@@ -627,22 +700,28 @@ namespace SMT.helpers
         public static void enumResults()
         {
             #region Write Results (Check 1)
+
             WriteLine("Generic Informations: \n", ConsoleColor.Green);
 
-            WriteLine("Alts:\n", ConsoleColor.Yellow); //fatto
-            RESULTS.alts.Distinct().ToList().ForEach(alt => WriteLine("- " + alt));
+            WriteLine("PC Type:\n", ConsoleColor.Yellow); //fatto
+            Console.WriteLine((SystemInformation.PowerStatus.BatteryChargeStatus == BatteryChargeStatus.NoSystemBattery)
+                ? "- Desktop PC, no possible touchpad abuse"
+                : "- Laptop PC, possible touchpad abuse");
+
+            WriteLine("\nAlts:\n", ConsoleColor.Yellow); //fatto
+            SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => WriteLine("- " + alt));
 
             WriteLine("\nRecycle.bin:\n", ConsoleColor.Yellow); //fatto
-            foreach (KeyValuePair<string, string> recycleBin in RESULTS.recyble_bins)
+            foreach (KeyValuePair<string, string> recycleBin in SMT_Main.RESULTS.recyble_bins)
             {
                 WriteLine($"- {recycleBin.Key} ({recycleBin.Value})");
             }
 
-            if (RESULTS.recording_softwares.Count > 0)
+            if (SMT_Main.RESULTS.recording_softwares.Count > 0)
             {
                 WriteLine("\nRecording Software(s):\n ", ConsoleColor.Yellow);
 
-                RESULTS.recording_softwares.ForEach(recording => WriteLine("- " + recording));
+                SMT_Main.RESULTS.recording_softwares.ForEach(recording => WriteLine("- " + recording));
             }
             else
             {
@@ -652,15 +731,15 @@ namespace SMT.helpers
             }
 
             WriteLine("\nProcess(es) Start Time:\n", ConsoleColor.Yellow); //fatto
-            foreach (KeyValuePair<string, string> processStart in RESULTS.processes_starts)
+            foreach (KeyValuePair<string, string> processStart in SMT_Main.RESULTS.processes_starts)
             {
                 WriteLine("- " + processStart.Key + processStart.Value);
             }
 
             WriteLine("\nXray Resource Pack(s):\n", ConsoleColor.Yellow); //fatto
-            if (RESULTS.xray_packs.Count > 0)
+            if (SMT_Main.RESULTS.xray_packs.Count > 0)
             {
-                RESULTS.xray_packs.ForEach(xray => WriteLine("- " + xray));
+                SMT_Main.RESULTS.xray_packs.ForEach(xray => WriteLine("- " + xray));
             }
             else
             {
@@ -668,9 +747,9 @@ namespace SMT.helpers
             }
 
             WriteLine("\nInput Device(s):\n", ConsoleColor.Yellow); //fatto
-            if (RESULTS.mouse.Count > 0)
+            if (SMT_Main.RESULTS.mouse.Count > 0)
             {
-                RESULTS.mouse.ForEach(mouse => WriteLine("- " + mouse));
+                SMT_Main.RESULTS.mouse.ForEach(mouse => WriteLine("- " + mouse));
             }
             else
             {
@@ -678,9 +757,9 @@ namespace SMT.helpers
             }
 
             WriteLine("\nPcaClient files (no duplicated files):\n", ConsoleColor.Yellow); //fatto
-            if (RESULTS.pcaclient.Count > 0)
+            if (SMT_Main.RESULTS.pcaclient.Count > 0)
             {
-                RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => WriteLine("- " + mouse));
+                SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => WriteLine("- " + mouse));
             }
             else
             {
@@ -693,29 +772,29 @@ namespace SMT.helpers
 
             WriteLine("\nChecks:", ConsoleColor.Red);
 
-            if (RESULTS.Errors.Count > 0) // done
+            if (SMT_Main.RESULTS.Errors.Count > 0) // done
             {
-                RESULTS.Errors.Distinct().ToList().ForEach(jna => WriteLine("- " + jna));
+                SMT_Main.RESULTS.Errors.Distinct().ToList().ForEach(jna => WriteLine("- " + jna));
             }
 
-            if (RESULTS.possible_replaces.Count > 0) // done
+            if (SMT_Main.RESULTS.possible_replaces.Count > 0) // done
             {
                 WriteLine("\nFile's actions file(s):\n", ConsoleColor.Cyan);
-                RESULTS.possible_replaces.Sort();
-                RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => WriteLine("- " + replace));
+                SMT_Main.RESULTS.possible_replaces.Sort();
+                SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => WriteLine("- " + replace));
             }
 
-            if (RESULTS.event_viewer_entries.Count > 0) // done
+            if (SMT_Main.RESULTS.event_viewer_entries.Count > 0) // done
             {
                 WriteLine("\nBad Eventvwr log(s):\n", ConsoleColor.Cyan);
-                RESULTS.event_viewer_entries.Distinct().ToList().ForEach(eventvwr => WriteLine("- " + eventvwr));
+                SMT_Main.RESULTS.event_viewer_entries.Distinct().ToList().ForEach(eventvwr => WriteLine("- " + eventvwr));
             }
 
-            if (RESULTS.suspy_files.Count > 0) // done
+            if (SMT_Main.RESULTS.suspy_files.Count > 0) // done
             {
                 WriteLine("\nGeneric file attributes Check:\n", ConsoleColor.Cyan);
-                RESULTS.suspy_files.Sort();
-                RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => WriteLine("- " + suspy));
+                SMT_Main.RESULTS.suspy_files.Sort();
+                SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => WriteLine("- " + suspy));
             }
             else
             {
@@ -723,29 +802,31 @@ namespace SMT.helpers
                 Console.WriteLine("- No suspicious file found, if user uses \"Kaspersky\" please disable it and rescan");
             }
 
-            if (RESULTS.bypass_methods.Count > 0) // done
+            if (SMT_Main.RESULTS.bypass_methods.Count > 0) // done
             {
                 WriteLine("\nBypass methods:\n", ConsoleColor.Cyan);
-                RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => WriteLine("- " + replace));
+                SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => WriteLine("- " + replace));
             }
 
-            if (RESULTS.string_scan.Count > 0) // done
+            if (SMT_Main.RESULTS.string_scan.Count > 0) // done
             {
                 WriteLine("\nString Scan:\n", ConsoleColor.Cyan);
-                RESULTS.string_scan.Distinct().ToList().ForEach(strscn => WriteLine("- " + strscn));
+                SMT_Main.RESULTS.string_scan.Distinct().ToList().ForEach(strscn => WriteLine("- " + strscn));
             }
 
             #endregion
 
             #region Nothing Found
-            if (RESULTS.possible_replaces.Count == 0 && RESULTS.suspy_files.Count == 0
-                 && RESULTS.event_viewer_entries.Count == 0
-                 && RESULTS.string_scan.Count == 0 && RESULTS.bypass_methods.Count == 0)
+
+            if (SMT_Main.RESULTS.possible_replaces.Count == 0 && SMT_Main.RESULTS.suspy_files.Count == 0
+                 && SMT_Main.RESULTS.event_viewer_entries.Count == 0
+                 && SMT_Main.RESULTS.string_scan.Count == 0 && SMT_Main.RESULTS.bypass_methods.Count == 0)
             {
                 WriteLine("\nNothing Found", ConsoleColor.Green);
             }
+
+            #endregion
         }
-        #endregion
 
         #endregion
     }
