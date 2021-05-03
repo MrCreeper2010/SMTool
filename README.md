@@ -27,11 +27,12 @@ Features da aggiungere nella prossima release (quelle con la spunta già sono st
 
 - [X] Check PcaClient
 - [X] Check di alcune macro (sezione da aggiornare)
-- [ ] Check universale per i software di recoding -> Forse dalla 1.11 in poi
 - [X] Check metodo mountvol
-- [ ] Check metodo rundll32 e regsvc -> Completato in parte
 - [X] Check metodo java -jar (senza JNativeHook) -> ci sto lavorando
 - [X] Check universale per trovare QUALUNQUE ghost client di qualunque versione (sia optifine che vanilla)
+- [X] Check per il tipo di PC (laptop o desktop)
+- [ ] Check universale per i software di recoding -> Forse dalla 1.11 in poi
+- [ ] Check metodo rundll32 e regsvc -> Completato in parte
 - [ ] Check per le estensioni spoffate -> Da trovare un metodo efficace
 
 Official Telegram channel @SMTool
