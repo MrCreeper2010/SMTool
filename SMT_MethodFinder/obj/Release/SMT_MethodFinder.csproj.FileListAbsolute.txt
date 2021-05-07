@@ -1,0 +1,9 @@
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_MethodFinder\bin\Release\SMT_MethodFinder.exe.config
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_MethodFinder\bin\Release\SMT_MethodFinder.exe
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_MethodFinder\bin\Release\SMT_MethodFinder.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_MethodFinder\bin\Release\Prefetch.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_MethodFinder\obj\Release\SMT_MethodFinder.csprojAssemblyReference.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_MethodFinder\obj\Release\SMT_MethodFinder.csproj.CoreCompileInputs.cache
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_MethodFinder\obj\Release\SMT_MethodFinder.csproj.CopyComplete
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_MethodFinder\obj\Release\SMT_MethodFinder.exe
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_MethodFinder\obj\Release\SMT_MethodFinder.pdb

@@ -1,4 +1,5 @@
 ﻿using SMT.helpers;
+using SMT.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SMT
 {
-    public class Generics
+    public class Generics : Wrapper
     {
         #region Generics List Variables
 
@@ -29,59 +30,74 @@ namespace SMT
         {
             #region Process Start Time
 
-            int explorerPID = Process.GetProcessesByName("explorer")[0].Id;
-
-            if (Wrapper.MinecraftMainProcess != "")
+            generic_tasks.Add(Task.Run(() =>
             {
-                int javaw = Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].Id;
+                int explorerPID = Process.GetProcessesByName("explorer")[0].Id;
 
-                SMT_Main.RESULTS.processes_starts.Add("Javaw: ", Process.GetProcessById(javaw).StartTime.ToString());
-            }
-            else
-            {
-                SMT_Main.RESULTS.processes_starts.Add("Javaw: ", "missed");
-            }
+                if (Wrapper.MinecraftMainProcess != "")
+                {
+                    int javaw = Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].Id;
 
-            SMT_Main.RESULTS.processes_starts.Add("Explorer: ", Process.GetProcessById(explorerPID).StartTime.ToString());
-            SMT_Main.RESULTS.processes_starts.Add("System: ", Wrapper.PC_StartTime().ToString());
+                    SMT_Main.RESULTS.processes_starts.Add("Javaw: ", Process.GetProcessById(javaw).StartTime.ToString());
+                }
+                else
+                {
+                    SMT_Main.RESULTS.processes_starts.Add("Javaw: ", "missed");
+                }
+
+                SMT_Main.RESULTS.processes_starts.Add("Explorer: ", Process.GetProcessById(explorerPID).StartTime.ToString());
+                SMT_Main.RESULTS.processes_starts.Add("System: ", Wrapper.PC_StartTime().ToString());
+
+            }));
 
             #endregion
 
             #region Get Input Devices
 
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PointingDevice");
-
-            List<ManagementObject> Mouse_device = searcher.Get().Cast<ManagementObject>().ToList();
-
-            Parallel.ForEach(Mouse_device, (index) =>
+            generic_tasks.Add(Task.Run(() =>
             {
-                SMT_Main.RESULTS.mouse.Add(index["Name"].ToString());
-            });
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_PointingDevice");
+
+                List<ManagementObject> Mouse_device = searcher.Get().Cast<ManagementObject>().ToList();
+
+                Parallel.ForEach(Mouse_device, (index) =>
+                {
+                    SMT_Main.RESULTS.mouse.Add(index["Name"].ToString());
+                });
+            }));
 
             #endregion
 
             #region Cestino
 
-            string[] recycleBinFolders = Directory.GetDirectories(@"C:\$Recycle.Bin\");
-
-            Parallel.ForEach(recycleBinFolders, (index) =>
+            generic_tasks.Add(Task.Run(() =>
             {
-                FileInfo folderInfo = new FileInfo(index);
-                DateTime lastEditTime = File.GetLastWriteTime(@"C:\$Recycle.Bin\" + folderInfo.Name);
 
-                SMT_Main.RESULTS.recyble_bins.Add(folderInfo.Name, lastEditTime.ToString());
-            });
+                string[] recycleBinFolders = Directory.GetDirectories(@"C:\$Recycle.Bin\");
+
+                Parallel.ForEach(recycleBinFolders, (index) =>
+                {
+                    FileInfo folderInfo = new FileInfo(index);
+                    DateTime lastEditTime = File.GetLastWriteTime(@"C:\$Recycle.Bin\" + folderInfo.Name);
+
+                    SMT_Main.RESULTS.recyble_bins.Add(folderInfo.Name, lastEditTime.ToString());
+                });
+
+            }));
 
             #endregion
 
             #region Recording Software
 
-            int recordingProcessesFound = 0;
-
-
-            //Check if there is 1 of this process's name in background
-            string[] recordingprocesses = new string[]
+            generic_tasks.Add(Task.Run(() =>
             {
+
+                int recordingProcessesFound = 0;
+
+
+                //Check if there is 1 of this process's name in background
+                string[] recordingprocesses = new string[]
+                {
                 "obs64",
                 "obs32",
                 "Action",
@@ -91,136 +107,152 @@ namespace SMT
                 "CamRecorder",
                 "Fraps",
                 "recorder"
-            };
+                };
 
-            Parallel.ForEach(recordingprocesses, (index) =>
-            {
-                if (Process.GetProcessesByName(index).Length != 0)
+                Parallel.ForEach(recordingprocesses, (index) =>
                 {
-                    SMT_Main.RESULTS.recording_softwares.Add(index);
-                    recordingProcessesFound++;
-                }
-            });
+                    if (Process.GetProcessesByName(index).Length != 0)
+                    {
+                        SMT_Main.RESULTS.recording_softwares.Add(index);
+                        recordingProcessesFound++;
+                    }
+                });
+            }));
 
             #endregion
 
             #region XRay Resource Pack
 
-            try
+            generic_tasks.Add(Task.Run(() =>
             {
-                string[] Get_ResourcePacks = Directory.GetFiles($@"C:\Users\{Environment.UserName}\AppData\Roaming\.minecraft\resourcepacks\");
-                string ResourcePack_line = string.Empty;
-
-                Parallel.ForEach(Get_ResourcePacks, (resourcepack) =>
+                try
                 {
-                    FileInfo finfo = new FileInfo(resourcepack);
-                    if (File.ReadAllText(resourcepack).Contains(".json") && finfo.Length < 1000000)
+                    string[] Get_ResourcePacks = Directory.GetFiles($@"C:\Users\{GlobalVariables.username}\AppData\Roaming\.minecraft\resourcepacks\");
+                    string ResourcePack_line = string.Empty;
+
+                    Parallel.ForEach(Get_ResourcePacks, (resourcepack) =>
                     {
-                        SMT_Main.RESULTS.xray_packs.Add(resourcepack);
-                    }
-                });
-            }
-            catch
-            {
-                SMT_Main.RESULTS.xray_packs.Add("Nothing Found");
-            }
+                        FileInfo finfo = new FileInfo(resourcepack);
+                        if (File.ReadAllText(resourcepack).Contains(".json") && finfo.Length < 1000000)
+                        {
+                            SMT_Main.RESULTS.xray_packs.Add(resourcepack);
+                        }
+                    });
+                }
+                catch
+                {
+                    SMT_Main.RESULTS.xray_packs.Add("Nothing Found");
+                }
+            }));
 
             #endregion
 
             #region Alts
 
-            int total_alts_ctr = 0;
-            string launcher_profiles_line = "";
-
-            try
+            generic_tasks.Add(Task.Run(() =>
             {
-                //Default string -> "displayName" : "MrCreeper2010"
-                string launcher_profiles_file = $@"C:\Users\{Environment.UserName}\AppData\Roaming\.minecraft\launcher_accounts.json";
 
-                using (StreamReader read_launcher_profiles = new StreamReader(launcher_profiles_file))
+                int total_alts_ctr = 0;
+                string launcher_profiles_line = "";
+
+                try
                 {
-                    while ((launcher_profiles_line = read_launcher_profiles.ReadLine()) != null)
+                    //Default string -> "displayName" : "MrCreeper2010"
+                    string launcher_profiles_file = $@"C:\Users\{Environment.UserName}\AppData\Roaming\.minecraft\launcher_accounts.json";
+
+                    using (StreamReader read_launcher_profiles = new StreamReader(launcher_profiles_file))
                     {
-                        if (launcher_profiles_line.Contains("\"name\" :")) //Ignore all lines without displayName to get profile
+                        while ((launcher_profiles_line = read_launcher_profiles.ReadLine()) != null)
                         {
-                            Regex displayname_remove = new Regex(@"\"".*?:");
-                            string remove_junk1 = displayname_remove.Replace(launcher_profiles_line, "-");  //"displayName" : "MrCreeper2010" -> - "MrCreeper2010"
-
-                            Regex junkstr_remover = new Regex(@"\"".*?\""");
-                            Match alt = junkstr_remover.Match(remove_junk1);  //Remove " from name || - "MrCreeper2010" -> MrCreeper2010
-
-                            if (alt.Value.Length > 0
-                                && alt.Value.Contains("HuzuniLite"))
+                            if (launcher_profiles_line.Contains("\"name\" :")) //Ignore all lines without displayName to get profile
                             {
-                                SMT_Main.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
+                                Regex displayname_remove = new Regex(@"\"".*?:");
+                                Regex junkstr_remover = new Regex(@"\"".*?\""");
+
+                                string remove_junk1 = displayname_remove.Replace(launcher_profiles_line, "-");  //"displayName" : "MrCreeper2010" -> - "MrCreeper2010"
+                                var alts = junkstr_remover.Match(remove_junk1);
+
+                                if (alts.Success)
+                                {
+                                    switch (alts.Value.Replace("\"", ""))
+                                    {
+                                        case "ItsChri":
+                                            SMT_Main.RESULTS.alts.Add("- ItsChri (oioc o scem!)");
+                                            break;
+                                        case "HuzuniLite":
+                                            SMT_Main.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
+                                            break;
+                                        case "5tie":
+                                            SMT_Main.RESULTS.alts.Add("- 5tie (La malavita dell'Emilia Romagna è qui!)");
+                                            break;
+                                        case "SSoAmmetti":
+                                            SMT_Main.RESULTS.alts.Add("- SSoAmmetti (Giulio Piombo vuole bypassarti con i comandi da cmd!)");
+                                            break;
+                                        default:
+                                            SMT_Main.RESULTS.alts.Add(alts.Value.Replace("\"", ""));
+                                            total_alts_ctr++;
+                                            break;
+                                    }
+                                }
                             }
-                            else if (alt.Value.Length > 0)
+                            else if (launcher_profiles_line.Contains(",\"name\":"))
                             {
-                                SMT_Main.RESULTS.alts.Add(alt.Value);
-                                total_alts_ctr++;
+                                Regex displayname_remove = new Regex(",\"name\".*?}");
+                                Match mch = displayname_remove.Match(launcher_profiles_line);
+                                Regex remove_name = new Regex("\"name\":");
+                                Regex remove_graffe = new Regex("}");
+                                Regex remove_apostrofi = new Regex("\"");
+                                Regex remove_virgole = new Regex(",");
+
+                                string alt_finito = remove_name.Replace(mch.Value, "");
+                                alt_finito = remove_graffe.Replace(alt_finito, "");
+                                alt_finito = remove_apostrofi.Replace(alt_finito, "");
+                                alt_finito = remove_virgole.Replace(alt_finito, "");
+
+                                if (alt_finito.Length > 0)
+                                {
+                                    switch (alt_finito)
+                                    {
+                                        case "ItsChri":
+                                            SMT_Main.RESULTS.alts.Add("- ItsChri (oioc o scem!)");
+                                            break;
+                                        case "HuzuniLite":
+                                            SMT_Main.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
+                                            break;
+                                        case "5tie":
+                                            SMT_Main.RESULTS.alts.Add("- 5tie (La malavita dell'Emilia Romagna è qui!)");
+                                            break;
+                                        case "SSoAmmetti":
+                                            SMT_Main.RESULTS.alts.Add("- SSoAmmetti (Giulio Piombo vuole bypassarti con i comandi da cmd!)");
+                                            break;
+                                        default:
+                                            SMT_Main.RESULTS.alts.Add(alt_finito);
+                                            total_alts_ctr++;
+                                            break;
+                                    }
+                                }
                             }
                         }
-                        else if (launcher_profiles_line.Contains(",\"name\":"))
-                        {
-                            Regex displayname_remove = new Regex(",\"name\".*?}");
-                            Match mch = displayname_remove.Match(launcher_profiles_line);
-                            Regex remove_name = new Regex("\"name\":");
-                            Regex remove_graffe = new Regex("}");
-                            Regex remove_apostrofi = new Regex("\"");
-                            Regex remove_virgole = new Regex(",");
-
-                            string alt_finito = remove_name.Replace(mch.Value, "");
-                            alt_finito = remove_graffe.Replace(alt_finito, "");
-                            alt_finito = remove_apostrofi.Replace(alt_finito, "");
-                            alt_finito = remove_virgole.Replace(alt_finito, "");
-
-                            if (alt_finito.Length > 0 && alt_finito.Contains("HuzuniLite"))
-                            {
-                                SMT_Main.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
-                            }
-                            else if (alt_finito.Length > 0)
-                            {
-                                SMT_Main.RESULTS.alts.Add(alt_finito);
-                                total_alts_ctr++;
-                            }
-                        }
+                        read_launcher_profiles.Close();
                     }
-                    read_launcher_profiles.Close();
                 }
-            }
-            catch 
-            { 
-                SMT_Main.RESULTS.alts.Add("No Alt(s) found(s)"); 
-            }
+                catch
+                {
+                    SMT_Main.RESULTS.alts.Add("No Alt(s) found(s)");
+                }
 
-            if (total_alts_ctr == 0)
-            {
-                SMT_Main.RESULTS.alts.Add("No Alt(s) found(s)");
-            }
+                if (total_alts_ctr == 0)
+                {
+                    SMT_Main.RESULTS.alts.Add("No Alt(s) found(s)");
+                }
+
+            }));
 
             #endregion
 
+            Task.WaitAll(generic_tasks.ToArray());
+
             Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Generic checks completed"));
         }
-
-        public void Clean()
-        {
-            //Clean SMT's files
-
-            string SMT_dir = $@"C:\ProgramData\SMT-{Wrapper.SMTDir}";
-            ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c rmdir /S /Q " + SMT_dir)
-            {
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-            using (Process proc = new Process())
-            {
-                proc.StartInfo = procStartInfo;
-                proc.Start();
-            }
-            Environment.Exit(0);
-        } //Refractored
     }
 }

@@ -1,17 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "1c0cNdqrEUCWsl5Z2ilMymi70h2CUD2VXWoFRO7LXtquyA4RCqOuK9US/qvO+b7V1zH+dRpiZwNikbUxMXtsaA==",
+  "dgSpecHash": "3+SaTchV+8+2/acKh1UY6LRgUCjn+W3SSgW6ju2PaRL6SyMYZrumBwIiRPvUuB1s3KmLJabYcPNnV1EJx4ihFA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Mattia\\Documents\\Progetti\\Progetti C#\\SMTool\\SMT_Tests\\SMT_Tests.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Mattia\\.nuget\\packages\\dotnet.glob\\3.1.2\\dotnet.glob.3.1.2.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\dotnetzip\\1.15.0\\dotnetzip.1.15.0.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\fluentnhibernate\\1.4.0\\fluentnhibernate.1.4.0.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\iesi.collections\\3.2.0.4000\\iesi.collections.3.2.0.4000.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\linqpad.nhibernate.formatsql\\1.0.3\\linqpad.nhibernate.formatsql.1.0.3.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\linqpad.supporting.nhibernate\\1.0.0\\linqpad.supporting.nhibernate.1.0.0.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\nhibernate\\3.3.1.4000\\nhibernate.3.3.1.4000.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\nlog\\4.7.9\\nlog.4.7.9.nupkg.sha512",
     "C:\\Users\\Mattia\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
     "C:\\Users\\Mattia\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
     "C:\\Users\\Mattia\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",

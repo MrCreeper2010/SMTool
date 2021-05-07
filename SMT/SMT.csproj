@@ -284,7 +284,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classi utili\GlobalVariables.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -306,8 +305,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\unprotect.exe" />
-    <None Include="Resources\strings2.exe" />
     <Content Include="SMT.ico" />
   </ItemGroup>
   <ItemGroup>

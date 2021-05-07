@@ -26,6 +26,8 @@ namespace SMT.Helpers
 
         #region Liste importanti
 
+        public static string username = Environment.UserName;
+
         public static readonly List<string> suspy_extension = new List<string>()
         {
             ".EXE",
@@ -50,7 +52,7 @@ namespace SMT.Helpers
 
         public static List<string> prefetchfiles = Directory.GetFiles(@"C:\Windows\Prefetch").ToList();
         
-        public static List<string> GetTemp_files = Directory.GetFiles($@"C:\Users\{Environment.UserName}\AppData\Local\Temp").ToList();
+        public static List<string> GetTemp_files = Directory.GetFiles($@"C:\Users\{username}\AppData\Local\Temp").ToList();
 
         #endregion
 
@@ -100,15 +102,17 @@ namespace SMT.Helpers
         public static Regex mountvol_Method = new Regex("^\\\\\\\\?\\\\.+.Volume.+.\\\\.+.$");
         public static Regex javajar_method = new Regex("\\\\VOLUME.*?}");
 
+        #endregion
+
+
         public static Action[] CheckActions_List = new Action[]
         {
-            //checks.DoStringScan,
-            //checks.HeuristicCsrssCheck,
-            //checks.OtherChecks,
-            //checks.EventVwrCheck,
-            //generics.GlobalGeneric_check,
+            checks.DoStringScan,
+            checks.HeuristicCsrssCheck,
+            checks.OtherChecks,
+            checks.EventVwrCheck,
+            generics.GlobalGeneric_check,
         };
 
-        #endregion
     }
 }

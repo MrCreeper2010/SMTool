@@ -18,7 +18,7 @@ using ThreeOneThree.Proxima.Core;
 
 namespace SMT.scanners
 {
-    public class Checks : GlobalVariables
+    public class Checks : Wrapper
     {
         public void HeuristicCsrssCheck()
         {
@@ -239,97 +239,135 @@ namespace SMT.scanners
 
             #region Cambio ora, logs del security eliminati, journal eliminato 
 
-            List<EventLogEntry> Security_entries = GetSecurity_log.Entries.Cast<EventLogEntry>().ToList();
-            List<EventLogEntry> System_entries = GetSystem_log.Entries.Cast<EventLogEntry>().ToList();
-            List<EventLogEntry> Application_entries = GetApplication_log.Entries.Cast<EventLogEntry>().ToList();
-
-            Parallel.ForEach(Security_entries, (index) =>
+            eventvwr_tasks.Add(Task.Run(() =>
             {
-                if (index.InstanceId == 1102 && Wrapper.PC_StartTime() < index.TimeGenerated)
-                {
-                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Security logs deleted", "No more informations"));
-                }
+                List<EventLogEntry> Security_entries = GetSecurity_log.Entries.Cast<EventLogEntry>().ToList();
+                List<EventLogEntry> System_entries = GetSystem_log.Entries.Cast<EventLogEntry>().ToList();
+                List<EventLogEntry> Application_entries = GetApplication_log.Entries.Cast<EventLogEntry>().ToList();
 
-            });
-
-            Parallel.ForEach(System_entries, (Security) =>
-            {
-                if (Security.InstanceId == 104 && Wrapper.PC_StartTime() <= Security.TimeGenerated)
+                Parallel.ForEach(Security_entries, (index) =>
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "\"Security\" logs deleted", "No more informations"));
-                }
-
-#pragma warning disable CS0618 // Il tipo o il membro è obsoleto
-                else if (Security.EventID == 7031 && Wrapper.PC_StartTime() <= Security.TimeGenerated)
-#pragma warning restore CS0618 // Il tipo o il membro è obsoleto
-                {
-                    foreach (byte single_bytes in Security.Data)
+                    if (PC_StartTime() <= index.TimeGenerated)
                     {
-                        bytes += single_bytes;
+                        if (index.InstanceId == 1102)
+                        {
+                            SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Security logs deleted", "No more informations"));
+                        }
                     }
-                }
-            });
+                });
 
-            Parallel.ForEach(Application_entries, (Application_log) =>
-            {
-#pragma warning disable CS0618 // Il tipo o il membro è obsoleto
-                if (Application_log.EventID == 3079 && Wrapper.PC_StartTime() <= Application_log.TimeGenerated)
+                Parallel.ForEach(System_entries, (Security) =>
                 {
+                    if (PC_StartTime() <= Security.TimeGenerated)
+                    {
+                        if (Security.InstanceId == 104)
+                        {
+                            SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "\"Security\" logs deleted", "No more informations"));
+                        }
+                        else if (Security.EventID == 7031)
+                        {
+                            foreach (byte single_bytes in Security.Data)
+                            {
+                                bytes += single_bytes;
+                            }
+                        }
+                    }
+                });
+
+                Parallel.ForEach(Application_entries, (Application_log) =>
+                {
+#pragma warning disable CS0618 // Il tipo o il membro è obsoleto
+                    if (Application_log.EventID == 3079 && Wrapper.PC_StartTime() <= Application_log.TimeGenerated)
+                    {
 #pragma warning restore CS0618 // Il tipo o il membro è obsoleto
-                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "USN Journal was deleted", Application_log.TimeGenerated.ToString()));
-                }
-            });
+                        SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "USN Journal was deleted", Application_log.TimeGenerated.ToString()));
+                    }
+                });
+
+            }));
 
             #endregion
 
             #region Cambio ora preciso check
 
-            EventRecord entry;
-            string logPath = @"C:\Windows\System32\winevt\Logs\Security.evtx";
-            EventLogReader logReader = new EventLogReader(logPath, PathType.FilePath);
-
-            while ((entry = logReader.ReadEvent()) != null)
+            eventvwr_tasks.Add(Task.Run(() =>
             {
-                if (entry.Id != 4616)
+
+                EventRecord entry;
+                string logPath = @"C:\Windows\System32\winevt\Logs\Security.evtx";
+                EventLogReader logReader = new EventLogReader(logPath, PathType.FilePath);
+
+                while ((entry = logReader.ReadEvent()) != null)
                 {
-                    continue;
+                    if (entry.Id != 4616)
+                    {
+                        continue;
+                    }
+
+                    if (entry.TimeCreated <= Wrapper.PC_StartTime())
+                    {
+                        continue;
+                    }
+
+                    IList<EventProperty> properties = entry.Properties;
+                    DateTime previousTime = DateTime.Parse(properties[4].Value.ToString());
+                    DateTime newTime = DateTime.Parse(properties[5].Value.ToString());
+
+                    if (Math.Abs((previousTime - newTime).TotalMinutes) > 5)
+                    {
+                        SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "System time change", $"Old -> {previousTime} New -> {newTime}"));
+                    }
                 }
 
-                if (entry.TimeCreated <= Wrapper.PC_StartTime())
-                {
-                    continue;
-                }
-
-                IList<EventProperty> properties = entry.Properties;
-                DateTime previousTime = DateTime.Parse(properties[4].Value.ToString());
-                DateTime newTime = DateTime.Parse(properties[5].Value.ToString());
-
-                if (Math.Abs((previousTime - newTime).TotalMinutes) > 5)
-                {
-                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "System time change", $"Old -> {previousTime} New -> {newTime}"));
-                }
-            }
+            }));
 
             #endregion
 
             #region Riavvio Explorer || DPS || Pcasvc || DiagTrack
 
-            EventLogQuery elQuery = new EventLogQuery(LogSource, PathType.LogName, sQuery);
-
-            using (EventLogReader elReader = new EventLogReader(elQuery))
+            eventvwr_tasks.Add(Task.Run(() =>
             {
-                for (EventRecord dodo = elReader.ReadEvent(); dodo != null; dodo = elReader.ReadEvent())
+
+                EventLogQuery elQuery = new EventLogQuery(LogSource, PathType.LogName, sQuery);
+
+                using (EventLogReader elReader = new EventLogReader(elQuery))
                 {
-                    if (Wrapper.MinecraftMainProcess != "" && dodo.TimeCreated >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime)
+                    for (EventRecord dodo = elReader.ReadEvent(); dodo != null; dodo = elReader.ReadEvent())
                     {
-                        SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Explorer was restarted after Minecraft", dodo.TimeCreated.ToString()));
+                        if (Wrapper.MinecraftMainProcess != "" && dodo.TimeCreated >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime)
+                        {
+                            SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Explorer was restarted after Minecraft", dodo.TimeCreated.ToString()));
+                        }
                     }
                 }
-            }
+            }));
 
-            /*
-             * 830121011507709701050110000 SYSMAIN
-             */
+            #endregion
+
+            #region Uso di USB
+
+            eventvwr_tasks.Add(Task.Run(() =>
+            {
+
+                EventLogQuery rQuery = new EventLogQuery(StorageSpaces, PathType.LogName, bQuery);
+                using (EventLogReader elReader = new EventLogReader(rQuery))
+                {
+                    for (EventRecord dodo = elReader.ReadEvent(); dodo != null; dodo = elReader.ReadEvent())
+                    {
+                        DateTime UpdatedTime = (DateTime)dodo.TimeCreated;
+
+                        if (dodo.TimeCreated > Wrapper.PC_StartTime() && UpdatedTime.AddMinutes(-5) > Wrapper.PC_StartTime())
+                        {
+                            SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "USB connected", dodo.TimeCreated.ToString()));
+                        }
+                    }
+                }
+
+            }));
+
+            #endregion
+
+            Task.WaitAll(eventvwr_tasks.ToArray());
 
             switch (bytes)
             {
@@ -347,26 +385,6 @@ namespace SMT.scanners
                     break;
             }
 
-            #endregion
-
-            #region Uso di USB
-
-            EventLogQuery rQuery = new EventLogQuery(StorageSpaces, PathType.LogName, bQuery);
-            using (EventLogReader elReader = new EventLogReader(rQuery))
-            {
-                for (EventRecord dodo = elReader.ReadEvent(); dodo != null; dodo = elReader.ReadEvent())
-                {
-                    DateTime UpdatedTime = (DateTime)dodo.TimeCreated;
-
-                    if (dodo.TimeCreated > Wrapper.PC_StartTime() && UpdatedTime.AddMinutes(-5) > Wrapper.PC_StartTime())
-                    {
-                        SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "USB connected", dodo.TimeCreated.ToString()));
-                    }
-                }
-            }
-
-            #endregion
-
             Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Eventvwr check completed"));
         } //Refractored
 
@@ -375,6 +393,164 @@ namespace SMT.scanners
             Console.OutputEncoding = Encoding.Unicode;
             List<string> journal_names = new List<string>();
             bool unicode_char = false;
+
+            others_tasks.Add(Task.Run(() =>
+            {
+
+                #region Wmic da regedit
+
+                string regedit_replace = "";
+                Regex DiscoC = new Regex(@"\\Device\\HarddiskVolume4\\");
+                Regex remove_stream = new Regex(@":.*?$");
+                Regex jessica = new Regex(@".*?$");
+
+                using (RegistryKey get_subkeynames = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\bam\State\UserSettings"))
+                {
+                    Parallel.ForEach(get_subkeynames.GetSubKeyNames(), (subkey_name) =>
+                    {
+                        using (RegistryKey correct_key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\bam\State\UserSettings\" + subkey_name))
+                        {
+                            foreach (string values in correct_key.GetValueNames())
+                            {
+                                if (values.Contains(":")
+                                    && values.Contains(@"\Device\HarddiskVolume4\"))
+                                {
+                                    Match mch = jessica.Match(values);
+                                    regedit_replace = DiscoC.Replace(mch.Value, "C:\\");
+
+                                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.WMIC, regedit_replace, "Wmic started today or few days ago, please investigate #2"));
+                                }
+                                else if (values.Contains(":")
+                                    && !values.Contains(@"\Device\HarddiskVolume4\"))
+                                {
+                                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.WMIC, values, "Wmic started today or few days ago, please investigate #2"));
+                                }
+                            }
+                        }
+                    });
+                }
+
+                #endregion
+            }));
+
+            others_tasks.Add(Task.Run(() =>
+            {
+
+                #region Disabilitazione del Prefetch #1 e #2
+
+                RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters");
+
+                if (key.GetValue("EnablePrefetcher").ToString() != "3")
+                {
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", "No more informations"));
+                }
+
+                if (Wrapper.GetPID("SysMain") == " 0 ")
+                {
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", "No more informations"));
+                }
+
+                #endregion
+            }));
+
+            others_tasks.Add(Task.Run(() =>
+            {
+                #region Check delle macro
+
+                if (Directory.Exists($@"C:\Users\{GlobalVariables.username}\AppData\Local\LGHUB\")
+                && (File.GetLastWriteTime($@"C:\Users\{GlobalVariables.username}\AppData\Local\LGHUB\settings.backup") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime
+                || File.GetLastWriteTime($@"C:\Users\{GlobalVariables.username}\AppData\Local\LGHUB\settings.json") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime))
+                {
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, $@"Logitech macro detected!", "(BETA Method)"));
+                }
+                else if (Directory.Exists($@"C:\Users\{GlobalVariables.username}\AppData\Local\BY-COMBO2\")
+                    && (File.GetLastWriteTime($@"C:\Users\{GlobalVariables.username}\AppData\Local\BY-COMBO2\pro.dct") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime
+                    || File.GetLastWriteTime($@"C:\Users\{GlobalVariables.username}\AppData\Local\BY-COMBO2\curid.dct") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime))
+                {
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, $@"Glorious macro detected!", "(BETA Method)"));
+                }
+
+
+                #endregion
+            }));
+
+            others_tasks.Add(Task.Run(() =>
+            {
+
+                #region Check unlegit versions
+
+                var version_Directories = Directory.GetDirectories($@"C:\Users\{GlobalVariables.username}\AppData\Roaming\.minecraft\versions");
+                int inUsingFile = 0;
+
+                WebClient wb = new WebClient();
+                var s = wb.DownloadString("https://pastebin.com/raw/vrcAF3dq");
+
+                Parallel.ForEach(version_Directories, (index) =>
+                {
+                    var version_File = Directory.GetFiles(index, "*.jar");
+
+                    for (int j = 0; j < version_File.Length; j++)
+                    {
+                        if (Wrapper.IsFileLocked(new FileInfo(version_File[j])))
+                        {
+                            inUsingFile++;
+
+                            if (!Wrapper.GL_Contains(s, Wrapper.calcoloSHA256(new FileStream(version_File[j], FileMode.Open))))
+                            {
+                                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Modified minecraft's version", "If version is LabyMod ignore flag"));
+                            }
+                        }
+                    }
+                });
+
+                if (inUsingFile > 1)
+                {
+                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "More than 1 version is used", "No more Informations"));
+                }
+
+                #endregion
+            }));
+
+            others_tasks.Add(Task.Run(() =>
+            {
+
+                #region PcaClient e MountVol
+
+                var get_PCACLIENT = File.ReadAllLines($@"C:\ProgramData\SMT-{Wrapper.SMTDir}\explorer.txt");
+
+                Regex correctPath = new Regex("[A-Z]:\\\\.*?,");
+
+                Parallel.ForEach(get_PCACLIENT, (index) =>
+                {
+                    if (Wrapper.GL_Contains(index, "pcaclient")
+                    && Wrapper.GL_Contains(index, "trace")
+                    && index.Length > 27)
+                    {
+                        var path = correctPath.Match(index);
+
+                        if (path.Success && path.Value.Length > 0)
+                        {
+                            string d = path.Value;
+                            d = d.Remove(d.Length - 1, 1) + "";
+
+                            SMT_Main.RESULTS.pcaclient.Add(d);
+                        }
+                    }
+                    else if (Wrapper.GL_Contains(index, @"\\?\volume{")
+                    && Wrapper.GL_Contains(index, "-")
+                    && index.Length >= 50)
+                    {
+                        var volume = mountvol_Method.Match(index);
+
+                        if (volume.Success && volume.Value.Length > 0)
+                        {
+                            SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Mountvol method found", "No more Informations"));
+                        }
+                    }
+                });
+
+                #endregion
+            }));
 
             #region Metodo carattere speciale + Regedit aperto + Java/Javaw
 
@@ -410,7 +586,7 @@ namespace SMT.scanners
                             if (volume.Success && volume.Value.Length > 0)
                             {
                                 string trytoget_disk = s.Replace(volume.Value, Path.GetPathRoot(Environment.SystemDirectory));
-                                
+
                                 if (!journal_names.Contains(trytoget_disk))
                                     journal_names.Add(trytoget_disk);
 
@@ -456,8 +632,6 @@ namespace SMT.scanners
             });
 
             #endregion
-
-            Console.WriteLine("fine #1");
 
             #region Check Journal
 
@@ -517,26 +691,6 @@ namespace SMT.scanners
                                 SMT_Main.RESULTS.string_scan.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.OUT_INSTANCE, "Generic JNativeHook Clicker (deleted)", TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString()));
                             }
                         }
-
-                        /*
-                        if (TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp) >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime)
-                        {
-                            foreach (var s in journal_names)
-                            {
-                                if (s.Contains(d.Name))
-                                {
-                                    if (d.Reason == 4096)
-                                    {
-                                        SMT_Main.RESULTS.possible_replaces.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.FILE_MOVED_RENAMED, d.Name, $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
-                                    }
-                                    else if (d.Reason == 2147484160)
-                                    {
-                                        SMT_Main.RESULTS.possible_replaces.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.FILE_DELETED, d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
-                                    }
-                                }
-                            }
-                        }
-                        */
                     }
                 });
             }
@@ -565,144 +719,7 @@ namespace SMT.scanners
 
             #endregion
 
-            #region Wmic da regedit
-
-            string regedit_replace = "";
-            Regex DiscoC = new Regex(@"\\Device\\HarddiskVolume4\\");
-            Regex remove_stream = new Regex(@":.*?$");
-            Regex jessica = new Regex(@".*?$");
-
-            using (RegistryKey get_subkeynames = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\bam\State\UserSettings"))
-            {
-                Parallel.ForEach(get_subkeynames.GetSubKeyNames(), (subkey_name) =>
-                {
-                    using (RegistryKey correct_key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\bam\State\UserSettings\" + subkey_name))
-                    {
-                        foreach (string values in correct_key.GetValueNames())
-                        {
-                            if (values.Contains(":")
-                                && values.Contains(@"\Device\HarddiskVolume4\"))
-                            {
-                                Match mch = jessica.Match(values);
-                                regedit_replace = DiscoC.Replace(mch.Value, "C:\\");
-
-                                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.WMIC, regedit_replace, "Wmic started today or few days ago, please investigate #2"));
-                            }
-                            else if (values.Contains(":")
-                                && !values.Contains(@"\Device\HarddiskVolume4\"))
-                            {
-                                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.WMIC, values, "Wmic started today or few days ago, please investigate #2"));
-                            }
-                        }
-                    }
-                });
-            }
-
-            #endregion
-
-            #region Disabilitazione del Prefetch #1 e #2
-
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters");
-
-            if (key.GetValue("EnablePrefetcher").ToString() != "3")
-            {
-                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", "No more informations"));
-            }
-
-            if (Wrapper.GetPID("SysMain") == " 0 ")
-            {
-                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", "No more informations"));
-            }
-
-            #endregion
-
-            #region Check delle macro
-
-            if (Directory.Exists($@"C:\Users\{Environment.UserName}\AppData\Local\LGHUB\")
-                && (File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\LGHUB\settings.backup") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime
-                || File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\LGHUB\settings.json") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime))
-            {
-                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, $@"Logitech macro detected!", "(BETA Method)"));
-            }
-            else if (Directory.Exists($@"C:\Users\{Environment.UserName}\AppData\Local\BY-COMBO2\")
-                && (File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\BY-COMBO2\pro.dct") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime
-                || File.GetLastWriteTime($@"C:\Users\{Environment.UserName}\AppData\Local\BY-COMBO2\curid.dct") >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime))
-            {
-                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, $@"Glorious macro detected!", "(BETA Method)"));
-            }
-
-
-            #endregion
-
-            #region Check unlegit versions
-
-            var version_Directories = Directory.GetDirectories($@"C:\Users\{Environment.UserName}\AppData\Roaming\.minecraft\versions");
-            int inUsingFile = 0;
-
-            WebClient wb = new WebClient();
-            var s = wb.DownloadString("https://pastebin.com/raw/0kjRrqiC");
-
-            Parallel.ForEach(version_Directories, (index) =>
-            {
-                var version_File = Directory.GetFiles(index, "*.jar");
-
-                for (int j = 0; j < version_File.Length; j++)
-                {
-                    if (Wrapper.IsFileLocked(new FileInfo(version_File[j])))
-                    {
-                        inUsingFile++;
-
-                        if (!Wrapper.GL_Contains(s, Wrapper.calcoloSHA256(new FileStream(version_File[j], FileMode.Open))))
-                        {
-                            SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Modified minecraft's version", "If version is LabyMod ignore flag"));
-                        }
-                    }
-                }
-            });
-
-            if (inUsingFile > 1)
-            {
-                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "More than 1 version is used", "No more Informations"));
-            }
-
-            #endregion
-
-            #region PcaClient e MountVol
-
-            var get_PCACLIENT = File.ReadAllLines($@"C:\ProgramData\SMT-{Wrapper.SMTDir}\explorer.txt");
-
-            Regex correctPath = new Regex("[A-Z]:\\\\.*?,");
-
-            Parallel.ForEach(get_PCACLIENT, (index) =>
-            {
-                if (Wrapper.GL_Contains(index, "pcaclient")
-                && Wrapper.GL_Contains(index, "trace")
-                && index.Length > 27)
-                {
-                    var path = correctPath.Match(index);
-
-                    if (path.Success && path.Value.Length > 0)
-                    {
-                        string d = path.Value;
-                        d = d.Remove(d.Length - 1, 1) + "";
-
-                        SMT_Main.RESULTS.pcaclient.Add(d);
-                    }
-                }
-                else if (Wrapper.GL_Contains(index, @"\\?\volume{")
-                && Wrapper.GL_Contains(index, "-")
-                && index.Length >= 50)
-                {
-                    var volume = mountvol_Method.Match(index);
-
-                    if (volume.Success && volume.Value.Length > 0)
-                    {
-                        SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Mountvol method found", "No more Informations"));
-                    }
-                }
-            });
-
-            #endregion
+            Task.WaitAll(others_tasks.ToArray());
 
             Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Other checks completed"));
         } //Refractored
@@ -720,10 +737,7 @@ namespace SMT.scanners
             Task DNS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/1LKLuNWh", '§', $@"C:\ProgramData\SMT-{Wrapper.SMTDir}\dns.txt"); });
             DNS.Start(); tasks.Add(DNS);
 
-            Parallel.ForEach(tasks, index =>
-            {
-                index.Wait();
-            });
+            Task.WaitAll(tasks.ToArray());
 
             Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Specific client check completed"));
         }

@@ -15,17 +15,11 @@ C:\Users\user\Documents\Others\Progetti\SMT-v3.0-master\SMT_Tests\bin\Release\NH
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\SMT_Tests.exe.config
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\SMT_Tests.exe
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\SMT_Tests.pdb
-C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\FluentNHibernate.dll
-C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Iesi.Collections.dll
-C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\LINQPad.NHibernate.FormatSQL.dll
-C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\LINQPad.Supporting.NHibernate.dll
-C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\NHibernate.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Release\SMT_Tests.csprojAssemblyReference.cache
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Release\SMT_Tests.csproj.CoreCompileInputs.cache
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Release\SMT_Tests.csproj.CopyComplete
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Release\SMT_Tests.exe
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Release\SMT_Tests.pdb
-C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\DotNet.Glob.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\System.Buffers.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\System.Memory.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\System.Numerics.Vectors.dll
@@ -33,6 +27,4 @@ C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Syst
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\ThreeOneThree.Proxima.Agent.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\ThreeOneThree.Proxima.Core.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\NLog.dll
-C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\DotNetZip.dll
-C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\DotNetZip.pdb
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Prefetch.dll

@@ -1,4 +1,5 @@
 ﻿using AuthenticodeExaminer;
+using PastebinAPI;
 using Pastel;
 using SMT.Helpers;
 using System;
@@ -23,6 +24,9 @@ namespace SMT.helpers
     public class Wrapper : GlobalVariables
     {
         public static readonly List<Task> tasks = new List<Task>();
+        public static readonly List<Task> generic_tasks = new List<Task>();
+        public static readonly List<Task> eventvwr_tasks = new List<Task>();
+        public static readonly List<Task> others_tasks = new List<Task>();
 
         public enum DETECTION_VALUES
         {
@@ -125,21 +129,52 @@ namespace SMT.helpers
             catch { ThrowException(); }
         }
 
+        public static void runCheckAsync_Generic(Action check)
+        {
+            try
+            {
+#pragma warning disable CS1998 // Il metodo asincrono non contiene operatori 'await', pertanto verrà eseguito in modo sincrono
+                generic_tasks.Add(Task.Factory.StartNew(async () => check()));
+#pragma warning restore CS1998 // Il metodo asincrono non contiene operatori 'await', pertanto verrà eseguito in modo sincrono
+            }
+            catch { ThrowException(); }
+        }
+
         public static bool GL_Contains(string source, string toCheck)
         {
             return source.IndexOf(toCheck, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
+        public static void Clean()
+        {
+            //Clean SMT's files
+
+            string SMT_dir = $@"C:\ProgramData\SMT-{Wrapper.SMTDir}";
+            ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c rmdir /S /Q " + SMT_dir)
+            {
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            using (Process proc = new Process())
+            {
+                proc.StartInfo = procStartInfo;
+                proc.Start();
+            }
+            Environment.Exit(0);
+        } //Refractored
+
         public static void GoodBye()
         {
-            Generics generics = new Generics();
-
-            WriteLine("\nHave a nice day! developed by MrCreeper2010", ConsoleColor.Yellow);
+            WriteLine("\nCi vedremo presto, ne sono sicuro ;)\n", ConsoleColor.Green);
+            WriteLine("\nScritto da: MrCreeper2010 | @SMTool su Telegram\n", ConsoleColor.White);
+            WriteLine("\nBuona giornata cocchitos! =)\n", ConsoleColor.Red);
             Console.Write("\nPress ENTER to exit");
             Console.ReadLine();
             Console.Write("\nConfirm exit -> press ENTER");
             Console.ReadLine();
-            generics.Clean();
+            Clean();
         }
 
         #endregion
@@ -169,6 +204,12 @@ namespace SMT.helpers
         }
 
         public static void Wait() => Thread.Sleep(5000);
+
+        public static string getCorrectUsername(string temp_path)
+        {
+            Regex rgx = new Regex("Users\\\\.*?\\\\");
+            return rgx.Match(temp_path).Value.Replace(@"Users\", "").Replace("\\", "");
+        }
 
         public static bool journal_returnconditions(Win32Api.UsnEntry UsnEntry)
         {
@@ -412,7 +453,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT.SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (PcaSvc process missed)");
+                    SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (PcaSvc process missed)");
                 }
             }
             catch { }
@@ -428,7 +469,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT.SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (DPS process missed)");
+                    SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (DPS process missed)");
                 }
             }
             catch { }
@@ -456,7 +497,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT.SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (DNScache process missed)");
+                    SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (DNScache process missed)");
                 }
             }
             catch { }
@@ -474,12 +515,12 @@ namespace SMT.helpers
                         && DiagTrack_lines.ToList().Contains("del")
                         && DiagTrack_lines.ToList().Contains(".pf"))
                     {
-                        SMT.SMT_Main.RESULTS.string_scan.Add("Found generic prefetch's file(s) Self-destruct");
+                        SMT_Main.RESULTS.string_scan.Add("Found generic prefetch's file(s) Self-destruct");
                     }
                 }
                 else
                 {
-                    SMT.SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (DiagTrack process missed)");
+                    SMT_Main.RESULTS.bypass_methods.Add("Generic Bypass method (DiagTrack process missed)");
                 }
             }
             catch { }
@@ -590,7 +631,7 @@ namespace SMT.helpers
 
         #region DiscordWebHook
 
-        public static string URL = Wrapper.DownloadString("https://pastebin.com/raw/bQtuHGtA");
+        public static string URL = DownloadString("https://pastebin.com/raw/8yBBh1Wt");
 
         public static byte[] initializeURL(string URL, NameValueCollection pairs)
         {
@@ -697,6 +738,14 @@ namespace SMT.helpers
 
         #region Write List's results
 
+        public static bool isLegit()
+        {
+            return (SMT_Main.RESULTS.bypass_methods.Count > 0
+            || SMT_Main.RESULTS.event_viewer_entries.Count > 0
+            || SMT_Main.RESULTS.possible_replaces.Count > 0
+            || SMT_Main.RESULTS.string_scan.Count > 0);
+        }
+
         public static void enumResults()
         {
             #region Write Results (Check 1)
@@ -705,8 +754,8 @@ namespace SMT.helpers
 
             WriteLine("PC Type:\n", ConsoleColor.Yellow); //fatto
             Console.WriteLine((SystemInformation.PowerStatus.BatteryChargeStatus == BatteryChargeStatus.NoSystemBattery)
-                ? "- Desktop PC, no possible touchpad abuse"
-                : "- Laptop PC, possible touchpad abuse");
+                ? "- Desktop PC, no touchpad found"
+                : "- Laptop PC, possible touchpad abuse?");
 
             WriteLine("\nAlts:\n", ConsoleColor.Yellow); //fatto
             SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => WriteLine("- " + alt));
@@ -829,5 +878,6 @@ namespace SMT.helpers
         }
 
         #endregion
+
     }
 }

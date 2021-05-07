@@ -21,7 +21,7 @@ namespace SMT
 
             if (Wrapper.isMCRunning())
             {
-                Wrapper.WriteLine("Quindi lei mi sta dicendo che trova replace tramite DPS?...\n", ConsoleColor.Yellow);
+                Wrapper.WriteLine("Mangiamo sti baby shitty Giulio Piombini ...\n", ConsoleColor.Yellow);
 
                 stopwatch.Start();
 
@@ -36,9 +36,11 @@ namespace SMT
 #endif
 
                 if (!isDebug)
-                    Wrapper.sendMessage($"L'utente con HWID: {Wrapper.HardwareID()} ha totalizzato {stopwatch.ElapsedMilliseconds}ms!");
+                    Wrapper.sendMessage($"L'utente con HWID: {Wrapper.HardwareID()} ha totalizzato {stopwatch.ElapsedMilliseconds}ms!" +
+                        $"\nUnlegit?: {Wrapper.isLegit()}");
                 else
-                    Wrapper.sendMessage($"[DEBUG] L'utente con HWID: {Wrapper.HardwareID()} ha totalizzato {stopwatch.ElapsedMilliseconds}ms!");
+                    Wrapper.sendMessage($"[DEBUG] L'utente con HWID: {Wrapper.HardwareID()} ha totalizzato {stopwatch.ElapsedMilliseconds}ms!" +
+                        $"\nUnlegit?: {Wrapper.isLegit()}");
 
                 Console.Clear();
                 Wrapper.WriteLine($"[?] Press enter to print results (Time elapsed from start scanning: {stopwatch.ElapsedMilliseconds}ms)", ConsoleColor.Yellow);
@@ -46,6 +48,11 @@ namespace SMT
 
                 //Get Results
                 Wrapper.enumResults();
+
+                //if(Wrapper.isLegit())
+                //{
+                //    Process.Start(@"");
+                //}
 
                 //Clean files
                 Wrapper.GoodBye();

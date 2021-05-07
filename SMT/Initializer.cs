@@ -2,6 +2,7 @@
 using SMT.Helpers;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 
@@ -11,7 +12,7 @@ namespace SMT
     {
         public Initializer()
         {
-            Wrapper.WriteLine("Scusami bello fammi preparare la cintura per frustare questi shitty cheaters...\n", ConsoleColor.Cyan);
+            Wrapper.WriteLine("Fammi preparare la cintura per frustare questi shitty cheaters...\n", ConsoleColor.Cyan);
 
             #region Titolo e check versione
 
@@ -75,11 +76,15 @@ namespace SMT
 
                 }
             }
-            catch
+            catch (DirectoryNotFoundException)
             {
-                Wrapper.WriteLine(@"[-] Prefetch or %temp% unreacheable, possible cacls method?", ConsoleColor.Yellow);
+                username = Wrapper.getCorrectUsername(Path.GetTempPath());
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine("PC can't grant permissions to access to %temp% or Prefetch");
                 Wrapper.Wait();
-                Environment.Exit(0);
+                Environment.Exit(1);
             }
 
             #endregion
@@ -92,7 +97,6 @@ namespace SMT
             Wrapper.SaveAllFiles();
 
             #endregion
-
         }
     }
 }
