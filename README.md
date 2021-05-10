@@ -5,7 +5,7 @@ Lista features:
 - [X] Check del recycle.bin
 - [X] Check per software di recording in background (NVIDIA SHARE etc..)
 - [X] Check per controllare quali dispositivi sono attualmente collegati
-- [X] Check per le resource pack xray
+- [X] Check per le xray resource pack
 - [X] Check delle date di avvio dei processi
 - [X] Check deile USB connesse (nel caso l'utente ha connesso delle USB saranno flaggate)
 - [X] Check deila firma digitale (sia se non c'è alcuna firma che se è fasulla)
@@ -28,11 +28,16 @@ Features da aggiungere nella prossima release (quelle con la spunta già sono st
 - [X] Check PcaClient
 - [X] Check di alcune macro (sezione da aggiornare)
 - [X] Check metodo mountvol
-- [X] Check metodo java -jar (senza JNativeHook) -> ci sto lavorando
+- [X] Check metodo java -jar (senza JNativeHook)
 - [X] Check universale per trovare QUALUNQUE ghost client di qualunque versione (sia optifine che vanilla)
 - [X] Check per il tipo di PC (laptop o desktop)
+- [X] Explorer report
+- [X] USNJournal anche su USB e HardDisk esterni (ancora in ALFA)
+- [X] Check USB con FAT32
 - [ ] Check universale per i software di recoding -> Forse dalla 1.11 in poi
 - [ ] Check metodo rundll32 e regsvc -> Completato in parte
 - [ ] Check per le estensioni spoffate -> Da trovare un metodo efficace
+
+? Tradurre SMT in Italiano
 
 Official Telegram channel @SMTool
