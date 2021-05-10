@@ -70,6 +70,7 @@ namespace SMT.Helpers
         public static Random r = new Random();
         public static Generics generics = new Generics();
         public static Checks checks = new Checks();
+        public static DriveInfo[] drives = DriveInfo.GetDrives();
 
         public static string strings2, unprotect;
         
@@ -107,11 +108,11 @@ namespace SMT.Helpers
 
         public static Action[] CheckActions_List = new Action[]
         {
-            checks.DoStringScan,
-            checks.HeuristicCsrssCheck,
+            //checks.DoStringScan,
+            //checks.HeuristicCsrssCheck,
             checks.OtherChecks,
             checks.EventVwrCheck,
-            generics.GlobalGeneric_check,
+            //generics.GlobalGeneric_check,
         };
 
     }

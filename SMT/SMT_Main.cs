@@ -49,11 +49,6 @@ namespace SMT
                 //Get Results
                 Wrapper.enumResults();
 
-                //if(Wrapper.isLegit())
-                //{
-                //    Process.Start(@"");
-                //}
-
                 //Clean files
                 Wrapper.GoodBye();
             }

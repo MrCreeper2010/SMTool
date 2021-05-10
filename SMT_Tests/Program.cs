@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
 
@@ -16,7 +14,14 @@ namespace SMT_Tests
 
         static void Main()
         {
-            Process.Start(@"C:\users\Mattia\Desktop\video.mp4");
+            StreamWriter sl = File.CreateText($@"C:\users\Mattia\Desktop\ciao.txt");
+            sl.Close();
+
+            using(StreamWriter sw = new StreamWriter($@"C:\users\Mattia\Desktop\ciao.txt"))
+            {
+                sw.WriteLine("tpsto");
+                sw.Close();
+            }
 
             Console.WriteLine("done");
             Console.ReadLine();

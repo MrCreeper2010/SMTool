@@ -25,7 +25,7 @@ namespace SMT.scanners
             GlobalVariables globalVariables = new GlobalVariables();
 
             Regex regex_path = new Regex(@"[A-Z]:\\.*?$");
-            string[] CSRSS_file = File.ReadAllLines($@"C:\ProgramData\SMT-{Wrapper.SMTDir}\csrss.txt");
+            string[] CSRSS_file = File.ReadAllLines($@"C:\ProgramData\SMT-{SMTDir}\csrss.txt");
 
             Parallel.ForEach(CSRSS_file, (index) =>
             {
@@ -33,7 +33,7 @@ namespace SMT.scanners
                 && index.Contains(Path.GetPathRoot(Environment.SystemDirectory))
                     && Path.GetExtension(index).Length > 0
                     && suspy_extension.Contains(Path.GetExtension(index.ToUpper()))
-                    && !Wrapper.GL_Contains(index, ".dll"))
+                    && !GL_Contains(index, ".dll"))
                 {
                     Match Csrss_path = regex_path.Match(index);
 
@@ -43,22 +43,28 @@ namespace SMT.scanners
                     .FirstOrDefault() != null
                     && prefetchfiles
                     .Where(f => File.GetLastWriteTime(Csrss_path.Value)
-                    >= Wrapper.PC_StartTime())
+                    >= PC_StartTime())
                     .FirstOrDefault() != null)
                     {
-                        switch (Wrapper.GetSign(Csrss_path.Value))
+                        switch (GetSign(Csrss_path.Value))
                         {
                             case "Unsigned":
-                                if (!Wrapper.GL_Contains(Csrss_path.Value, "windows"))
+                                if (!GL_Contains(Csrss_path.Value, "windows"))
                                 {
-                                    SMT_Main.RESULTS.suspy_files.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.UNSIGNED, Csrss_path.Value, "This file hasn't got any digital signature, please investigate"));
+                                    if (!GL_Contains(Csrss_path.Value, "strings2.exe")
+                                    && calcoloSHA256(new FileStream(Csrss_path.Value, FileMode.Open)) 
+                                    != "736f66305b85b1ff01b735491db3fae966815ba9ae830c3fec1ab750430f5cdf")
+                                        SMT_Main.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.UNSIGNED, Csrss_path.Value, "This file hasn't got any digital signature, please investigate"));
                                 }
                                 break;
                             case "Fake":
-                                SMT_Main.RESULTS.suspy_files.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.FAKE_SIGN, Csrss_path.Value, "File has got a fake/expired digital signature"));
+                                if (!GL_Contains(Csrss_path.Value, "unprotect.exe") 
+                                && calcoloSHA256(new FileStream(Csrss_path.Value, FileMode.Open)) 
+                                != "7c8b131c5222b69ccfd6664fb9c7d93b071e7f377d1fe8b224cf6ea4367a379f")
+                                    SMT_Main.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.FAKE_SIGN, Csrss_path.Value, "File has got a fake/expired digital signature"));
                                 break;
                             case "Other type of signature":
-                                SMT_Main.RESULTS.suspy_files.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.UNKN_SIGN, Csrss_path.Value, "Suspicious digital signature's informations, please investigate"));
+                                SMT_Main.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.UNKN_SIGN, Csrss_path.Value, "Suspicious digital signature's informations, please investigate"));
                                 break;
                         }
                     }
@@ -67,7 +73,7 @@ namespace SMT.scanners
 
             SMT_Main.RESULTS.suspy_files.Sort();
 
-            Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Suspicious file check completed"));
+            Console.WriteLine(Detection(DETECTION_VALUES.STAGE_PRC, "", "Suspicious file check completed"));
         } //Refractored
 
         public static void StringScannerSystem(string link, char separator, string result)
@@ -479,36 +485,57 @@ namespace SMT.scanners
 
                 #region Check unlegit versions
 
-                var version_Directories = Directory.GetDirectories($@"C:\Users\{GlobalVariables.username}\AppData\Roaming\.minecraft\versions");
+                var default_mc_path = $@"C:\Users\{username}\AppData\Roaming\.minecraft\versions";
+                var version_Directories = Directory.GetDirectories(default_mc_path);
                 int inUsingFile = 0;
+                bool isVersionFound = false;
 
                 WebClient wb = new WebClient();
                 var s = wb.DownloadString("https://pastebin.com/raw/vrcAF3dq");
 
-                Parallel.ForEach(version_Directories, (index) =>
+                ManagementClass mngmtClass = new ManagementClass("Win32_Process");
+                Regex getversion = new Regex("--version.*?--gameDir");
+
+                foreach (ManagementObject o in mngmtClass.GetInstances())
                 {
-                    var version_File = Directory.GetFiles(index, "*.jar");
-
-                    for (int j = 0; j < version_File.Length; j++)
+                    if (o["Name"].ToString() == Wrapper.MinecraftMainProcess + ".exe")
                     {
-                        if (Wrapper.IsFileLocked(new FileInfo(version_File[j])))
-                        {
-                            inUsingFile++;
+                        var sda = getversion.Match(o["CommandLine"].ToString());
 
-                            if (!Wrapper.GL_Contains(s, Wrapper.calcoloSHA256(new FileStream(version_File[j], FileMode.Open))))
+                        if (sda.Success)
+                        {
+                            var version = sda.Value.Replace("--version ", "").Replace(" --gameDir", "");
+
+                            var jar_file = default_mc_path + "\\" + version + "\\" + version + ".jar";
+
+                            if (IsFileLocked(new FileInfo(jar_file)))
                             {
-                                SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Modified minecraft's version", "If version is LabyMod ignore flag"));
+                                inUsingFile++;
+
+                                if (!GL_Contains(s, calcoloSHA256(new FileStream(jar_file, FileMode.Open))))
+                                {
+                                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Modified version found: {Path.GetFileName(jar_file)}", "No more Informations"));
+                                }
                             }
                         }
+                        else
+                        {
+                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Impossible to get {o["Name"]}'s (PID: {int.Parse(o["Handle"].ToString())}) informations", "No more Informations"));
+                        }
                     }
-                });
+                }
 
                 if (inUsingFile > 1)
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "More than 1 version is used", "No more Informations"));
+                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "More than 1 version is used", "(BETA Method)"));
+                }
+                else if (inUsingFile == 0)
+                {
+                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "No versions used in .minecraft, is it possible?", "(BETA Method)"));
                 }
 
                 #endregion
+
             }));
 
             others_tasks.Add(Task.Run(() =>
@@ -516,14 +543,30 @@ namespace SMT.scanners
 
                 #region PcaClient e MountVol
 
-                var get_PCACLIENT = File.ReadAllLines($@"C:\ProgramData\SMT-{Wrapper.SMTDir}\explorer.txt");
+                var get_PCACLIENT = File.ReadAllLines($@"C:\ProgramData\SMT-{SMTDir}\explorer.txt");
+                StreamWriter sl = File.CreateText($@"C:\ProgramData\SMT-{SMTDir}\explorer_helper.txt");
+                List<string> to_distinct = new List<string>();
+                sl.Close();
 
                 Regex correctPath = new Regex("[A-Z]:\\\\.*?,");
 
                 Parallel.ForEach(get_PCACLIENT, (index) =>
                 {
-                    if (Wrapper.GL_Contains(index, "pcaclient")
-                    && Wrapper.GL_Contains(index, "trace")
+                    if (index.Contains("file://")
+                    && !index.Contains("\"displayText\"")
+                    && !GL_Contains(index, "visited: ")
+                    && index.Length >= 14
+                    && !GL_Contains(index, $": {Environment.UserName}@file:///")
+                    && !index.Contains("?"))
+                    {
+                        if (!GL_Contains(index, "."))
+                            to_distinct.Add("[VISITED FOLDER] " + index.Replace("file:///", "").Replace("%20", " "));
+                        else
+                            to_distinct.Add(index.Replace("file:///", "").Replace("%20", " "));
+                    }
+
+                    if (GL_Contains(index, "pcaclient")
+                    && GL_Contains(index, "trace")
                     && index.Length > 27)
                     {
                         var path = correctPath.Match(index);
@@ -536,8 +579,8 @@ namespace SMT.scanners
                             SMT_Main.RESULTS.pcaclient.Add(d);
                         }
                     }
-                    else if (Wrapper.GL_Contains(index, @"\\?\volume{")
-                    && Wrapper.GL_Contains(index, "-")
+                    else if (GL_Contains(index, @"\\?\volume{")
+                    && GL_Contains(index, "-")
                     && index.Length >= 50)
                     {
                         var volume = mountvol_Method.Match(index);
@@ -547,9 +590,23 @@ namespace SMT.scanners
                             SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Mountvol method found", "No more Informations"));
                         }
                     }
+
                 });
 
+                FileStream mystream = new FileStream($@"C:\ProgramData\SMT-{SMTDir}\explorer_helper.txt",
+                    FileMode.OpenOrCreate, FileAccess.Write);
+                StreamWriter tw = new StreamWriter(mystream);
+
+                to_distinct.Sort();
+
+                foreach (string n in to_distinct)
+                {
+                    tw.WriteLine(n);
+                }
+                tw.Close();
+
                 #endregion
+
             }));
 
             #region Metodo carattere speciale + Regedit aperto + Java/Javaw
@@ -580,7 +637,6 @@ namespace SMT.scanners
                     {
                         foreach (var s in Prefetch.PrefetchFile.Open(index).Filenames)
                         {
-                            //Wrapper.SMT_Main.RESULTS.bypass_methods.Add(s);
                             var volume = javajar_method.Match(s);
 
                             if (volume.Success && volume.Value.Length > 0)
@@ -600,9 +656,9 @@ namespace SMT.scanners
                                         {
                                             foreach (var zipItem in targetZipFile)
                                             {
-                                                if (Wrapper.GL_Contains(zipItem.ToString(), "meta-inf"))
+                                                if (GL_Contains(zipItem.ToString(), "meta-inf"))
                                                 {
-                                                    var dir = $@"{Path.GetTempPath()}\SMT-{r.Next(1000, 9999)}-{Wrapper.randomStr()}";
+                                                    var dir = $@"{Path.GetTempPath()}\SMT-{r.Next(1000, 9999)}-{randomStr()}";
                                                     Directory.CreateDirectory(dir);
 
                                                     zipItem.Extract(dir);
@@ -611,9 +667,9 @@ namespace SMT.scanners
                                                     {
                                                         var f = File.ReadAllText($@"{dir}\META-INF\MANIFEST.MF");
 
-                                                        if (Wrapper.GL_Contains(f, "main-class"))
+                                                        if (GL_Contains(f, "main-class"))
                                                         {
-                                                            SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Jar file executable found in JAVA prefetch's log, possible java -jar?", trytoget_disk));
+                                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Jar file executable found in JAVA prefetch's log, possible java -jar?", trytoget_disk));
                                                         }
                                                     }
                                                 }
@@ -639,66 +695,89 @@ namespace SMT.scanners
 
             Win32Api.USN_JOURNAL_DATA data = new Win32Api.USN_JOURNAL_DATA();
 
-            DriveConstruct construct = new DriveConstruct(Path.GetPathRoot(Environment.SystemDirectory));
-            NtfsUsnJournal journal = new NtfsUsnJournal(Path.GetPathRoot(Environment.SystemDirectory));
-
-            NtfsUsnJournal.UsnJournalReturnCode rtn = journal.GetUsnJournalEntries(construct.CurrentJournalData, reasonMask, out List<Win32Api.UsnEntry> usnEntries, out Win32Api.USN_JOURNAL_DATA newUsnState, OverrideLastUsn: data.MaxUsn);
-
-            List<string> cacls_string = new List<string>();
-
-            if (rtn == NtfsUsnJournal.UsnJournalReturnCode.USN_JOURNAL_SUCCESS)
+            foreach (DriveInfo drive in drives)
             {
-                Parallel.ForEach(usnEntries, (d) =>
+                if (drive.IsReady && !GL_Contains(drive.DriveFormat, "fat32"))
                 {
-                    if (TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp) >= Wrapper.PC_StartTime()
-                    && Wrapper.returnReason(d.Reason).Length > 0)
+                    if (volumeStatus_Check(drive.Name))
+                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"USN Journal isn't active for {drive.Name} volume", $"No more Informations"));
+
+                    DriveConstruct construct = new DriveConstruct(drive.Name);
+                    NtfsUsnJournal journal = new NtfsUsnJournal(drive.Name);
+
+                    NtfsUsnJournal.UsnJournalReturnCode rtn = journal.GetUsnJournalEntries(construct.CurrentJournalData, reasonMask, out List<Win32Api.UsnEntry> usnEntries, out Win32Api.USN_JOURNAL_DATA newUsnState, OverrideLastUsn: data.MaxUsn);
+
+                    List<string> cacls_string = new List<string>();
+
+                    if (rtn == NtfsUsnJournal.UsnJournalReturnCode.USN_JOURNAL_SUCCESS)
                     {
-                        foreach (var f in journal_names)
+                        Parallel.ForEach(usnEntries, (d) =>
                         {
-                            if (Wrapper.GL_Contains(f, d.Name) && d.Reason == 2147484160)
+                            if (TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp) >= PC_StartTime()
+                            && returnReason(d.Reason).Length > 0
+                            && d.IsFile)
                             {
-                                if (TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
-                                        >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime)
-                                    SMT_Main.RESULTS.possible_replaces.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.FILE_DELETED, "From JAVA.exe Prefetch's log: " + d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
-                            }
-                        }
-
-                        if (d.Reason == 2149581088)
-                        {
-                            SMT_Main.RESULTS.possible_replaces.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.WMIC, d.Name, $"Wmic method started today {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
-                        }
-                        else if (d.Reason == 2048 && d.Name == "Prefetch" && d.IsFolder && !cacls_string.Contains(TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString()))
-                        {
-                            cacls_string.Add(TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString());
-
-                            cacls_counter++;
-                        }
-                        else if (suspy_extension.Contains(Path.GetExtension(d.Name.ToUpper())) && TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp) >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime)
-                        {
-                            if (!Wrapper.GL_Contains(d.Name, "jnativehook") && !Wrapper.GL_Contains(Path.GetExtension(d.Name), ".dll"))
-                            {
-                                if (d.Reason == 4096)
+                                foreach (var f in journal_names)
                                 {
-                                    SMT_Main.RESULTS.possible_replaces.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.FILE_MOVED_RENAMED, d.Name, $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                    if (GL_Contains(f, d.Name) && d.Reason == 2147484160)
+                                    {
+                                        if (TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
+                                                >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
+                                            SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, "From JAVA.exe Prefetch's log: " + d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                    }
                                 }
-                                else if (d.Reason == 2147484160)
+
+                                if (d.Reason == 2149581088)
                                 {
-                                    SMT_Main.RESULTS.possible_replaces.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.FILE_DELETED, d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                    if (Path.GetPathRoot(Environment.SystemDirectory) == drive.Name)
+                                        SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.WMIC, d.Name, $"Wmic method started today {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                    else
+                                        SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.WMIC, d.Name + " on: " + drive.Name + " volume", $"Wmic method started today {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                }
+                                else if (d.Reason == 2048 && d.Name == "Prefetch" && d.IsFolder && !cacls_string.Contains(TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString()))
+                                {
+                                    cacls_string.Add(TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString());
+
+                                    cacls_counter++;
+                                }
+                                else if (suspy_extension.Contains(Path.GetExtension(d.Name.ToUpper())) && TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp) >= Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].StartTime)
+                                {
+                                    if (!GL_Contains(d.Name, "jnativehook") && !GL_Contains(Path.GetExtension(d.Name), ".dll"))
+                                    {
+                                        if (d.Reason == 4096)
+                                        {
+                                            if (Path.GetPathRoot(Environment.SystemDirectory) == drive.Name)
+                                                SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_MOVED_RENAMED, d.Name, $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                            else
+                                                SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_MOVED_RENAMED, d.Name + " on: " + drive.Name + " volume", $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                        }
+                                        else if (d.Reason == 2147484160)
+                                        {
+                                            if (Path.GetPathRoot(Environment.SystemDirectory) == drive.Name)
+                                                SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                            else
+                                                SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_MOVED_RENAMED, d.Name + " on: " + drive.Name + " volume", $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                        }
+                                    }
+                                    else if (GL_Contains(d.Name, "jnativehook") && GL_Contains(Path.GetExtension(d.Name), ".dll"))
+                                    {
+                                        SMT_Main.RESULTS.string_scan.Add(Detection(DETECTION_VALUES.OUT_INSTANCE, "Generic JNativeHook Clicker (deleted)", TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString()));
+                                    }
                                 }
                             }
-                            else if (Wrapper.GL_Contains(d.Name, "jnativehook") && Wrapper.GL_Contains(Path.GetExtension(d.Name), ".dll"))
-                            {
-                                SMT_Main.RESULTS.string_scan.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.OUT_INSTANCE, "Generic JNativeHook Clicker (deleted)", TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString()));
-                            }
-                        }
+                        });
                     }
-                });
+                    else
+                    {
+                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Impossible to get informations from {drive.Name}", $"No more Informations"));
+                    }
+                }
+                else
+                {
+                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"{drive.Name} is in FAT32 format. You can't use Journal", $"No more Informations"));
+                }
             }
-            else
-            {
-                SMT_Main.RESULTS.Errors.Add("USNJournal unreachable" + rtn.ToString());
-                throw new UsnJournalException(rtn);
-            }
+
 
             Parallel.For(0, GetTemp_files.Count, (index) =>
             {

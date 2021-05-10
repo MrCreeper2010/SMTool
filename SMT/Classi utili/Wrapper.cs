@@ -1,5 +1,4 @@
 ﻿using AuthenticodeExaminer;
-using PastebinAPI;
 using Pastel;
 using SMT.Helpers;
 using System;
@@ -145,6 +144,31 @@ namespace SMT.helpers
             return source.IndexOf(toCheck, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
+        public static bool volumeStatus_Check(string volume_name)
+        {
+            bool finalpid = false;
+
+            if (volume_name != Path.GetPathRoot(Environment.SystemDirectory))
+            {
+                pr.StartInfo.FileName = "cmd.exe";
+                pr.StartInfo.Arguments = $"/C fsutil usn queryjournal {volume_name.Replace("\\", "")}";
+                pr.StartInfo.UseShellExecute = false;
+                pr.StartInfo.RedirectStandardOutput = true;
+                pr.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                pr.Start();
+                pr.WaitForExit();
+                string output = pr.StandardOutput.ReadToEnd();
+                pr.Close();
+
+                if (!output.Contains("ID journal USN") || output.Contains("NTFS"))
+                    finalpid = true;
+                else
+                    finalpid = false;
+            }
+
+            return finalpid;
+        }
+
         public static void Clean()
         {
             //Clean SMT's files
@@ -167,9 +191,10 @@ namespace SMT.helpers
 
         public static void GoodBye()
         {
-            WriteLine("\nCi vedremo presto, ne sono sicuro ;)\n", ConsoleColor.Green);
-            WriteLine("\nScritto da: MrCreeper2010 | @SMTool su Telegram\n", ConsoleColor.White);
-            WriteLine("\nBuona giornata cocchitos! =)\n", ConsoleColor.Red);
+            WriteLine("\nOpen Source project!\n", ConsoleColor.Yellow);
+            WriteLine("Ci vedremo presto, ne sono sicuro ;)", ConsoleColor.Green);
+            WriteLine("Scritto da: MrCreeper2010 | @SMTool su Telegram", ConsoleColor.White);
+            WriteLine("Buona giornata cocchitos! =)", ConsoleColor.Red);
             Console.Write("\nPress ENTER to exit");
             Console.ReadLine();
             Console.Write("\nConfirm exit -> press ENTER");
@@ -425,6 +450,7 @@ namespace SMT.helpers
 
         public static void SaveAllFiles()
         {
+            /*
             //csrss
             try
             {
@@ -524,6 +550,7 @@ namespace SMT.helpers
                 }
             }
             catch { }
+            */
 
             //Explorer
             try
@@ -752,7 +779,10 @@ namespace SMT.helpers
 
             WriteLine("Generic Informations: \n", ConsoleColor.Green);
 
-            WriteLine("PC Type:\n", ConsoleColor.Yellow); //fatto
+            Write($"{"[".Pastel(Color.White)}{$"?".Pastel(Color.FromArgb(235, 149, 50))}{"]".Pastel(Color.White)} {"Explorer report".Pastel(Color.LightCyan)}: ");
+            Console.WriteLine($"C:\\ProgramData\\SMT-{SMTDir}\\explorer_helper.txt".Pastel(Color.White));
+
+            WriteLine("\nPC Type:\n", ConsoleColor.Yellow); //fatto
             Console.WriteLine((SystemInformation.PowerStatus.BatteryChargeStatus == BatteryChargeStatus.NoSystemBattery)
                 ? "- Desktop PC, no touchpad found"
                 : "- Laptop PC, possible touchpad abuse?");
@@ -823,44 +853,44 @@ namespace SMT.helpers
 
             if (SMT_Main.RESULTS.Errors.Count > 0) // done
             {
-                SMT_Main.RESULTS.Errors.Distinct().ToList().ForEach(jna => WriteLine("- " + jna));
+                SMT_Main.RESULTS.Errors.Distinct().ToList().ForEach(jna => WriteLine("   " + jna));
             }
 
             if (SMT_Main.RESULTS.possible_replaces.Count > 0) // done
             {
-                WriteLine("\nFile's actions file(s):\n", ConsoleColor.Cyan);
+                WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} File's actions file(s):");
                 SMT_Main.RESULTS.possible_replaces.Sort();
-                SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => WriteLine("- " + replace));
+                SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
             }
 
             if (SMT_Main.RESULTS.event_viewer_entries.Count > 0) // done
             {
-                WriteLine("\nBad Eventvwr log(s):\n", ConsoleColor.Cyan);
-                SMT_Main.RESULTS.event_viewer_entries.Distinct().ToList().ForEach(eventvwr => WriteLine("- " + eventvwr));
+                WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} EventVwr's bad Logs:");
+                SMT_Main.RESULTS.event_viewer_entries.Distinct().ToList().ForEach(eventvwr => WriteLine("   " + eventvwr));
+            }
+
+            if (SMT_Main.RESULTS.bypass_methods.Count > 0) // done
+            {
+                WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} Bypass methods:");
+                SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
+            }
+
+            if (SMT_Main.RESULTS.string_scan.Count > 0) // done
+            {
+                WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} String scan:");
+                SMT_Main.RESULTS.string_scan.Distinct().ToList().ForEach(strscn => WriteLine("   " + strscn));
             }
 
             if (SMT_Main.RESULTS.suspy_files.Count > 0) // done
             {
-                WriteLine("\nGeneric file attributes Check:\n", ConsoleColor.Cyan);
+                WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} Generic file attributes:");
                 SMT_Main.RESULTS.suspy_files.Sort();
-                SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => WriteLine("- " + suspy));
+                SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => WriteLine("   " + suspy));
             }
             else
             {
                 WriteLine("\nWarning:\n", ConsoleColor.Yellow);
                 Console.WriteLine("- No suspicious file found, if user uses \"Kaspersky\" please disable it and rescan");
-            }
-
-            if (SMT_Main.RESULTS.bypass_methods.Count > 0) // done
-            {
-                WriteLine("\nBypass methods:\n", ConsoleColor.Cyan);
-                SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => WriteLine("- " + replace));
-            }
-
-            if (SMT_Main.RESULTS.string_scan.Count > 0) // done
-            {
-                WriteLine("\nString Scan:\n", ConsoleColor.Cyan);
-                SMT_Main.RESULTS.string_scan.Distinct().ToList().ForEach(strscn => WriteLine("- " + strscn));
             }
 
             #endregion
