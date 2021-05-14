@@ -62,6 +62,15 @@ namespace SMT
 
             #endregion
 
+            #region Estrazione files e disabilitazione chiusura del programma
+
+            DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_CLOSE, MF_BYCOMMAND);
+
+            Wrapper.ExtractFile();
+            Wrapper.SaveAllFiles();
+
+            #endregion
+
             #region Check errore permessi
 
             try
@@ -89,14 +98,6 @@ namespace SMT
 
             #endregion
 
-            #region Estrazione files e disabilitazione chiusura del programma
-
-            DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_CLOSE, MF_BYCOMMAND);
-
-            Wrapper.ExtractFile();
-            Wrapper.SaveAllFiles();
-
-            #endregion
         }
     }
 }

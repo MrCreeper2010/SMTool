@@ -46,3 +46,4 @@ C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.cspr
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.csproj.CopyComplete
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.exe
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\x64\Debug\SMT.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\x64\Debug\Newtonsoft.Json.xml

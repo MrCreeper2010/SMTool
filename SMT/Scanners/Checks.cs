@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -52,14 +53,14 @@ namespace SMT.scanners
                                 if (!GL_Contains(Csrss_path.Value, "windows"))
                                 {
                                     if (!GL_Contains(Csrss_path.Value, "strings2.exe")
-                                    && calcoloSHA256(new FileStream(Csrss_path.Value, FileMode.Open)) 
+                                    && calcoloSHA256(new FileStream(Csrss_path.Value, FileMode.Open))
                                     != "736f66305b85b1ff01b735491db3fae966815ba9ae830c3fec1ab750430f5cdf")
                                         SMT_Main.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.UNSIGNED, Csrss_path.Value, "This file hasn't got any digital signature, please investigate"));
                                 }
                                 break;
                             case "Fake":
-                                if (!GL_Contains(Csrss_path.Value, "unprotect.exe") 
-                                && calcoloSHA256(new FileStream(Csrss_path.Value, FileMode.Open)) 
+                                if (!GL_Contains(Csrss_path.Value, "unprotect.exe")
+                                && calcoloSHA256(new FileStream(Csrss_path.Value, FileMode.Open))
                                 != "7c8b131c5222b69ccfd6664fb9c7d93b071e7f377d1fe8b224cf6ea4367a379f")
                                     SMT_Main.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.FAKE_SIGN, Csrss_path.Value, "File has got a fake/expired digital signature"));
                                 break;
@@ -362,9 +363,11 @@ namespace SMT.scanners
                     {
                         DateTime UpdatedTime = (DateTime)dodo.TimeCreated;
 
-                        if (dodo.TimeCreated > Wrapper.PC_StartTime() && UpdatedTime.AddMinutes(-5) > Wrapper.PC_StartTime())
+                        if (dodo.TimeCreated > PC_StartTime()
+                        && UpdatedTime.AddMinutes(-5) > PC_StartTime())
                         {
-                            SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "USB connected", dodo.TimeCreated.ToString()));
+                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
+                                "Volume/USB connected", dodo.TimeCreated.ToString()));
                         }
                     }
                 }
@@ -398,7 +401,33 @@ namespace SMT.scanners
         {
             Console.OutputEncoding = Encoding.Unicode;
             List<string> journal_names = new List<string>();
+            List<string> tda = new List<string>();
             bool unicode_char = false;
+
+            others_tasks.Add(Task.Run(() =>
+            {
+                Parallel.ForEach(Process.GetProcesses(), (single_process) =>
+                {
+                    try
+                    {
+                        var processFileName = Path.GetFileName(single_process.MainModule.FileName).ToUpper();
+
+                        if (GetSign(single_process.MainModule.FileName) != "Signed"
+                        && single_process.MainModule.FileName != Assembly.GetExecutingAssembly().Location
+                        && prefetchfiles.Where(x => x.Contains(processFileName)) != null
+                        && prefetchfiles.Where(f => File.GetLastWriteTime(processFileName)
+                        >= PC_StartTime()) != null)
+                        {
+                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Unsigned process is in background", $"Process's name: {single_process.MainModule.FileName}"));
+                        }
+
+                    }
+                    catch
+                    {
+
+                    }
+                });
+            }));
 
             others_tasks.Add(Task.Run(() =>
             {
@@ -553,16 +582,23 @@ namespace SMT.scanners
                 Parallel.ForEach(get_PCACLIENT, (index) =>
                 {
                     if (index.Contains("file://")
-                    && !index.Contains("\"displayText\"")
-                    && !GL_Contains(index, "visited: ")
-                    && index.Length >= 14
-                    && !GL_Contains(index, $": {Environment.UserName}@file:///")
-                    && !index.Contains("?"))
+                    && !index.Contains("\"backgroundColor\"")
+                        && !index.Contains("\"displayText\"")
+                        && !GL_Contains(index, "visited: ")
+                        && index.Length >= 14
+                        && !GL_Contains(index, $": {Environment.UserName}@file:///")
+                        && !index.Contains("?")
+                        && !GL_Contains(index, "\""))
                     {
-                        if (!GL_Contains(index, "."))
-                            to_distinct.Add("[VISITED FOLDER] " + index.Replace("file:///", "").Replace("%20", " "));
-                        else
-                            to_distinct.Add(index.Replace("file:///", "").Replace("%20", " "));
+                        int count = index.Replace("file:///", "").Count(f => f == ':');
+
+                        if (count == 1)
+                        {
+                            if (!GL_Contains(index, "."))
+                                to_distinct.Add("[VISITED FOLDER] " + index.Replace("file:///", "").Replace("%20", " "));
+                            else if(GL_Contains(index, "."))
+                                to_distinct.Add(index.Replace("file:///", "").Replace("%20", " "));
+                        }
                     }
 
                     if (GL_Contains(index, "pcaclient")
@@ -598,8 +634,9 @@ namespace SMT.scanners
                 StreamWriter tw = new StreamWriter(mystream);
 
                 to_distinct.Sort();
+                var sas = to_distinct.Distinct().ToList();
 
-                foreach (string n in to_distinct)
+                foreach (string n in sas)
                 {
                     tw.WriteLine(n);
                 }
@@ -807,7 +844,7 @@ namespace SMT.scanners
         {
             List<Task> tasks = new List<Task>();
 
-            Task DPS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/adJN0gu4", '§', $@"C:\ProgramData\SMT-{Wrapper.SMTDir}\Specific.txt"); });
+            Task DPS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/adJN0gu4", '§', $@"C:\ProgramDataGet\SMT-{Wrapper.SMTDir}\Specific.txt"); });
             DPS.Start(); tasks.Add(DPS);
 
             Task LSASS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/1LKLuNWh", '§', $@"C:\ProgramData\SMT-{Wrapper.SMTDir}\Browser.txt"); });

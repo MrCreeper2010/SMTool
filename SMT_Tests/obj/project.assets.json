@@ -2,6 +2,18 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.8": {
+      "AuthenticodeExaminer/0.3.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Security"
+        ],
+        "compile": {
+          "lib/net461/AuthenticodeExaminer.dll": {}
+        },
+        "runtime": {
+          "lib/net461/AuthenticodeExaminer.dll": {}
+        }
+      },
       "System.Buffers/4.5.1": {
         "type": "package",
         "frameworkAssemblies": [
@@ -59,6 +71,18 @@
       }
     },
     ".NETFramework,Version=v4.8/win": {
+      "AuthenticodeExaminer/0.3.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Security"
+        ],
+        "compile": {
+          "lib/net461/AuthenticodeExaminer.dll": {}
+        },
+        "runtime": {
+          "lib/net461/AuthenticodeExaminer.dll": {}
+        }
+      },
       "System.Buffers/4.5.1": {
         "type": "package",
         "frameworkAssemblies": [
@@ -116,6 +140,18 @@
       }
     },
     ".NETFramework,Version=v4.8/win-x64": {
+      "AuthenticodeExaminer/0.3.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Security"
+        ],
+        "compile": {
+          "lib/net461/AuthenticodeExaminer.dll": {}
+        },
+        "runtime": {
+          "lib/net461/AuthenticodeExaminer.dll": {}
+        }
+      },
       "System.Buffers/4.5.1": {
         "type": "package",
         "frameworkAssemblies": [
@@ -173,6 +209,18 @@
       }
     },
     ".NETFramework,Version=v4.8/win-x86": {
+      "AuthenticodeExaminer/0.3.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Security"
+        ],
+        "compile": {
+          "lib/net461/AuthenticodeExaminer.dll": {}
+        },
+        "runtime": {
+          "lib/net461/AuthenticodeExaminer.dll": {}
+        }
+      },
       "System.Buffers/4.5.1": {
         "type": "package",
         "frameworkAssemblies": [
@@ -231,6 +279,23 @@
     }
   },
   "libraries": {
+    "AuthenticodeExaminer/0.3.0": {
+      "sha512": "5fynSklEISHwJX81xeFLZV0+q8nskGdM9W6CRp/V7dN0UO3NmWqDyyDPxKNNbnQIkdbdBiP9yLKdTxwUvxVrOw==",
+      "type": "package",
+      "path": "authenticodeexaminer/0.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "authenticodeexaminer.0.3.0.nupkg.sha512",
+        "authenticodeexaminer.nuspec",
+        "lib/net461/AuthenticodeExaminer.dll",
+        "lib/net461/AuthenticodeExaminer.pdb",
+        "lib/net461/AuthenticodeExaminer.xml",
+        "lib/netstandard2.0/AuthenticodeExaminer.dll",
+        "lib/netstandard2.0/AuthenticodeExaminer.pdb",
+        "lib/netstandard2.0/AuthenticodeExaminer.xml"
+      ]
+    },
     "System.Buffers/4.5.1": {
       "sha512": "Rw7ijyl1qqRS0YQD/WycNst8hUUMgrMH4FCn1nNm27M4VxchZ1js3fVjQaANHO5f3sN4isvP4a+Met9Y4YomAg==",
       "type": "package",
@@ -364,6 +429,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.8": [
+      "AuthenticodeExaminer >= 0.3.0",
       "System.Memory >= 4.5.4"
     ]
   },
@@ -400,6 +466,10 @@
     "frameworks": {
       "net48": {
         "dependencies": {
+          "AuthenticodeExaminer": {
+            "target": "Package",
+            "version": "[0.3.0, )"
+          },
           "System.Memory": {
             "target": "Package",
             "version": "[4.5.4, )"

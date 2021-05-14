@@ -37,3 +37,4 @@ C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Release\SMT.csproj
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Release\SMT.exe
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Release\SMT.pdb
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\DotNetZip.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Release\Newtonsoft.Json.xml

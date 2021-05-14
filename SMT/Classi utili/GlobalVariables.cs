@@ -1,4 +1,5 @@
-﻿using SMT.scanners;
+﻿using SMT.helpers;
+using SMT.scanners;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -100,19 +101,20 @@ namespace SMT.Helpers
             Win32Api.USN_REASON_STREAM_CHANGE |
             Win32Api.USN_REASON_CLOSE;
 
-        public static Regex mountvol_Method = new Regex("^\\\\\\\\?\\\\.+.Volume.+.\\\\.+.$");
+        public static Regex mountvol_Method = new Regex("^\\\\\\\\\\\\\\\\?\\\\\\\\.+.Volume.+.\\\\\\\\.+.$");
         public static Regex javajar_method = new Regex("\\\\VOLUME.*?}");
 
         #endregion
 
+        public static string file = $"C:\\ProgramData\\SMT-{SMTDir}\\SMT-log.txt";
 
         public static Action[] CheckActions_List = new Action[]
         {
-            //checks.DoStringScan,
-            //checks.HeuristicCsrssCheck,
+            checks.DoStringScan,
+            checks.HeuristicCsrssCheck,
             checks.OtherChecks,
             checks.EventVwrCheck,
-            //generics.GlobalGeneric_check,
+            generics.GlobalGeneric_check,
         };
 
     }
