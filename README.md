@@ -31,13 +31,12 @@ Features da aggiungere nella prossima release (quelle con la spunta già sono st
 - [X] Check metodo java -jar (senza JNativeHook)
 - [X] Check universale per trovare QUALUNQUE ghost client di qualunque versione (sia optifine che vanilla)
 - [X] Check per il tipo di PC (laptop o desktop)
-- [X] Explorer report
-- [X] USNJournal anche su USB e HardDisk esterni (ancora in ALFA)
+- [X] USNJournal anche su USB e HardDisk esterni
 - [X] Check USB con FAT32
-- [ ] Check universale per i software di recoding -> Forse dalla 1.11 in poi
+- [X] Check per tutti i volumi/USB del PC attualmente connessi
+- [X] Check universale per i software di recoding (Ancora leggermente buggato)
+- [X] Explorer report (file:// senza duplicati e false-flags)
 - [ ] Check metodo rundll32 e regsvc -> Completato in parte
 - [ ] Check per le estensioni spoffate -> Da trovare un metodo efficace
-
-? Tradurre SMT in Italiano
 
 Official Telegram channel @SMTool
