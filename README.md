@@ -28,7 +28,7 @@ Features da aggiungere nella prossima release (quelle con la spunta già sono st
 - [X] Check PcaClient
 - [X] Check di alcune macro (sezione da aggiornare)
 - [X] Check metodo mountvol
-- [X] Check metodo java -jar (senza JNativeHook)
+- [X] Check metodo java -jar
 - [X] Check universale per trovare QUALUNQUE ghost client di qualunque versione (sia optifine che vanilla)
 - [X] Check per il tipo di PC (laptop o desktop)
 - [X] USNJournal anche su USB e HardDisk esterni
@@ -36,6 +36,7 @@ Features da aggiungere nella prossima release (quelle con la spunta già sono st
 - [X] Check per tutti i volumi/USB del PC attualmente connessi
 - [X] Check universale per i software di recoding (Ancora leggermente buggato)
 - [X] Explorer report (file:// senza duplicati e false-flags)
+- [X] Check per i files PF modificati
 - [ ] Check metodo rundll32 e regsvc -> Completato in parte
 - [ ] Check per le estensioni spoffate -> Da trovare un metodo efficace
 
