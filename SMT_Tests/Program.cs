@@ -1,57 +1,62 @@
-﻿using AuthenticodeExaminer;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Security.Principal;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace SMT_Tests
 {
     class Program
     {
-        public static string GetSign(string file)
+        public static void Main()
         {
-            string signature = "";
-            if (File.Exists(file))
-            {
-                FileInspector extractor = new FileInspector(file);
-                SignatureCheckResult validationResult = extractor.Validate();
+            #region Check recording
 
-                switch (validationResult)
-                {
-                    case SignatureCheckResult.Valid:
-                        signature = "Signed";
-                        break;
-                    case SignatureCheckResult.NoSignature:
-                        signature = "Unsigned";
-                        break;
-                    case SignatureCheckResult.BadDigest:
-                        signature = "Fake";
-                        break;
-                    default:
-                        signature = "Other type of signature";
-                        break;
-                }
+            //List<string> prefetchfiles = Directory.GetFiles(@"C:\Windows\Prefetch", "*.pf").ToList();
+            //List<string> givova = new List<string>();
+
+            //Parallel.ForEach(Process.GetProcesses(), (single_process) =>
+            //{
+            //    try
+            //    {
+            //        var processFileName = Path.GetFileName(single_process.MainModule.FileName).ToUpper();
+
+            //        if (GetSign(single_process.MainModule.FileName) != "Signed"
+            //        && single_process.MainModule.FileName != Assembly.GetExecutingAssembly().Location
+            //        && prefetchfiles.Where(x => x.Contains(processFileName)) != null
+            //        && prefetchfiles.Where(f => File.GetLastWriteTime(processFileName)
+            //        >= Process.GetProcessesByName("javaw")[0].StartTime) != null)
+            //        {
+            //            givova.Add(single_process.MainModule.FileName);
+            //        }
+
+            //    }
+            //    catch
+            //    {
+
+            //    }
+            //});
+
+            //var m = givova.Distinct().ToList();
+            //m.Sort();
+
+            //foreach(var s in m)
+            //{
+            //    Console.WriteLine(s);
+            //}
+
+            #endregion
+            string francus = @"\\\\111\\\\33333\888888\VOLUME";
+
+            Regex rgx = new Regex("\\\\.*?\\\\");
+            Match mch = rgx.Match(francus);
+
+            if(mch.Success)
+            {
+                Console.WriteLine(mch.Value);
             }
 
-            return signature;
-        }
-
-        public static DateTime PC_StartTime()
-        {
-            return DateTime.Now.AddMilliseconds(-Environment.TickCount);
-        }
-
-        static void Main()
-        {
-            var identity = WindowsIdentity.GetCurrent();
-            var principal = new WindowsPrincipal(identity);
-            Console.WriteLine(principal.IsInRole(WindowsBuiltInRole.Administrator));
-
-            Console.WriteLine("done");
+            Console.WriteLine("Finito");
             Console.ReadLine();
         }
     }

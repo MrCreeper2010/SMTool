@@ -16,3 +16,5 @@ C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\ThreeO
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\Prefetch.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\AuthenticodeExaminer.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\AuthenticodeExaminer.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\Json.Net.dll

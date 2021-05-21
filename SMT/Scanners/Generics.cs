@@ -1,4 +1,6 @@
-﻿using SMT.helpers;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using SMT.helpers;
 using SMT.Helpers;
 using System;
 using System.Collections.Generic;
@@ -68,25 +70,6 @@ namespace SMT
 
             #endregion
 
-            #region Cestino
-
-            generic_tasks.Add(Task.Run(() =>
-            {
-
-                string[] recycleBinFolders = Directory.GetDirectories(@"C:\$Recycle.Bin\");
-
-                Parallel.ForEach(recycleBinFolders, (index) =>
-                {
-                    FileInfo folderInfo = new FileInfo(index);
-                    DateTime lastEditTime = File.GetLastWriteTime(@"C:\$Recycle.Bin\" + folderInfo.Name);
-
-                    SMT_Main.RESULTS.recyble_bins.Add(folderInfo.Name, lastEditTime.ToString());
-                });
-
-            }));
-
-            #endregion
-
             #region Recording Software
 
             generic_tasks.Add(Task.Run(() =>
@@ -113,7 +96,7 @@ namespace SMT
                 {
                     if (Process.GetProcessesByName(index).Length != 0)
                     {
-                        SMT_Main.RESULTS.recording_softwares.Add(index);
+                        SMT_Main.RESULTS.recording_softwares.Add(index + ", ");
                         recordingProcessesFound++;
                     }
                 });
@@ -151,89 +134,22 @@ namespace SMT
 
             generic_tasks.Add(Task.Run(() =>
             {
-
-                int total_alts_ctr = 0;
-                string launcher_profiles_line = "";
+                int alts_counter = 0;
 
                 try
                 {
-                    //Default string -> "displayName" : "MrCreeper2010"
-                    string launcher_profiles_file = $@"C:\Users\{Environment.UserName}\AppData\Roaming\.minecraft\launcher_accounts.json";
+                    var obj = JsonConvert.DeserializeObject<JObject>(File.ReadAllText($@"C:\Users\{username}\AppData\Roaming\.minecraft\launcher_accounts.json"));
+                    Regex rgx = new Regex("\".*?\"");
 
-                    using (StreamReader read_launcher_profiles = new StreamReader(launcher_profiles_file))
+                    foreach (var s in obj["accounts"])
                     {
-                        while ((launcher_profiles_line = read_launcher_profiles.ReadLine()) != null)
+                        Match mhc = rgx.Match(s.ToString());
+
+                        if (mhc.Success)
                         {
-                            if (launcher_profiles_line.Contains("\"name\" :")) //Ignore all lines without displayName to get profile
-                            {
-                                Regex displayname_remove = new Regex(@"\"".*?:");
-                                Regex junkstr_remover = new Regex(@"\"".*?\""");
-
-                                string remove_junk1 = displayname_remove.Replace(launcher_profiles_line, "-");  //"displayName" : "MrCreeper2010" -> - "MrCreeper2010"
-                                var alts = junkstr_remover.Match(remove_junk1);
-
-                                if (alts.Success)
-                                {
-                                    switch (alts.Value.Replace("\"", ""))
-                                    {
-                                        case "ItsChri":
-                                            SMT_Main.RESULTS.alts.Add("- ItsChri (oioc o scem!)");
-                                            break;
-                                        case "HuzuniLite":
-                                            SMT_Main.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
-                                            break;
-                                        case "5tie":
-                                            SMT_Main.RESULTS.alts.Add("- 5tie (La malavita dell'Emilia Romagna è qui!)");
-                                            break;
-                                        case "SSoAmmetti":
-                                            SMT_Main.RESULTS.alts.Add("- SSoAmmetti (Giulio Piombo vuole bypassarti con i comandi da cmd!)");
-                                            break;
-                                        default:
-                                            SMT_Main.RESULTS.alts.Add(alts.Value.Replace("\"", ""));
-                                            total_alts_ctr++;
-                                            break;
-                                    }
-                                }
-                            }
-                            else if (launcher_profiles_line.Contains(",\"name\":"))
-                            {
-                                Regex displayname_remove = new Regex(",\"name\".*?}");
-                                Match mch = displayname_remove.Match(launcher_profiles_line);
-                                Regex remove_name = new Regex("\"name\":");
-                                Regex remove_graffe = new Regex("}");
-                                Regex remove_apostrofi = new Regex("\"");
-                                Regex remove_virgole = new Regex(",");
-
-                                string alt_finito = remove_name.Replace(mch.Value, "");
-                                alt_finito = remove_graffe.Replace(alt_finito, "");
-                                alt_finito = remove_apostrofi.Replace(alt_finito, "");
-                                alt_finito = remove_virgole.Replace(alt_finito, "");
-
-                                if (alt_finito.Length > 0)
-                                {
-                                    switch (alt_finito)
-                                    {
-                                        case "ItsChri":
-                                            SMT_Main.RESULTS.alts.Add("- ItsChri (oioc o scem!)");
-                                            break;
-                                        case "HuzuniLite":
-                                            SMT_Main.RESULTS.alts.Add("- HuzuniLite (è stato trovato un guapo di Giugliano, attenzione!)");
-                                            break;
-                                        case "5tie":
-                                            SMT_Main.RESULTS.alts.Add("- 5tie (La malavita dell'Emilia Romagna è qui!)");
-                                            break;
-                                        case "SSoAmmetti":
-                                            SMT_Main.RESULTS.alts.Add("- SSoAmmetti (Giulio Piombo vuole bypassarti con i comandi da cmd!)");
-                                            break;
-                                        default:
-                                            SMT_Main.RESULTS.alts.Add(alt_finito);
-                                            total_alts_ctr++;
-                                            break;
-                                    }
-                                }
-                            }
+                            SMT_Main.RESULTS.alts.Add(obj["accounts"][mhc.Value.Replace("\"", "")]["minecraftProfile"]["name"].ToString() + ", ");
+                            alts_counter++;
                         }
-                        read_launcher_profiles.Close();
                     }
                 }
                 catch
@@ -241,7 +157,7 @@ namespace SMT
                     SMT_Main.RESULTS.alts.Add("No Alt(s) found(s)");
                 }
 
-                if (total_alts_ctr == 0)
+                if (alts_counter == 0)
                 {
                     SMT_Main.RESULTS.alts.Add("No Alt(s) found(s)");
                 }

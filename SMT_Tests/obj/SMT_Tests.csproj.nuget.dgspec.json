@@ -38,6 +38,14 @@
               "target": "Package",
               "version": "[0.3.0, )"
             },
+            "Json.Net": {
+              "target": "Package",
+              "version": "[1.0.33, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            },
             "System.Memory": {
               "target": "Package",
               "version": "[4.5.4, )"

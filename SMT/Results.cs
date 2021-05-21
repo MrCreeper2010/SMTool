@@ -7,7 +7,7 @@ namespace SMT
         #region Check Generics
         public List<string> alts { get; set; } = new List<string>();
         public List<string> mouse { get; set; } = new List<string>();
-        public Dictionary<string, string> recyble_bins { get; set; } = new Dictionary<string, string>();
+        public string recyble_bins { get; set; }
         public List<string> xray_packs { get; set; } = new List<string>();
         public List<string> recording_softwares { get; set; } = new List<string>();
         public List<string> pcaclient { get; set; } = new List<string>();

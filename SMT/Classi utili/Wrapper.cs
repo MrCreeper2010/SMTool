@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ThreeOneThree.Proxima.Agent;
 using ThreeOneThree.Proxima.Core;
 
 namespace SMT.helpers
@@ -42,6 +43,7 @@ namespace SMT.helpers
             IN_INSTANCE = 9,
             WMIC = 10, //DA ELIMINARE
             STAGE_PRC = 11,
+            FILE_REPLACED = 12,
         };
 
         #region Console Utilities
@@ -377,6 +379,9 @@ namespace SMT.helpers
                 case DETECTION_VALUES.FILE_MOVED_RENAMED: //arancione
                     detection_return = $@"{"[".Pastel(Color.White)} {$"MOVED OR RENAMED".Pastel(Color.FromArgb(235, 149, 50))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
+                case DETECTION_VALUES.FILE_REPLACED: //arancione
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"FILE REPLACED".Pastel(Color.FromArgb(235, 149, 50))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                    break;
 
                 #endregion
 
@@ -438,6 +443,51 @@ namespace SMT.helpers
             }
         }
 
+
+        public static string getDirectoryfromJournal(NtfsUsnJournal journal, Win32Api.UsnEntry usnEntry, DriveInfo drive)
+        {
+            string p91941914941eppe = "";
+
+            try
+            {
+                journal.GetPathFromFileReference(Convert.ToUInt64(usnEntry.FileReferenceNumber), out p91941914941eppe);
+
+                if (p91941914941eppe.Contains("Unavailable") && p91941914941eppe != "Unavailable")
+                {
+                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Suspy name to bypass USNJournal", p91941914941eppe));
+                }
+
+                p91941914941eppe = drive.Name + p91941914941eppe;
+            }
+            catch
+            {
+                p91941914941eppe = "Unavailable";
+            }
+
+            try
+            {
+                if (GL_Contains(p91941914941eppe, "Unavailable"))
+                {
+                    p91941914941eppe = "";
+
+                    journal.GetPathFromFileReference(Convert.ToUInt64(usnEntry.ParentFileReferenceNumber), out p91941914941eppe);
+
+                    if (p91941914941eppe.Contains("Unavailable") && p91941914941eppe != "Unavailable")
+                    {
+                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Suspy name to bypass USNJournal", p91941914941eppe));
+                    }
+
+                    p91941914941eppe = drive.Name + p91941914941eppe + "\\" + usnEntry.Name;
+                }
+            }
+            catch
+            {
+                p91941914941eppe = "Unavailable";
+            }
+
+            return p91941914941eppe.Replace(@":\\", ":\\");
+        }
+
         public static string calcoloSHA256(FileStream file)
         {
             var sha = new SHA256Managed();
@@ -449,23 +499,23 @@ namespace SMT.helpers
         public static void SaveAllFiles()
         {
             //csrss
-            try
-            {
-                if (Process.GetProcessesByName("csrss")[0].PagedMemorySize64 > Process.GetProcessesByName("csrss")[1].PagedMemorySize64)
-                {
-                    UnProtectProcess(Process.GetProcessesByName("csrss")[0].Id);
-                    SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {Process.GetProcessesByName("csrss")[0].Id} > C:\ProgramData\SMT-{SMTDir}\csrss.txt");
-                }
-                else
-                {
-                    UnProtectProcess(Process.GetProcessesByName("csrss")[1].Id);
-                    SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {Process.GetProcessesByName("csrss")[1].Id} > C:\ProgramData\SMT-{SMTDir}\csrss.txt");
-                }
-            }
-            catch
-            {
+            //try
+            //{
+            //    if (Process.GetProcessesByName("csrss")[0].PagedMemorySize64 > Process.GetProcessesByName("csrss")[1].PagedMemorySize64)
+            //    {
+            //        UnProtectProcess(Process.GetProcessesByName("csrss")[0].Id);
+            //        SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {Process.GetProcessesByName("csrss")[0].Id} > C:\ProgramData\SMT-{SMTDir}\csrss.txt");
+            //    }
+            //    else
+            //    {
+            //        UnProtectProcess(Process.GetProcessesByName("csrss")[1].Id);
+            //        SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {Process.GetProcessesByName("csrss")[1].Id} > C:\ProgramData\SMT-{SMTDir}\csrss.txt");
+            //    }
+            //}
+            //catch
+            //{
 
-            }
+            //}
 
             //pcasvc (non scanna più)
             try
@@ -807,8 +857,6 @@ namespace SMT.helpers
         public static void enumResults()
         {
             FileStream mystream = new FileStream(file, FileMode.OpenOrCreate, FileAccess.Write);
-            //Commit_TEST
-
 
             using (StreamWriter tw = new StreamWriter(mystream))
             {
@@ -818,51 +866,63 @@ namespace SMT.helpers
                 WriteLine("Generic Informations: \n", ConsoleColor.Green);
                 tw.WriteLine("Generic Informations: \n");
 
-                Write($"{"[".Pastel(Color.White)}{$"?".Pastel(Color.FromArgb(235, 149, 50))}{"]".Pastel(Color.White)} {"Explorer report".Pastel(Color.LightCyan)}: ");
+                Write("Explorer report: ", ConsoleColor.Yellow);
                 Console.WriteLine($"C:\\ProgramData\\SMT-{SMTDir}\\explorer_helper.txt".Pastel(Color.White));
 
                 tw.Write("Explorer report: \n");
                 tw.WriteLine($"C:\\ProgramData\\SMT-{SMTDir}\\explorer_helper.txt");
-                
-                WriteLine("\nPC Type:\n", ConsoleColor.Yellow); //fatto
+
                 tw.WriteLine("\nPC Type:\n");
                 tw.WriteLine((SystemInformation.PowerStatus.BatteryChargeStatus == BatteryChargeStatus.NoSystemBattery)
                     ? "- Desktop PC, no touchpad found"
                     : "- Laptop PC, possible touchpad abuse?");
-                Console.WriteLine((SystemInformation.PowerStatus.BatteryChargeStatus == BatteryChargeStatus.NoSystemBattery)
-                    ? "- Desktop PC, no touchpad found"
-                    : "- Laptop PC, possible touchpad abuse?");
+                
+                if(SystemInformation.PowerStatus.BatteryChargeStatus != BatteryChargeStatus.NoSystemBattery)
+                {
+                    Write("\nPC Type: ", ConsoleColor.Yellow); //fatto
 
-                WriteLine("\nAlts:\n", ConsoleColor.Yellow); //fatto
+                    Write("Laptop PC, possible touchpad abuse?\n", ConsoleColor.Red);
+                }
+                
+                Write("\nAlts: ", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nAlts:\n");
-                SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => WriteLine("- " + alt));
+                try
+                {
+                    string s = SMT_Main.RESULTS.alts.Last();
+                    SMT_Main.RESULTS.alts.RemoveAt(SMT_Main.RESULTS.alts.Count - 1);
+                    SMT_Main.RESULTS.alts.Add(s.Replace(",", ""));
+                }catch { }
+
+                SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => Write(alt));
                 SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => tw.WriteLine("- " + alt));
 
-                WriteLine("\nRecycle.bin:\n", ConsoleColor.Yellow); //fatto
-                tw.WriteLine("\nRecycle.bin:\n");
-                foreach (KeyValuePair<string, string> recycleBin in SMT_Main.RESULTS.recyble_bins)
-                {
-                    WriteLine($"- {recycleBin.Key} ({recycleBin.Value})");
-                    tw.WriteLine($"- {recycleBin.Key} ({recycleBin.Value})");
-                }
+                Write("\n\nRecycle.bin: ", ConsoleColor.Yellow); //fatto
+                Write(SMT_Main.RESULTS.recyble_bins);
+
+                tw.WriteLine("\nRecycle.bin: ");
+                tw.WriteLine(SMT_Main.RESULTS.recyble_bins);
 
                 if (SMT_Main.RESULTS.recording_softwares.Count > 0)
                 {
-                    WriteLine("\nRecording Software(s):\n ", ConsoleColor.Yellow);
-                    tw.WriteLine("\nRecording Software(s):\n ");
-                    SMT_Main.RESULTS.recording_softwares.ForEach(recording => WriteLine("- " + recording));
+                    Write("\n\nRecording Software(s): ", ConsoleColor.Yellow);
+                    string b = SMT_Main.RESULTS.recording_softwares.Last();
+                    SMT_Main.RESULTS.recording_softwares.RemoveAt(SMT_Main.RESULTS.recording_softwares.Count - 1);
+                    SMT_Main.RESULTS.recording_softwares.Add(b.Replace(",", ""));
+                    SMT_Main.RESULTS.recording_softwares.ForEach(recording => Write(recording));
+                    
+                    tw.WriteLine("\n\nRecording Software(s):\n ");
                     SMT_Main.RESULTS.recording_softwares.ForEach(recording => tw.WriteLine("- " + recording));
 
                 }
                 else
                 {
-                    WriteLine("\nRecording Software(s):\n ", ConsoleColor.Yellow);
-                    tw.WriteLine("\nRecording Software(s):\n ");
-                    Console.WriteLine("- No Recording Software(s) found");
-                    tw.WriteLine("- No Recording Software(s) found");
+                    Write("\n\nRecording Software(s): ", ConsoleColor.Yellow);
+                    Write("No Recording Software(s) found");
+                    tw.WriteLine("\n\nRecording Software(s): ");
+                    tw.WriteLine("No Recording Software(s) found");
                 }
 
-                WriteLine("\nProcess(es) Start Time:\n", ConsoleColor.Yellow); //fatto
+                WriteLine("\n\nProcess(es) Start Time:\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nProcess(es) Start Time:\n");
                 foreach (KeyValuePair<string, string> processStart in SMT_Main.RESULTS.processes_starts)
                 {
@@ -921,7 +981,9 @@ namespace SMT.helpers
 
                 if (SMT_Main.RESULTS.Errors.Count > 0) // done
                 {
+                    tw.WriteLine("[WARNING] ERRORS:");
                     SMT_Main.RESULTS.Errors.Distinct().ToList().ForEach(jna => WriteLine("   " + jna));
+                    SMT_Main.RESULTS.Errors.Distinct().ToList().ForEach(jna => tw.WriteLine("   " + jna));
                 }
 
                 if (SMT_Main.RESULTS.possible_replaces.Count > 0) // done
@@ -937,6 +999,7 @@ namespace SMT.helpers
                 {
                     WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} EventVwr's bad Logs:");
                     tw.WriteLine("\nEventVwr's bad Logs:");
+                    SMT_Main.RESULTS.event_viewer_entries.Sort();
                     SMT_Main.RESULTS.event_viewer_entries.Distinct().ToList().ForEach(eventvwr => WriteLine("   " + eventvwr));
                     SMT_Main.RESULTS.event_viewer_entries.Distinct().ToList().ForEach(eventvwr => tw.WriteLine("   " + eventvwr.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
                 }
@@ -945,15 +1008,17 @@ namespace SMT.helpers
                 {
                     WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} Bypass methods:");
                     tw.WriteLine("\nBypass methods:");
+                    SMT_Main.RESULTS.bypass_methods.Sort();
                     SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
                     SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => tw.WriteLine("   " + replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
-                
+
                 }
 
                 if (SMT_Main.RESULTS.string_scan.Count > 0) // done
                 {
                     WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} String scan:");
                     tw.WriteLine("\nString scan:");
+                    SMT_Main.RESULTS.string_scan.Sort();
                     SMT_Main.RESULTS.string_scan.Distinct().ToList().ForEach(strscn => WriteLine("   " + strscn));
                     SMT_Main.RESULTS.string_scan.Distinct().ToList().ForEach(strscn => tw.WriteLine("   " + strscn.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
                 }
@@ -975,10 +1040,7 @@ namespace SMT.helpers
                 }
 
                 #endregion
-
             }
-
-            Console.WriteLine($"\nComplete SMT's scan log: C:\\ProgramData\\SMT-{SMTDir}\\SMT-log.txt");
 
             try
             {

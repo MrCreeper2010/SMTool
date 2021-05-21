@@ -15,6 +15,12 @@ namespace SMT
         /// - by MrCreeper2010 || @CheatReleaseItalyv2 on Telegram
         /// </summary>
 
+        /*
+         *  1.Vari checks powershell
+            2.Clicker bat Eventi ps
+            3.Checks solo lettura cronologia pw
+         */
+
         public static Results RESULTS = new Results();
 
         public static long final_scan = 0;
@@ -32,7 +38,7 @@ namespace SMT
 
                 Stopwatch stopwatch = new Stopwatch();
 
-                Wrapper.WriteLine("Mangiamo sti baby shitty Giulio Piombini ...\n", ConsoleColor.Yellow);
+                Wrapper.WriteLine("Mangiamo sti baby shitty Giulio Piombini...\n", ConsoleColor.Yellow);
 
                 stopwatch.Start();
 

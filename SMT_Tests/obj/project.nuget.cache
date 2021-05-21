@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "BSo9Lre2DSgV/lFnhuHxjrRy0prKmBKd5J9Au6+bdJj5e2miElzA2/QsmqaCRrNMeO3pVOshDywFea/hkLdPIA==",
+  "dgSpecHash": "YiP+VCdtd9Mj0JNmKmrKnfzMTCrY149I8Pd/+zGsiGGl8lFSVOUn0BTsv2COFJSZfbHNb4M0ZD5jbpH/oV0fUQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Mattia\\Documents\\Progetti\\Progetti C#\\SMTool\\SMT_Tests\\SMT_Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mattia\\.nuget\\packages\\authenticodeexaminer\\0.3.0\\authenticodeexaminer.0.3.0.nupkg.sha512",
+    "C:\\Users\\Mattia\\.nuget\\packages\\json.net\\1.0.33\\json.net.1.0.33.nupkg.sha512",
+    "C:\\Users\\Mattia\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
     "C:\\Users\\Mattia\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
     "C:\\Users\\Mattia\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
     "C:\\Users\\Mattia\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",

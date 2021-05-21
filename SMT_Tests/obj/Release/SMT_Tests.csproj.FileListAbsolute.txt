@@ -30,3 +30,4 @@ C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\NLog
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Prefetch.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\AuthenticodeExaminer.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\AuthenticodeExaminer.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Newtonsoft.Json.dll

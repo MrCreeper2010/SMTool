@@ -50,3 +50,4 @@ C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Debug\SMT.csproj.C
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Debug\SMT.exe
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\obj\Debug\SMT.pdb
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Debug\DotNetZip.xml
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT\bin\Debug\Newtonsoft.Json.xml
