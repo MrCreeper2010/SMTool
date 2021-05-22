@@ -34,10 +34,11 @@ Features da aggiungere nella prossima release (quelle con la spunta già sono st
 - [X] USNJournal anche su USB e HardDisk esterni
 - [X] Check USB con FAT32
 - [X] Check per tutti i volumi/USB del PC attualmente connessi
-- [X] Check universale per i software di recoding (Ancora leggermente buggato)
 - [X] Explorer report (file:// senza duplicati e false-flags)
 - [X] Check per i files PF modificati
-- [ ] Check metodo rundll32 e regsvc -> Completato in parte
-- [ ] Check per le estensioni spoffate -> Da trovare un metodo efficace
+- [X] Check metodo rundll32 e regsvc
+- [X] Check per le estensioni spoffate
+- [X] Directory journal aggiunte!
+- [ ] Check universale recording software
 
 Official Telegram channel @SMTool
