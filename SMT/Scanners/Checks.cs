@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Ionic.Zip;
 using Microsoft.Win32;
+using SMT.Classi_utili;
 using SMT.helpers;
 using SMT.Helpers;
 using System;
@@ -723,7 +724,7 @@ namespace SMT.scanners
                         }
                     }
 
-                    if (Wrapper.GL_Contains(index, "java.exe"))
+                    if (GL_Contains(index, "java.exe"))
                     {
                         foreach (var s in Prefetch.PrefetchFile.Open(index).Filenames)
                         {
@@ -759,7 +760,7 @@ namespace SMT.scanners
 
                                                         if (GL_Contains(f, "main-class"))
                                                         {
-                                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Possible Java -jar found on: {trytoget_disk.Replace(@"\\", "\\")}", "No more Informations"));
+                                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Possible Java -jar found on: {trytoget_disk.Replace(@"\\", "\\")}", "(BETA Method)"));
                                                         }
                                                     }
                                                 }
@@ -778,6 +779,78 @@ namespace SMT.scanners
             });
 
             #endregion
+
+            Regex regex_path = new Regex(@"[A-Z]:\\.*?$");
+            string[] CSRSS_file = File.ReadAllLines($@"C:\Users\Mattia\Desktop\csrss.txt");
+
+            Parallel.ForEach(CSRSS_file, (index) =>
+            {
+                Match Csrss_path = regex_path.Match(index);
+
+                if (Csrss_path.Success && File.Exists(Csrss_path.Value) && !GL_Contains(index, ".dll"))
+                {
+                    if (FileUtilities.isSpoofedExtension(Csrss_path.Value))
+                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Spoofed extension found: {Csrss_path.Value}", $"This file is a DLL!"));
+                    else if (!FileUtilities.isSpoofedExtension(Csrss_path.Value) && suspy_extension.Contains(Path.GetExtension(index.ToUpper())))
+                    {
+                        if (prefetchfiles.Where(x => x
+                            .Contains(Path.GetFileName(Csrss_path.Value).ToUpper()))
+                            .FirstOrDefault() != null
+                            && prefetchfiles
+                            .Where(f => File.GetLastWriteTime(Csrss_path.Value)
+                            >= PC_StartTime())
+                            .FirstOrDefault() != null)
+                        {
+                            //switch (GetSign(Csrss_path.Value))
+                            //{
+                            //    case "Unsigned":
+                            //        if (!GL_Contains(Csrss_path.Value, "windows"))
+                            //        {
+                            //            if (!GL_Contains(Csrss_path.Value, "strings2.exe")
+                            //            && calcoloSHA256(new FileStream(Csrss_path.Value, FileMode.Open))
+                            //            != "736f66305b85b1ff01b735491db3fae966815ba9ae830c3fec1ab750430f5cdf")
+                            //                SMT_Main.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.UNSIGNED, Csrss_path.Value, "This file hasn't got any digital signature, please investigate"));
+                            //        }
+                            //        break;
+                            //    case "Fake":
+                            //        if (!GL_Contains(Csrss_path.Value, "unprotect.exe")
+                            //        && calcoloSHA256(new FileStream(Csrss_path.Value, FileMode.Open))
+                            //        != "7c8b131c5222b69ccfd6664fb9c7d93b071e7f377d1fe8b224cf6ea4367a379f")
+                            //            SMT_Main.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.FAKE_SIGN, Csrss_path.Value, "File has got a fake/expired digital signature"));
+                            //        break;
+                            //    case "Other type of signature":
+                            //        SMT_Main.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.UNKN_SIGN, Csrss_path.Value, "Suspicious digital signature's informations, please investigate"));
+                            //        break;
+                            //}
+                        }
+                    }
+                }
+                else if (Csrss_path.Success && !File.Exists(Csrss_path.Value))
+                {
+                    journal_names.Add(Csrss_path.Value);
+                }
+                else if (Csrss_path.Success && Path.GetExtension(Csrss_path.Value).ToUpper() == ".DLL")
+                {
+                    if (File.Exists(Csrss_path.Value)
+                        && File.ReadAllText(Csrss_path.Value).Contains("AllocConsole")
+                        && File.ReadAllText(Csrss_path.Value).Contains("AdjustTokenPrivileges")
+                        && FileUtilities.isInjectableDll(Csrss_path.Value)
+                        && !IsFileLocked(new FileInfo(Csrss_path.Value)))
+                    {
+                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"DLL Injected: {Csrss_path.Value}", $"No more Informations"));
+                    }
+                    else if(!File.Exists(Csrss_path.Value))
+                    {
+                        journal_names.Add(Csrss_path.Value);
+                    }
+                }
+            });
+
+            SMT_Main.RESULTS.suspy_files.Sort();
+
+            Task.WaitAll(others_tasks.ToArray());
+
+
 
             #region Check Journal
 
@@ -835,11 +908,11 @@ namespace SMT.scanners
                                     {
                                         foreach (var f in journal_names)
                                         {
-                                            if (GL_Contains(f, d.Name) && d.Reason == 2147484160)
+                                            if (GL_Contains(f, d.Name) && (d.Reason == 2147484160 || d.Reason == 4096 || d.Reason == 8192))
                                             {
                                                 if (TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
                                                         >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
-                                                    SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, "From JAVA.exe Prefetch's log: " + d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                    SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, "From journal file: " + d.Name, $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                             }
                                         }
 
@@ -934,8 +1007,6 @@ namespace SMT.scanners
             Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "USNJournal check completed"));
 
             #endregion
-
-            Task.WaitAll(others_tasks.ToArray());
 
             Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Other checks completed"));
         } //Refractored

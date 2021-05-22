@@ -114,7 +114,7 @@ namespace SMT.Helpers
             //checks.HeuristicCsrssCheck,
             checks.OtherChecks,
             //checks.EventVwrCheck,
-            generics.GlobalGeneric_check,
+            //generics.GlobalGeneric_check,
         };
 
     }

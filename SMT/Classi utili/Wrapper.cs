@@ -536,7 +536,7 @@ namespace SMT.helpers
             {
                 if (GetPID("DPS") != " 0 ")
                 {
-                    UnProtectProcess(Convert.ToInt32(GetPID("DPS")));
+                    //UnProtectProcess(Convert.ToInt32(GetPID("DPS")));
                     SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -l 19 -pid {GetPID("DPS")} > C:\ProgramData\SMT-{SMTDir}\Specific.txt");
                     DPS = true;
                 }
@@ -564,7 +564,7 @@ namespace SMT.helpers
             {
                 if (GetPID("dnscache") != " 0 ")
                 {
-                    UnProtectProcess(Convert.ToInt32(GetPID("dnscache")));
+                    //UnProtectProcess(Convert.ToInt32(GetPID("dnscache")));
                     SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -l 6 -pid {GetPID("dnscache")} > C:\ProgramData\SMT-{SMTDir}\dns.txt");
                     DNS = true;
                 }
@@ -580,7 +580,7 @@ namespace SMT.helpers
             {
                 if (GetPID("DiagTrack") != " 0 ")
                 {
-                    UnProtectProcess(Convert.ToInt32(GetPID("DiagTrack")));
+                    //UnProtectProcess(Convert.ToInt32(GetPID("DiagTrack")));
                     SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {GetPID("DiagTrack")} > C:\ProgramData\SMT-{SMTDir}\utcsvc.txt");
 
                     string[] DiagTrack_lines = File.ReadAllLines($@"C:\ProgramData\SMT-{SMTDir}\utcsvc.txt");

@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace SMT_Tests
+namespace SMT.Classi_utili
 {
-
     [StructLayout(LayoutKind.Sequential)]
     struct IMAGE_DOS_HEADER
     {
@@ -140,12 +141,11 @@ namespace SMT_Tests
         public uint NumberOfRvaAndSizes;
     }
 
-    static class ExeChecker
+    static class FileUtilities
     {
-        public static bool IsValidExe(string fileName)
+        public static bool isSpoofedExtension(string fileName)
         {
-            if (!File.Exists(fileName))
-                return false;
+            bool return_value = false;
 
             try
             {
@@ -159,46 +159,29 @@ namespace SMT_Tests
                     if (ntHeader.Signature != IMAGE_NT_SIGNATURE)
                         return false;
 
-                    if ((ntHeader.FileHeader.Characteristics & IMAGE_FILE_DLL) != 0)
-                        return false;
-
-                    switch (ntHeader.FileHeader.Machine)
-                    {
-                        case IMAGE_FILE_MACHINE_I386:
-                            return IsValidExe32(GetNtHeader32(stream, dosHeader));
-
-                        case IMAGE_FILE_MACHINE_IA64:
-                        case IMAGE_FILE_MACHINE_AMD64:
-                            return IsValidExe64(GetNtHeader64(stream, dosHeader));
-                    }
+                    if ((ntHeader.FileHeader.Characteristics & IMAGE_FILE_DLL) != 0 && Path.GetExtension(fileName).ToUpper() != ".DLL")
+                        return true;
                 }
             }
-            catch (InvalidOperationException)
+            catch
             {
-                return false;
+
             }
 
-            return true;
+            return return_value;
         }
 
         public static bool isInjectableDll(string fileName)
         {
             bool value_to_return = false;
-            
+
             try
             {
                 using (var stream = File.OpenRead(fileName))
                 {
                     IMAGE_DOS_HEADER dosHeader = GetDosHeader(stream);
-                    if (dosHeader.e_magic != IMAGE_DOS_SIGNATURE)
-                        Console.WriteLine("magic number doesn't work properly " + fileName);
 
                     IMAGE_NT_HEADERS_COMMON ntHeader = GetCommonNtHeader(stream, dosHeader);
-                    if (ntHeader.Signature != IMAGE_NT_SIGNATURE)
-                        Console.WriteLine("signature doesn't work properly");
-
-                    if ((ntHeader.FileHeader.Characteristics & IMAGE_FILE_DLL) != 0 && Path.GetExtension(fileName).ToUpper() != ".DLL")
-                        Console.WriteLine("Il File è una dll ma ha un'estensione diversa da quella DLL " + fileName);
 
                     switch (ntHeader.FileHeader.Machine)
                     {
@@ -218,16 +201,6 @@ namespace SMT_Tests
             return value_to_return;
         }
 
-        static bool IsValidExe32(IMAGE_NT_HEADERS32 ntHeader)
-        {
-            return ntHeader.OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC;
-        }
-
-        static bool IsValidExe64(IMAGE_NT_HEADERS64 ntHeader)
-        {
-            return ntHeader.OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR64_MAGIC;
-        }
-
         static ushort validDLL(IMAGE_NT_HEADERS64 ntHeader)
         {
             return ntHeader.OptionalHeader.Subsystem;
@@ -243,12 +216,6 @@ namespace SMT_Tests
         {
             stream.Seek(dosHeader.e_lfanew, SeekOrigin.Begin);
             return ReadStructFromStream<IMAGE_NT_HEADERS_COMMON>(stream);
-        }
-
-        static IMAGE_NT_HEADERS32 GetNtHeader32(Stream stream, IMAGE_DOS_HEADER dosHeader)
-        {
-            stream.Seek(dosHeader.e_lfanew, SeekOrigin.Begin);
-            return ReadStructFromStream<IMAGE_NT_HEADERS32>(stream);
         }
 
         static IMAGE_NT_HEADERS64 GetNtHeader64(Stream stream, IMAGE_DOS_HEADER dosHeader)
@@ -295,95 +262,5 @@ namespace SMT_Tests
         const ushort IMAGE_NT_OPTIONAL_HDR64_MAGIC = 0x20B; // PE32+
 
         const ushort IMAGE_FILE_DLL = 0x2000;
-    }
-
-    class Program
-    {
-        public static bool IsFileLocked(FileInfo file)
-        {
-            try
-            {
-                using (FileStream stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None))
-                {
-                    stream.Close();
-                }
-            }
-            catch (IOException)
-            {
-                //the file is unavailable because it is:
-                //still being written to
-                //or being processed by another thread
-                //or does not exist (has already been processed)
-                return true;
-            }
-
-            //file is not locked
-            return false;
-        }
-
-        public static void Main()
-        {
-            #region Check recording
-
-            //List<string> prefetchfiles = Directory.GetFiles(@"C:\Windows\Prefetch", "*.pf").ToList();
-            //List<string> givova = new List<string>();
-
-            //Parallel.ForEach(Process.GetProcesses(), (single_process) =>
-            //{
-            //    try
-            //    {
-            //        var processFileName = Path.GetFileName(single_process.MainModule.FileName).ToUpper();
-
-            //        if (GetSign(single_process.MainModule.FileName) != "Signed"
-            //        && single_process.MainModule.FileName != Assembly.GetExecutingAssembly().Location
-            //        && prefetchfiles.Where(x => x.Contains(processFileName)) != null
-            //        && prefetchfiles.Where(f => File.GetLastWriteTime(processFileName)
-            //        >= Process.GetProcessesByName("javaw")[0].StartTime) != null)
-            //        {
-            //            givova.Add(single_process.MainModule.FileName);
-            //        }
-
-            //    }
-            //    catch
-            //    {
-
-            //    }
-            //});
-
-            //var m = givova.Distinct().ToList();
-            //m.Sort();
-
-            //foreach(var s in m)
-            //{
-            //    Console.WriteLine(s);
-            //}
-
-            #endregion
-
-            Regex rgx = new Regex(@"[A-Z]:\\.*?$");
-
-            string line = "";
-            string[] sda = File.ReadAllLines(@"C:\users\Mattia\Desktop\csrss.txt");
-
-            Parallel.ForEach(sda, (index) =>
-            {
-                Match mch = rgx.Match(index);
-
-                if (Path.GetExtension(mch.Value).ToUpper() == ".DLL")
-                {
-                    if (mch.Success && File.Exists(mch.Value)
-                        && File.ReadAllText(mch.Value).Contains("AllocConsole")
-                        && File.ReadAllText(mch.Value).Contains("AdjustTokenPrivileges")
-                        && ExeChecker.isInjectableDll(mch.Value)
-                        && !IsFileLocked(new FileInfo(mch.Value)))
-                    {
-                        Console.WriteLine(mch.Value);
-                    }
-                }
-            });
-
-            Console.WriteLine("Finito");
-            Console.ReadLine();
-        }
     }
 }
