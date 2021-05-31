@@ -37,8 +37,9 @@ Features da aggiungere nella prossima release (quelle con la spunta già sono st
 - [X] Explorer report (file:// senza duplicati e false-flags)
 - [X] Check per i files PF modificati
 - [X] Check metodo rundll32 e regsvc
-- [X] Check per le estensioni spoffate
+- [ ] Check per le estensioni spoffate - per la 1.12
 - [X] Directory journal aggiunte!
-- [ ] Check universale recording software
+- [ ] Check universale recording software - per la 1.12
+- Web results added
 
 Official Telegram channel @SMTool
