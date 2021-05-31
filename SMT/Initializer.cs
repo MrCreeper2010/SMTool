@@ -87,7 +87,9 @@ namespace SMT
             }
             catch (DirectoryNotFoundException)
             {
-                username = Wrapper.getCorrectUsername(Path.GetTempPath());
+                Console.WriteLine("PC can't grant permissions to access to %temp% or Prefetch");
+                Wrapper.Wait();
+                Environment.Exit(1);
             }
             catch (UnauthorizedAccessException)
             {

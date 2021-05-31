@@ -31,19 +31,14 @@ namespace SMT.helpers
 
         public enum DETECTION_VALUES
         {
-            FILE_DELETED = 0,
-            FILE_MOVED_RENAMED = 1,
-            BYPASS_METHOD = 2,
-            SUSP_BEHAVIOR = 3, //Suspicious File (Suspicious behavior)
-            UNSIGNED = 4, //Suspicious File (Digital signature check)
-            SUSP_SIGN = 5,
-            FAKE_SIGN = 6,
-            UNKN_SIGN = 7,
-            OUT_INSTANCE = 8,
-            IN_INSTANCE = 9,
-            WMIC = 10, //DA ELIMINARE
-            STAGE_PRC = 11,
-            FILE_REPLACED = 12,
+            FILE_DELETED = 0,  //Files types
+            FILE_MOVED_RENAMED = 1, //Files types
+            BYPASS_METHOD = 2, //Checks
+            UNSIGNED = 4, //Files types
+            OUT_INSTANCE = 8, //Checks
+            IN_INSTANCE = 9, //Checks
+            STAGE_PRC = 11, //NN
+            FILE_REPLACED = 12,  //Files types
         };
 
         #region Console Utilities
@@ -131,17 +126,6 @@ namespace SMT.helpers
             catch { ThrowException(); }
         }
 
-        public static void runCheckAsync_Generic(Action check)
-        {
-            try
-            {
-#pragma warning disable CS1998 // Il metodo asincrono non contiene operatori 'await', pertanto verrà eseguito in modo sincrono
-                generic_tasks.Add(Task.Factory.StartNew(async () => check()));
-#pragma warning restore CS1998 // Il metodo asincrono non contiene operatori 'await', pertanto verrà eseguito in modo sincrono
-            }
-            catch { ThrowException(); }
-        }
-
         public static bool GL_Contains(string source, string toCheck)
         {
             return source.IndexOf(toCheck, StringComparison.OrdinalIgnoreCase) >= 0;
@@ -164,9 +148,13 @@ namespace SMT.helpers
                 pr.Close();
 
                 if (!output.Contains("ID journal USN") || output.Contains("NTFS"))
+                {
                     finalpid = true;
+                }
                 else
+                {
                     finalpid = false;
+                }
             }
 
             return finalpid;
@@ -231,35 +219,15 @@ namespace SMT.helpers
             return false;
         }
 
-        public static void Wait() => Thread.Sleep(5000);
+        public static void Wait()
+        {
+            Thread.Sleep(5000);
+        }
 
         public static string getCorrectUsername(string temp_path)
         {
             Regex rgx = new Regex("Users\\\\.*?\\\\");
             return rgx.Match(temp_path).Value.Replace(@"Users\", "").Replace("\\", "");
-        }
-
-        public static bool journal_returnconditions(Win32Api.UsnEntry UsnEntry)
-        {
-            bool true_or_false = false;
-
-            if (suspy_extension.Contains(Path.GetExtension(UsnEntry.Name.ToUpper())))
-            {
-                if (TimeZone.CurrentTimeZone.ToLocalTime(UsnEntry.TimeStamp)
-                    >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
-                {
-                    if (GL_Contains(UsnEntry.Name, "Jnativehook") && GL_Contains(UsnEntry.Name, ".dll"))
-                    {
-                        true_or_false = true;
-                    }
-                    else if (!GL_Contains(UsnEntry.Name, ".dll"))
-                    {
-                        true_or_false = true;
-                    }
-                }
-            }
-
-            return true_or_false;
         }
 
         public static void ExtractFile()
@@ -351,7 +319,7 @@ namespace SMT.helpers
 
             string return_value = "";
 
-            var mbs = new ManagementObjectSearcher("Select ProcessorId From Win32_processor");
+            ManagementObjectSearcher mbs = new ManagementObjectSearcher("Select ProcessorId From Win32_processor");
             ManagementObjectCollection mbsList = mbs.Get();
             foreach (ManagementObject mo in mbsList)
             {
@@ -377,10 +345,10 @@ namespace SMT.helpers
                     detection_return = $@"{"[".Pastel(Color.White)} {$"BYPASS METHOD".Pastel(Color.FromArgb(240, 52, 52))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
                 case DETECTION_VALUES.FILE_MOVED_RENAMED: //arancione
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"MOVED OR RENAMED".Pastel(Color.FromArgb(235, 149, 50))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"MOVED/RENAMED".Pastel(Color.FromArgb(235, 149, 50))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
                 case DETECTION_VALUES.FILE_REPLACED: //arancione
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"FILE REPLACED".Pastel(Color.FromArgb(235, 149, 50))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"REPLACED".Pastel(Color.FromArgb(235, 149, 50))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
 
                 #endregion
@@ -390,29 +358,15 @@ namespace SMT.helpers
                 case DETECTION_VALUES.UNSIGNED: //rosso
                     detection_return = $@"{"[".Pastel(Color.White)} {$"UNSIGNED".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
-                case DETECTION_VALUES.SUSP_BEHAVIOR: //rosso
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"SUSPY BEHAVIOR".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
-                    break;
-                case DETECTION_VALUES.FAKE_SIGN: //giallino
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"FAKE SIGNATURE".Pastel(Color.FromArgb(254, 250, 212))} {"]".Pastel(Color.White)} {detection}";
-                    break;
-                case DETECTION_VALUES.UNKN_SIGN: //idk
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"UNKNOW SIGNATURE".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
-                    break;
-
                 #endregion
 
                 #region Others
 
                 case DETECTION_VALUES.OUT_INSTANCE: //giallo
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                    detection_return = $@"{"[".Pastel(Color.White)} {$"OUT OF INSTANCE".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
-                case DETECTION_VALUES.IN_INSTANCE: //non si usa più
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(0, 230, 64))} {"]".Pastel(Color.White)} {detection}";
-                    break;
-
-                case DETECTION_VALUES.WMIC: //viola
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"{detection_type}".Pastel(Color.FromArgb(235, 149, 50))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                case DETECTION_VALUES.IN_INSTANCE: //DA RIMETTERE
+                    detection_return = $@"{"[".Pastel(Color.White)} {"IN INSTANCE".Pastel(Color.FromArgb(0, 230, 64))} {"]".Pastel(Color.White)} {detection}";
                     break;
 
                 case DETECTION_VALUES.STAGE_PRC:
@@ -443,7 +397,6 @@ namespace SMT.helpers
             }
         }
 
-
         public static string getDirectoryfromJournal(NtfsUsnJournal journal, Win32Api.UsnEntry usnEntry, DriveInfo drive)
         {
             string p91941914941eppe = "";
@@ -452,32 +405,18 @@ namespace SMT.helpers
             {
                 journal.GetPathFromFileReference(Convert.ToUInt64(usnEntry.FileReferenceNumber), out p91941914941eppe);
 
-                if (p91941914941eppe.Contains("Unavailable") && p91941914941eppe != "Unavailable")
+                if (p91941914941eppe != "Unavailable")
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Suspy name to bypass USNJournal", p91941914941eppe));
+                    p91941914941eppe = drive.Name + p91941914941eppe;
                 }
-
-                p91941914941eppe = drive.Name + p91941914941eppe;
-            }
-            catch
-            {
-                p91941914941eppe = "Unavailable";
-            }
-
-            try
-            {
-                if (GL_Contains(p91941914941eppe, "Unavailable"))
+                else
                 {
                     p91941914941eppe = "";
 
                     journal.GetPathFromFileReference(Convert.ToUInt64(usnEntry.ParentFileReferenceNumber), out p91941914941eppe);
 
-                    if (p91941914941eppe.Contains("Unavailable") && p91941914941eppe != "Unavailable")
-                    {
-                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Suspy name to bypass USNJournal", p91941914941eppe));
-                    }
-
                     p91941914941eppe = drive.Name + p91941914941eppe + "\\" + usnEntry.Name;
+
                 }
             }
             catch
@@ -490,7 +429,7 @@ namespace SMT.helpers
 
         public static string calcoloSHA256(FileStream file)
         {
-            var sha = new SHA256Managed();
+            SHA256Managed sha = new SHA256Managed();
 
             byte[] bytes = sha.ComputeHash(file);
             return BitConverter.ToString(bytes).Replace("-", "").ToLower();
@@ -498,24 +437,29 @@ namespace SMT.helpers
 
         public static void SaveAllFiles()
         {
-            //csrss
-            //try
-            //{
-            //    if (Process.GetProcessesByName("csrss")[0].PagedMemorySize64 > Process.GetProcessesByName("csrss")[1].PagedMemorySize64)
-            //    {
-            //        UnProtectProcess(Process.GetProcessesByName("csrss")[0].Id);
-            //        SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {Process.GetProcessesByName("csrss")[0].Id} > C:\ProgramData\SMT-{SMTDir}\csrss.txt");
-            //    }
-            //    else
-            //    {
-            //        UnProtectProcess(Process.GetProcessesByName("csrss")[1].Id);
-            //        SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {Process.GetProcessesByName("csrss")[1].Id} > C:\ProgramData\SMT-{SMTDir}\csrss.txt");
-            //    }
-            //}
-            //catch
-            //{
 
-            //}
+#if !DEBUG
+
+            //csrss
+            try
+            {
+                if (Process.GetProcessesByName("csrss")[0].PagedMemorySize64 > Process.GetProcessesByName("csrss")[1].PagedMemorySize64)
+                {
+                    UnProtectProcess(Process.GetProcessesByName("csrss")[0].Id);
+                    SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {Process.GetProcessesByName("csrss")[0].Id} > C:\ProgramData\SMT-{SMTDir}\csrss.txt");
+                }
+                else
+                {
+                    UnProtectProcess(Process.GetProcessesByName("csrss")[1].Id);
+                    SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {Process.GetProcessesByName("csrss")[1].Id} > C:\ProgramData\SMT-{SMTDir}\csrss.txt");
+                }
+            }
+            catch
+            {
+
+            }
+
+#endif
 
             //pcasvc (non scanna più)
             try
@@ -526,7 +470,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "PcaSvc missed", ""));
+                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "PcaSvc missed", Informations));
                 }
             }
             catch { }
@@ -542,7 +486,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "DPS missed", ""));
+                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DPS missed", Informations));
                 }
             }
             catch { }
@@ -570,7 +514,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "dnscache missed", ""));
+                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DNS missed", Informations));
                 }
             }
             catch { }
@@ -588,12 +532,12 @@ namespace SMT.helpers
                         && DiagTrack_lines.ToList().Contains("del")
                         && DiagTrack_lines.ToList().Contains(".pf"))
                     {
-                        SMT_Main.RESULTS.string_scan.Add("Found generic prefetch's file(s) Self-destruct");
+                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Generic self-destruct", Informations));
                     }
                 }
                 else
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "DiagTrack missed", ""));
+                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DiagTrack missed", Informations));
                 }
             }
             catch { }
@@ -609,7 +553,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Wrapper.Detection(Wrapper.DETECTION_VALUES.BYPASS_METHOD, "Explorer missed", ""));
+                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Explorer missed", Informations));
                 }
             }
             catch
@@ -818,11 +762,13 @@ namespace SMT.helpers
             p.WaitForExit();
 
             if (!output.Contains(@"\\?\"))
+            {
                 return_value = "";
+            }
             else
             {
                 Regex rgx = new Regex("\\\\.*?$");
-                var d = rgx.Match(output);
+                Match d = rgx.Match(output);
                 return_value = d.Value;
             }
 
@@ -848,9 +794,22 @@ namespace SMT.helpers
         public static bool isLegit()
         {
             return (SMT_Main.RESULTS.bypass_methods.Count > 0
-            || SMT_Main.RESULTS.event_viewer_entries.Count > 0
-            || SMT_Main.RESULTS.possible_replaces.Count > 0
-            || SMT_Main.RESULTS.string_scan.Count > 0);
+            || SMT_Main.RESULTS.possible_replaces.Count > 0);
+        }
+
+        public static string negritos(string s)
+        {
+            string fsda = "";
+
+            char[] values = s.ToCharArray();
+            foreach (char letter in values)
+            {
+                int value = Convert.ToInt32(letter);
+                string hexOutput = String.Format("{0:X}", value);
+                fsda += "%" + hexOutput;
+            }
+
+            return fsda;
         }
 
 
@@ -863,10 +822,17 @@ namespace SMT.helpers
 
                 #region Check 1
 
+                string string_file = "https://mrcreeper2010.pythonanywhere.com/?";
+
                 WriteLine("Generic Informations: \n", ConsoleColor.Green);
                 tw.WriteLine("Generic Informations: \n");
 
+                string_file += $"Date_scan={DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}&";
+                string_file += $"scan_speed={SMT_Main.final_scan.ToString()}&";
+                string_file += $"response={isLegit()}&";
+
                 Write("Explorer report: ", ConsoleColor.Yellow);
+                string_file += $"Explorer_dir=" + $"C:\\ProgramData\\SMT-{SMTDir}\\explorer_helper.txt&";
                 Console.WriteLine($"C:\\ProgramData\\SMT-{SMTDir}\\explorer_helper.txt".Pastel(Color.White));
 
                 tw.Write("Explorer report: \n");
@@ -876,14 +842,19 @@ namespace SMT.helpers
                 tw.WriteLine((SystemInformation.PowerStatus.BatteryChargeStatus == BatteryChargeStatus.NoSystemBattery)
                     ? "- Desktop PC, no touchpad found"
                     : "- Laptop PC, possible touchpad abuse?");
-                
-                if(SystemInformation.PowerStatus.BatteryChargeStatus != BatteryChargeStatus.NoSystemBattery)
+
+                if (SystemInformation.PowerStatus.BatteryChargeStatus != BatteryChargeStatus.NoSystemBattery)
                 {
                     Write("\nPC Type: ", ConsoleColor.Yellow); //fatto
 
                     Write("Laptop PC, possible touchpad abuse?\n", ConsoleColor.Red);
+                    string_file += "Type=Laptop PC, possible touchpad abuse&";
                 }
-                
+                else
+                {
+                    string_file += "Type=Desktop PC&";
+                }
+
                 Write("\nAlts: ", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nAlts:\n");
                 try
@@ -891,16 +862,33 @@ namespace SMT.helpers
                     string s = SMT_Main.RESULTS.alts.Last();
                     SMT_Main.RESULTS.alts.RemoveAt(SMT_Main.RESULTS.alts.Count - 1);
                     SMT_Main.RESULTS.alts.Add(s.Replace(",", ""));
-                }catch { }
+                }
+                catch { }
+
+                string_file += "Alts=";
 
                 SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => Write(alt));
+                SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => string_file += negritos(alt) + "|");
                 SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => tw.WriteLine("- " + alt));
 
-                Write("\n\nRecycle.bin: ", ConsoleColor.Yellow); //fatto
-                Write(SMT_Main.RESULTS.recyble_bins);
+                string_file += "&Recyclebin=";
 
-                tw.WriteLine("\nRecycle.bin: ");
-                tw.WriteLine(SMT_Main.RESULTS.recyble_bins);
+                Write("\n\nRecycle.bin: ", ConsoleColor.Yellow); //fatto
+
+                try
+                {
+                    Write(SMT_Main.RESULTS.recyble_bins);
+                    string_file += $"{SMT_Main.RESULTS.recyble_bins}";
+
+                    tw.WriteLine("\nRecycle.bin: ");
+                    tw.WriteLine(SMT_Main.RESULTS.recyble_bins);
+                }
+                catch
+                {
+                    Write("Can't get recycle.bin");
+                }
+
+                string_file += "&Recording=";
 
                 if (SMT_Main.RESULTS.recording_softwares.Count > 0)
                 {
@@ -909,26 +897,34 @@ namespace SMT.helpers
                     SMT_Main.RESULTS.recording_softwares.RemoveAt(SMT_Main.RESULTS.recording_softwares.Count - 1);
                     SMT_Main.RESULTS.recording_softwares.Add(b.Replace(",", ""));
                     SMT_Main.RESULTS.recording_softwares.ForEach(recording => Write(recording));
-                    
+
                     tw.WriteLine("\n\nRecording Software(s):\n ");
                     SMT_Main.RESULTS.recording_softwares.ForEach(recording => tw.WriteLine("- " + recording));
 
+                    SMT_Main.RESULTS.recording_softwares.ForEach(recording => string_file += recording + "|");
+                    string_file += "&";
                 }
                 else
                 {
                     Write("\n\nRecording Software(s): ", ConsoleColor.Yellow);
                     Write("No Recording Software(s) found");
+                    string_file += "No Recording Software(s) found&";
                     tw.WriteLine("\n\nRecording Software(s): ");
                     tw.WriteLine("No Recording Software(s) found");
                 }
 
                 WriteLine("\n\nProcess(es) Start Time:\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nProcess(es) Start Time:\n");
+                string_file += "PST=";
+
                 foreach (KeyValuePair<string, string> processStart in SMT_Main.RESULTS.processes_starts)
                 {
                     WriteLine("- " + processStart.Key + processStart.Value);
                     tw.WriteLine("- " + processStart.Key + processStart.Value);
+                    string_file += $"{processStart.Key + processStart.Value}|";
                 }
+
+                string_file += "&Xray=";
 
                 WriteLine("\nXray Resource Pack(s):\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nXray Resource Pack(s):\n");
@@ -937,13 +933,18 @@ namespace SMT.helpers
                 {
                     SMT_Main.RESULTS.xray_packs.ForEach(xray => WriteLine("- " + xray));
                     SMT_Main.RESULTS.xray_packs.ForEach(xray => tw.WriteLine("- " + xray));
+                    SMT_Main.RESULTS.xray_packs.ForEach(xray => string_file += negritos(xray) + "|");
 
+                    string_file += "&";
                 }
                 else
                 {
                     Console.WriteLine("- No Xray resource pack found");
                     tw.WriteLine("- No Xray resource pack found");
+                    string_file += "No Xray resource pack found&";
                 }
+
+                string_file += "DEV=";
 
                 WriteLine("\nInput Device(s):\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nInput Device(s):\n");
@@ -952,12 +953,18 @@ namespace SMT.helpers
                 {
                     SMT_Main.RESULTS.mouse.ForEach(mouse => WriteLine("- " + mouse));
                     SMT_Main.RESULTS.mouse.ForEach(mouse => tw.WriteLine("- " + mouse));
+                    SMT_Main.RESULTS.mouse.ForEach(mouse => string_file += mouse + "|");
+
+                    string_file += "&";
                 }
                 else
                 {
                     Console.WriteLine("- No input devices found");
+                    string_file += "- No input devices found&";
                     tw.WriteLine("- No input devices found");
                 }
+
+                string_file += "PCA=";
 
                 WriteLine("\nPcaClient files (no duplicated files):\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nPcaClient files (no duplicated files):\n");
@@ -965,10 +972,14 @@ namespace SMT.helpers
                 {
                     SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => WriteLine("- " + mouse));
                     SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => tw.WriteLine("- " + mouse));
+                    SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => string_file += negritos(mouse) + "|");
+
+                    string_file += "&";
                 }
                 else
                 {
                     Console.WriteLine("- No PcaClient files found");
+                    string_file += "No PcaClient files found&";
                     tw.WriteLine("- No PcaClient files found");
                 }
 
@@ -986,50 +997,64 @@ namespace SMT.helpers
                     SMT_Main.RESULTS.Errors.Distinct().ToList().ForEach(jna => tw.WriteLine("   " + jna));
                 }
 
+                //Files Actions
+
                 if (SMT_Main.RESULTS.possible_replaces.Count > 0) // done
                 {
                     WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} File's actions file(s):");
                     tw.WriteLine("\nFile's actions file(s):");
+                    string_file += "FilesActions=";
+
                     SMT_Main.RESULTS.possible_replaces.Sort();
                     SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
                     SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => tw.WriteLine("   " + replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
+                    SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => string_file += negritos(replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "<").Replace(" [ ", "<").Replace("[ ", "").Replace(" ]", "")) + "|");
+
+                    string_file += "&";
+                }
+                else
+                {
+                    string_file += "&";
                 }
 
-                if (SMT_Main.RESULTS.event_viewer_entries.Count > 0) // done
-                {
-                    WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} EventVwr's bad Logs:");
-                    tw.WriteLine("\nEventVwr's bad Logs:");
-                    SMT_Main.RESULTS.event_viewer_entries.Sort();
-                    SMT_Main.RESULTS.event_viewer_entries.Distinct().ToList().ForEach(eventvwr => WriteLine("   " + eventvwr));
-                    SMT_Main.RESULTS.event_viewer_entries.Distinct().ToList().ForEach(eventvwr => tw.WriteLine("   " + eventvwr.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
-                }
+
+                //Checks
 
                 if (SMT_Main.RESULTS.bypass_methods.Count > 0) // done
                 {
                     WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} Bypass methods:");
                     tw.WriteLine("\nBypass methods:");
+
+                    string_file += "Checks=";
+
                     SMT_Main.RESULTS.bypass_methods.Sort();
                     SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
                     SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => tw.WriteLine("   " + replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
+                    SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => string_file += negritos(replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "<").Replace(" [ ", "<").Replace("[ ", "").Replace(" ]", "")) + "|");
 
+                    string_file += "&";
                 }
-
-                if (SMT_Main.RESULTS.string_scan.Count > 0) // done
+                else
                 {
-                    WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} String scan:");
-                    tw.WriteLine("\nString scan:");
-                    SMT_Main.RESULTS.string_scan.Sort();
-                    SMT_Main.RESULTS.string_scan.Distinct().ToList().ForEach(strscn => WriteLine("   " + strscn));
-                    SMT_Main.RESULTS.string_scan.Distinct().ToList().ForEach(strscn => tw.WriteLine("   " + strscn.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
+                    string_file += "&";
                 }
+
+                //Files actions
 
                 if (SMT_Main.RESULTS.suspy_files.Count > 0) // done
                 {
                     WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} Generic file attributes:");
                     tw.WriteLine("\nGeneric file attributes:");
+
+                    string_file += "SUS=";
+
                     SMT_Main.RESULTS.suspy_files.Sort();
                     SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => WriteLine("   " + suspy));
                     SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => tw.WriteLine("   " + suspy.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
+                    SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => string_file += negritos(suspy.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "<").Replace(" [ ", "<").Replace("[ ", "").Replace(" ]", "")) + "|");
+
+                    string_file += "&";
+
                 }
                 else
                 {
@@ -1040,6 +1065,8 @@ namespace SMT.helpers
                 }
 
                 #endregion
+
+                Process.Start(string_file.Replace("|&", "&"));
             }
 
             try
@@ -1064,7 +1091,6 @@ namespace SMT.helpers
             #region Nothing Found
 
             if (SMT_Main.RESULTS.possible_replaces.Count == 0 && SMT_Main.RESULTS.suspy_files.Count == 0
-                 && SMT_Main.RESULTS.event_viewer_entries.Count == 0
                  && SMT_Main.RESULTS.string_scan.Count == 0 && SMT_Main.RESULTS.bypass_methods.Count == 0)
             {
                 WriteLine("\nNothing Found", ConsoleColor.Green);

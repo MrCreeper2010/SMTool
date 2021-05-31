@@ -15,7 +15,6 @@ namespace SMT
         #endregion
 
         #region Check Scanners
-        public List<string> event_viewer_entries { get; set; } = new List<string>();
         public List<string> possible_replaces { get; set; } = new List<string>();
         public List<string> suspy_files { get; set; } = new List<string>();
         public List<string> string_scan { get; set; } = new List<string>();

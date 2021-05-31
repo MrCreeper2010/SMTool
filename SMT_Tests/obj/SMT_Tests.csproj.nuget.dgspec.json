@@ -38,6 +38,10 @@
               "target": "Package",
               "version": "[0.3.0, )"
             },
+            "Google.Apis.Urlshortener.v1": {
+              "target": "Package",
+              "version": "[1.41.1.138, )"
+            },
             "Json.Net": {
               "target": "Package",
               "version": "[1.0.33, )"

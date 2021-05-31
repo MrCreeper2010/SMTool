@@ -27,7 +27,7 @@ namespace SMT.Helpers
 
         #region Liste importanti
 
-        public static string username = Environment.UserName;
+        public static string username = Wrapper.getCorrectUsername(Path.GetTempPath());
 
         public static readonly List<string> suspy_extension = new List<string>()
         {
@@ -74,6 +74,7 @@ namespace SMT.Helpers
         public static DriveInfo[] drives = DriveInfo.GetDrives();
 
         public static string strings2, unprotect;
+        public static string Informations = "No more Informations";
         
         public static int SMTDir = r.Next(1000, 9999);
         
@@ -110,11 +111,10 @@ namespace SMT.Helpers
 
         public static Action[] CheckActions_List = new Action[]
         {
-            //checks.DoStringScan,
-            //checks.HeuristicCsrssCheck,
+            checks.DoStringScan,
             checks.OtherChecks,
-            //checks.EventVwrCheck,
-            //generics.GlobalGeneric_check,
+            checks.EventVwrCheck,
+            generics.GlobalGeneric_check,
         };
 
     }

@@ -32,3 +32,14 @@ C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Auth
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\AuthenticodeExaminer.pdb
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Newtonsoft.Json.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Json.Net.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Google.Apis.PlatformServices.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Google.Apis.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Google.Apis.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Google.Apis.Auth.PlatformServices.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Google.Apis.Auth.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Google.Apis.Auth.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Google.Apis.Core.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Google.Apis.Core.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Google.Apis.Urlshortener.v1.dll
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Release\Google.Apis.Urlshortener.v1.pdb
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Release\SMT_Tests.exe.config

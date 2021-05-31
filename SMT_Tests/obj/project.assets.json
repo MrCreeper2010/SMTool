@@ -14,6 +14,70 @@
           "lib/net461/AuthenticodeExaminer.dll": {}
         }
       },
+      "Google.Apis/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis.Core": "1.41.1",
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
+        }
+      },
+      "Google.Apis.Auth/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis": "1.41.1",
+          "Google.Apis.Core": "1.41.1"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.Auth.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.Auth.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Auth.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.Auth.dll": {}
+        }
+      },
+      "Google.Apis.Core/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Core.dll": {}
+        }
+      },
+      "Google.Apis.Urlshortener.v1/1.41.1.138": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis": "1.41.1",
+          "Google.Apis.Auth": "1.41.1"
+        },
+        "compile": {
+          "lib/net45/Google.Apis.Urlshortener.v1.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Urlshortener.v1.dll": {}
+        }
+      },
       "Json.Net/1.0.33": {
         "type": "package",
         "compile": {
@@ -99,6 +163,70 @@
         },
         "runtime": {
           "lib/net461/AuthenticodeExaminer.dll": {}
+        }
+      },
+      "Google.Apis/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis.Core": "1.41.1",
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
+        }
+      },
+      "Google.Apis.Auth/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis": "1.41.1",
+          "Google.Apis.Core": "1.41.1"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.Auth.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.Auth.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Auth.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.Auth.dll": {}
+        }
+      },
+      "Google.Apis.Core/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Core.dll": {}
+        }
+      },
+      "Google.Apis.Urlshortener.v1/1.41.1.138": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis": "1.41.1",
+          "Google.Apis.Auth": "1.41.1"
+        },
+        "compile": {
+          "lib/net45/Google.Apis.Urlshortener.v1.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Urlshortener.v1.dll": {}
         }
       },
       "Json.Net/1.0.33": {
@@ -188,6 +316,70 @@
           "lib/net461/AuthenticodeExaminer.dll": {}
         }
       },
+      "Google.Apis/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis.Core": "1.41.1",
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
+        }
+      },
+      "Google.Apis.Auth/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis": "1.41.1",
+          "Google.Apis.Core": "1.41.1"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.Auth.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.Auth.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Auth.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.Auth.dll": {}
+        }
+      },
+      "Google.Apis.Core/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Core.dll": {}
+        }
+      },
+      "Google.Apis.Urlshortener.v1/1.41.1.138": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis": "1.41.1",
+          "Google.Apis.Auth": "1.41.1"
+        },
+        "compile": {
+          "lib/net45/Google.Apis.Urlshortener.v1.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Urlshortener.v1.dll": {}
+        }
+      },
       "Json.Net/1.0.33": {
         "type": "package",
         "compile": {
@@ -273,6 +465,70 @@
         },
         "runtime": {
           "lib/net461/AuthenticodeExaminer.dll": {}
+        }
+      },
+      "Google.Apis/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis.Core": "1.41.1",
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
+        }
+      },
+      "Google.Apis.Auth/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis": "1.41.1",
+          "Google.Apis.Core": "1.41.1"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.Auth.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.Auth.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Auth.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.Auth.dll": {}
+        }
+      },
+      "Google.Apis.Core/1.41.1": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/Google.Apis.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Core.dll": {}
+        }
+      },
+      "Google.Apis.Urlshortener.v1/1.41.1.138": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis": "1.41.1",
+          "Google.Apis.Auth": "1.41.1"
+        },
+        "compile": {
+          "lib/net45/Google.Apis.Urlshortener.v1.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Google.Apis.Urlshortener.v1.dll": {}
         }
       },
       "Json.Net/1.0.33": {
@@ -366,6 +622,100 @@
         "lib/netstandard2.0/AuthenticodeExaminer.dll",
         "lib/netstandard2.0/AuthenticodeExaminer.pdb",
         "lib/netstandard2.0/AuthenticodeExaminer.xml"
+      ]
+    },
+    "Google.Apis/1.41.1": {
+      "sha512": "/gNhxyiCY66ElHrOG0jMg6l13++PXFn69ULoeDabA92z4tCMzTBToY2XuuZhcxHzROcAjiVWPpj03ZEJl7s5kg==",
+      "type": "package",
+      "path": "google.apis/1.41.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "google.apis.1.41.1.nupkg.sha512",
+        "google.apis.nuspec",
+        "lib/net45/Google.Apis.PlatformServices.dll",
+        "lib/net45/Google.Apis.dll",
+        "lib/net45/Google.Apis.pdb",
+        "lib/net45/Google.Apis.xml",
+        "lib/netstandard1.3/Google.Apis.dll",
+        "lib/netstandard1.3/Google.Apis.pdb",
+        "lib/netstandard1.3/Google.Apis.xml",
+        "lib/netstandard2.0/Google.Apis.dll",
+        "lib/netstandard2.0/Google.Apis.pdb",
+        "lib/netstandard2.0/Google.Apis.xml"
+      ]
+    },
+    "Google.Apis.Auth/1.41.1": {
+      "sha512": "zsb5QnQVDaeU4rTnYcRJead+obLEsi+iJH/T12+zUzu7/r5Pg6PD/I8RW7aG3qJ6TLyLpKDKDgm/IyQ6G4qOFg==",
+      "type": "package",
+      "path": "google.apis.auth/1.41.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "google.apis.auth.1.41.1.nupkg.sha512",
+        "google.apis.auth.nuspec",
+        "lib/net45/Google.Apis.Auth.PlatformServices.dll",
+        "lib/net45/Google.Apis.Auth.dll",
+        "lib/net45/Google.Apis.Auth.pdb",
+        "lib/net45/Google.Apis.Auth.xml",
+        "lib/netstandard1.3/Google.Apis.Auth.PlatformServices.dll",
+        "lib/netstandard1.3/Google.Apis.Auth.dll",
+        "lib/netstandard1.3/Google.Apis.Auth.pdb",
+        "lib/netstandard1.3/Google.Apis.Auth.xml",
+        "lib/netstandard2.0/Google.Apis.Auth.PlatformServices.dll",
+        "lib/netstandard2.0/Google.Apis.Auth.dll",
+        "lib/netstandard2.0/Google.Apis.Auth.pdb",
+        "lib/netstandard2.0/Google.Apis.Auth.xml"
+      ]
+    },
+    "Google.Apis.Core/1.41.1": {
+      "sha512": "6jZDk7VsnZGLXGREYdy+3v4Xvdtc6zJs9E4mkxmKC3d1B1NxK0fBX0Ir6/wFdmEt95cnoILRQVi2vNCisU6hIg==",
+      "type": "package",
+      "path": "google.apis.core/1.41.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "google.apis.core.1.41.1.nupkg.sha512",
+        "google.apis.core.nuspec",
+        "lib/net45/Google.Apis.Core.dll",
+        "lib/net45/Google.Apis.Core.pdb",
+        "lib/net45/Google.Apis.Core.xml",
+        "lib/netstandard1.3/Google.Apis.Core.dll",
+        "lib/netstandard1.3/Google.Apis.Core.pdb",
+        "lib/netstandard1.3/Google.Apis.Core.xml",
+        "lib/netstandard2.0/Google.Apis.Core.dll",
+        "lib/netstandard2.0/Google.Apis.Core.pdb",
+        "lib/netstandard2.0/Google.Apis.Core.xml"
+      ]
+    },
+    "Google.Apis.Urlshortener.v1/1.41.1.138": {
+      "sha512": "PrUmD48N1360TeIzlSjjTZCoX9M2cl1ESHooxwUPPEvW69rWswbQrMX6HqV3+CK9rO7K4Zpx0yvNGzeKkjl1ww==",
+      "type": "package",
+      "path": "google.apis.urlshortener.v1/1.41.1.138",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "google.apis.urlshortener.v1.1.41.1.138.nupkg.sha512",
+        "google.apis.urlshortener.v1.nuspec",
+        "lib/net40/Google.Apis.Urlshortener.v1.dll",
+        "lib/net40/Google.Apis.Urlshortener.v1.pdb",
+        "lib/net40/Google.Apis.Urlshortener.v1.xml",
+        "lib/net45/Google.Apis.Urlshortener.v1.dll",
+        "lib/net45/Google.Apis.Urlshortener.v1.pdb",
+        "lib/net45/Google.Apis.Urlshortener.v1.xml",
+        "lib/netstandard1.0/Google.Apis.Urlshortener.v1.dll",
+        "lib/netstandard1.0/Google.Apis.Urlshortener.v1.pdb",
+        "lib/netstandard1.0/Google.Apis.Urlshortener.v1.xml",
+        "lib/netstandard1.3/Google.Apis.Urlshortener.v1.dll",
+        "lib/netstandard1.3/Google.Apis.Urlshortener.v1.pdb",
+        "lib/netstandard1.3/Google.Apis.Urlshortener.v1.xml",
+        "lib/netstandard2.0/Google.Apis.Urlshortener.v1.dll",
+        "lib/netstandard2.0/Google.Apis.Urlshortener.v1.pdb",
+        "lib/netstandard2.0/Google.Apis.Urlshortener.v1.xml"
       ]
     },
     "Json.Net/1.0.33": {
@@ -541,6 +891,7 @@
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.8": [
       "AuthenticodeExaminer >= 0.3.0",
+      "Google.Apis.Urlshortener.v1 >= 1.41.1.138",
       "Json.Net >= 1.0.33",
       "Newtonsoft.Json >= 13.0.1",
       "System.Memory >= 4.5.4"
@@ -582,6 +933,10 @@
           "AuthenticodeExaminer": {
             "target": "Package",
             "version": "[0.3.0, )"
+          },
+          "Google.Apis.Urlshortener.v1": {
+            "target": "Package",
+            "version": "[1.41.1.138, )"
           },
           "Json.Net": {
             "target": "Package",

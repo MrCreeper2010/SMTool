@@ -36,9 +36,9 @@ namespace SMT
             {
                 int explorerPID = Process.GetProcessesByName("explorer")[0].Id;
 
-                if (Wrapper.MinecraftMainProcess != "")
+                if (MinecraftMainProcess != "")
                 {
-                    int javaw = Process.GetProcessesByName(Wrapper.MinecraftMainProcess)[0].Id;
+                    int javaw = Process.GetProcessesByName(MinecraftMainProcess)[0].Id;
 
                     SMT_Main.RESULTS.processes_starts.Add("Javaw: ", Process.GetProcessById(javaw).StartTime.ToString());
                 }
@@ -48,7 +48,7 @@ namespace SMT
                 }
 
                 SMT_Main.RESULTS.processes_starts.Add("Explorer: ", Process.GetProcessById(explorerPID).StartTime.ToString());
-                SMT_Main.RESULTS.processes_starts.Add("System: ", Wrapper.PC_StartTime().ToString());
+                SMT_Main.RESULTS.processes_starts.Add("System: ", PC_StartTime().ToString());
 
             }));
 
@@ -168,7 +168,7 @@ namespace SMT
 
             Task.WaitAll(generic_tasks.ToArray());
 
-            Console.WriteLine(Wrapper.Detection(Wrapper.DETECTION_VALUES.STAGE_PRC, "", "Generic checks completed"));
+            Console.WriteLine(Detection(DETECTION_VALUES.STAGE_PRC, "", "Generic checks completed"));
         }
     }
 }

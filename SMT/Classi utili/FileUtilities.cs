@@ -159,8 +159,19 @@ namespace SMT.Classi_utili
                     if (ntHeader.Signature != IMAGE_NT_SIGNATURE)
                         return false;
 
-                    if ((ntHeader.FileHeader.Characteristics & IMAGE_FILE_DLL) != 0 && Path.GetExtension(fileName).ToUpper() != ".DLL")
-                        return true;
+                    if ((ntHeader.FileHeader.Characteristics & IMAGE_FILE_DLL) != 0)
+                    {
+                        switch (ntHeader.FileHeader.Machine)
+                        {
+                            case IMAGE_FILE_MACHINE_IA64:
+                            case IMAGE_FILE_MACHINE_AMD64:
+                                if (validDLL(GetNtHeader64(stream, dosHeader)) == 2)
+                                    return true;
+                                break;
+                        }
+
+                        return false;
+                    }
                 }
             }
             catch

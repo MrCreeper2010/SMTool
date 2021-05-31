@@ -1,8 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Google.Apis.Services;
+using Google.Apis.Urlshortener.v1;
+using Google.Apis.Urlshortener.v1.Data;
+using Google.Apis.Http;
+using System.Text;
 
 namespace SMT_Tests
 {
@@ -321,6 +327,22 @@ namespace SMT_Tests
             return false;
         }
 
+
+        public static string negritos(string s)
+        {
+            string fsda = "";
+
+            char[] values = s.ToCharArray();
+            foreach (char letter in values)
+            {
+                int value = Convert.ToInt32(letter);
+                string hexOutput = String.Format("{0:X}", value);
+                fsda += "%" + hexOutput;
+            }
+
+            return fsda;
+        }
+
         public static void Main()
         {
             #region Check recording
@@ -360,27 +382,15 @@ namespace SMT_Tests
 
             #endregion
 
-            Regex rgx = new Regex(@"[A-Z]:\\.*?$");
+            string string_file = "https://mrcreeper2010.pythonanywhere.com/?response=";
+            string_file += negritos("true");
 
-            string line = "";
-            string[] sda = File.ReadAllLines(@"C:\users\Mattia\Desktop\csrss.txt");
+            //Process.Start(string_file);
 
-            Parallel.ForEach(sda, (index) =>
-            {
-                Match mch = rgx.Match(index);
+            //Console.ReadKey();
 
-                if (Path.GetExtension(mch.Value).ToUpper() == ".DLL")
-                {
-                    if (mch.Success && File.Exists(mch.Value)
-                        && File.ReadAllText(mch.Value).Contains("AllocConsole")
-                        && File.ReadAllText(mch.Value).Contains("AdjustTokenPrivileges")
-                        && ExeChecker.isInjectableDll(mch.Value)
-                        && !IsFileLocked(new FileInfo(mch.Value)))
-                    {
-                        Console.WriteLine(mch.Value);
-                    }
-                }
-            });
+            Console.WriteLine(string_file);
+            Process.Start(string_file);
 
             Console.WriteLine("Finito");
             Console.ReadLine();
