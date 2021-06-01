@@ -9,6 +9,8 @@ using Google.Apis.Urlshortener.v1;
 using Google.Apis.Urlshortener.v1.Data;
 using Google.Apis.Http;
 using System.Text;
+using System.Collections.Generic;
+using System.Net;
 
 namespace SMT_Tests
 {
@@ -335,9 +337,12 @@ namespace SMT_Tests
             char[] values = s.ToCharArray();
             foreach (char letter in values)
             {
-                int value = Convert.ToInt32(letter);
-                string hexOutput = String.Format("{0:X}", value);
-                fsda += "%" + hexOutput;
+                if (letter != 'Ø' && letter != 'ƒ')
+                {
+                    int value = Convert.ToInt32(letter);
+                    string hexOutput = String.Format("{0:X}", value);
+                    fsda += "%" + hexOutput;
+                }
             }
 
             return fsda;
@@ -383,7 +388,8 @@ namespace SMT_Tests
             #endregion
 
             string string_file = "https://mrcreeper2010.pythonanywhere.com/?response=";
-            string_file += negritos("true");
+            string_file += negritos("Øƒ");
+
 
             //Process.Start(string_file);
 

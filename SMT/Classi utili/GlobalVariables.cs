@@ -109,6 +109,8 @@ namespace SMT.Helpers
 
         public static string file = $"C:\\ProgramData\\SMT-{SMTDir}\\SMT-log.txt";
 
+        public static string FinalURL = "";
+
         public static Action[] CheckActions_List = new Action[]
         {
             checks.DoStringScan,

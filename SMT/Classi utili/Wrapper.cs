@@ -67,6 +67,12 @@ namespace SMT.helpers
                 case 2147484160:
                     return_value = "File Deleted";
                     break;
+                case 2149581088:
+                    return_value = "Wmic";
+                    break;
+                case 2147483652:
+                    return_value = "PF EDITED";
+                    break;
                 case 2048:
                     return_value = "Cacls";
                     break;
@@ -75,9 +81,6 @@ namespace SMT.helpers
                     break;
                 case 8192:
                     return_value = "New name";
-                    break;
-                case 2149581088:
-                    return_value = "Wmic";
                     break;
             }
 
@@ -399,32 +402,38 @@ namespace SMT.helpers
 
         public static string getDirectoryfromJournal(NtfsUsnJournal journal, Win32Api.UsnEntry usnEntry, DriveInfo drive)
         {
-            string p91941914941eppe = "";
+            string returnDirectory = "";
 
             try
             {
-                journal.GetPathFromFileReference(Convert.ToUInt64(usnEntry.FileReferenceNumber), out p91941914941eppe);
+                journal.GetPathFromFileReference(Convert.ToUInt64(usnEntry.FileReferenceNumber), out returnDirectory);
 
-                if (p91941914941eppe != "Unavailable")
+                if (returnDirectory != "Unavailable")
                 {
-                    p91941914941eppe = drive.Name + p91941914941eppe;
+                    returnDirectory = drive.Name + returnDirectory;
                 }
                 else
                 {
-                    p91941914941eppe = "";
+                    returnDirectory = "";
 
-                    journal.GetPathFromFileReference(Convert.ToUInt64(usnEntry.ParentFileReferenceNumber), out p91941914941eppe);
+                    journal.GetPathFromFileReference(Convert.ToUInt64(usnEntry.ParentFileReferenceNumber), out returnDirectory);
 
-                    p91941914941eppe = drive.Name + p91941914941eppe + "\\" + usnEntry.Name;
-
+                    if (returnDirectory != "Unavailable")
+                    {
+                        returnDirectory = drive.Name + returnDirectory + "\\" + usnEntry.Name;
+                    }
+                    else
+                    {
+                        
+                    }
                 }
             }
             catch
             {
-                p91941914941eppe = "Unavailable";
+                returnDirectory = "Unavailable";
             }
 
-            return p91941914941eppe.Replace(@":\\", ":\\");
+            return returnDirectory.Replace(@":\\", ":\\");
         }
 
         public static string calcoloSHA256(FileStream file)
@@ -804,9 +813,23 @@ namespace SMT.helpers
             char[] values = s.ToCharArray();
             foreach (char letter in values)
             {
-                int value = Convert.ToInt32(letter);
-                string hexOutput = String.Format("{0:X}", value);
-                fsda += "%" + hexOutput;
+                if (letter != 'Ø')
+                {
+                    if (letter != 'ƒ')
+                    {
+                        int value = Convert.ToInt32(letter);
+                        string hexOutput = string.Format("{0:X}", value);
+                        fsda += "%" + hexOutput;
+                    }
+                    else
+                    {
+                        fsda += "ƒ";
+                    }
+                }
+                else
+                {
+                    fsda += "Ø";
+                }
             }
 
             return fsda;
@@ -824,16 +847,16 @@ namespace SMT.helpers
 
                 string string_file = "https://mrcreeper2010.pythonanywhere.com/?";
 
-                WriteLine("Generic Informations: \n", ConsoleColor.Green);
+                //WriteLine("Generic Informations: \n", ConsoleColor.Green);
                 tw.WriteLine("Generic Informations: \n");
 
                 string_file += $"Date_scan={DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}&";
                 string_file += $"scan_speed={SMT_Main.final_scan.ToString()}&";
                 string_file += $"response={isLegit()}&";
 
-                Write("Explorer report: ", ConsoleColor.Yellow);
+                //Write("Explorer report: ", ConsoleColor.Yellow);
                 string_file += $"Explorer_dir=" + $"C:\\ProgramData\\SMT-{SMTDir}\\explorer_helper.txt&";
-                Console.WriteLine($"C:\\ProgramData\\SMT-{SMTDir}\\explorer_helper.txt".Pastel(Color.White));
+                //Console.WriteLine($"C:\\ProgramData\\SMT-{SMTDir}\\explorer_helper.txt".Pastel(Color.White));
 
                 tw.Write("Explorer report: \n");
                 tw.WriteLine($"C:\\ProgramData\\SMT-{SMTDir}\\explorer_helper.txt");
@@ -845,9 +868,9 @@ namespace SMT.helpers
 
                 if (SystemInformation.PowerStatus.BatteryChargeStatus != BatteryChargeStatus.NoSystemBattery)
                 {
-                    Write("\nPC Type: ", ConsoleColor.Yellow); //fatto
+                    //Write("\nPC Type: ", ConsoleColor.Yellow); //fatto
 
-                    Write("Laptop PC, possible touchpad abuse?\n", ConsoleColor.Red);
+                    //Write("Laptop PC, possible touchpad abuse?\n", ConsoleColor.Red);
                     string_file += "Type=Laptop PC, possible touchpad abuse&";
                 }
                 else
@@ -855,7 +878,7 @@ namespace SMT.helpers
                     string_file += "Type=Desktop PC&";
                 }
 
-                Write("\nAlts: ", ConsoleColor.Yellow); //fatto
+                //Write("\nAlts: ", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nAlts:\n");
                 try
                 {
@@ -867,17 +890,17 @@ namespace SMT.helpers
 
                 string_file += "Alts=";
 
-                SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => Write(alt));
-                SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => string_file += negritos(alt) + "|");
+                //SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => Write(alt));
+                SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => string_file += negritos(alt) + "ƒ");
                 SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => tw.WriteLine("- " + alt));
 
                 string_file += "&Recyclebin=";
 
-                Write("\n\nRecycle.bin: ", ConsoleColor.Yellow); //fatto
+                //Write("\n\nRecycle.bin: ", ConsoleColor.Yellow); //fatto
 
                 try
                 {
-                    Write(SMT_Main.RESULTS.recyble_bins);
+                    //Write(SMT_Main.RESULTS.recyble_bins);
                     string_file += $"{SMT_Main.RESULTS.recyble_bins}";
 
                     tw.WriteLine("\nRecycle.bin: ");
@@ -885,100 +908,100 @@ namespace SMT.helpers
                 }
                 catch
                 {
-                    Write("Can't get recycle.bin");
+                    //Write("Can't get recycle.bin");
                 }
 
                 string_file += "&Recording=";
 
                 if (SMT_Main.RESULTS.recording_softwares.Count > 0)
                 {
-                    Write("\n\nRecording Software(s): ", ConsoleColor.Yellow);
+                    //Write("\n\nRecording Software(s): ", ConsoleColor.Yellow);
                     string b = SMT_Main.RESULTS.recording_softwares.Last();
                     SMT_Main.RESULTS.recording_softwares.RemoveAt(SMT_Main.RESULTS.recording_softwares.Count - 1);
                     SMT_Main.RESULTS.recording_softwares.Add(b.Replace(",", ""));
-                    SMT_Main.RESULTS.recording_softwares.ForEach(recording => Write(recording));
+                    //SMT_Main.RESULTS.recording_softwares.ForEach(recording => Write(recording));
 
                     tw.WriteLine("\n\nRecording Software(s):\n ");
                     SMT_Main.RESULTS.recording_softwares.ForEach(recording => tw.WriteLine("- " + recording));
 
-                    SMT_Main.RESULTS.recording_softwares.ForEach(recording => string_file += recording + "|");
+                    SMT_Main.RESULTS.recording_softwares.ForEach(recording => string_file += recording + "ƒ");
                     string_file += "&";
                 }
                 else
                 {
-                    Write("\n\nRecording Software(s): ", ConsoleColor.Yellow);
-                    Write("No Recording Software(s) found");
+                    //Write("\n\nRecording Software(s): ", ConsoleColor.Yellow);
+                    //Write("No Recording Software(s) found");
                     string_file += "No Recording Software(s) found&";
                     tw.WriteLine("\n\nRecording Software(s): ");
                     tw.WriteLine("No Recording Software(s) found");
                 }
 
-                WriteLine("\n\nProcess(es) Start Time:\n", ConsoleColor.Yellow); //fatto
+                //WriteLine("\n\nProcess(es) Start Time:\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nProcess(es) Start Time:\n");
                 string_file += "PST=";
 
                 foreach (KeyValuePair<string, string> processStart in SMT_Main.RESULTS.processes_starts)
                 {
-                    WriteLine("- " + processStart.Key + processStart.Value);
+                    //WriteLine("- " + processStart.Key + processStart.Value);
                     tw.WriteLine("- " + processStart.Key + processStart.Value);
-                    string_file += $"{processStart.Key + processStart.Value}|";
+                    string_file += $"{processStart.Key + processStart.Value}ƒ";
                 }
 
                 string_file += "&Xray=";
 
-                WriteLine("\nXray Resource Pack(s):\n", ConsoleColor.Yellow); //fatto
+                //WriteLine("\nXray Resource Pack(s):\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nXray Resource Pack(s):\n");
 
                 if (SMT_Main.RESULTS.xray_packs.Count > 0)
                 {
-                    SMT_Main.RESULTS.xray_packs.ForEach(xray => WriteLine("- " + xray));
+                    //SMT_Main.RESULTS.xray_packs.ForEach(xray => WriteLine("- " + xray));
                     SMT_Main.RESULTS.xray_packs.ForEach(xray => tw.WriteLine("- " + xray));
-                    SMT_Main.RESULTS.xray_packs.ForEach(xray => string_file += negritos(xray) + "|");
+                    SMT_Main.RESULTS.xray_packs.ForEach(xray => string_file += negritos(xray) + "ƒ");
 
                     string_file += "&";
                 }
                 else
                 {
-                    Console.WriteLine("- No Xray resource pack found");
+                    //Console.WriteLine("- No Xray resource pack found");
                     tw.WriteLine("- No Xray resource pack found");
                     string_file += "No Xray resource pack found&";
                 }
 
                 string_file += "DEV=";
 
-                WriteLine("\nInput Device(s):\n", ConsoleColor.Yellow); //fatto
+                //WriteLine("\nInput Device(s):\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nInput Device(s):\n");
 
                 if (SMT_Main.RESULTS.mouse.Count > 0)
                 {
-                    SMT_Main.RESULTS.mouse.ForEach(mouse => WriteLine("- " + mouse));
+                    //SMT_Main.RESULTS.mouse.ForEach(mouse => WriteLine("- " + mouse));
                     SMT_Main.RESULTS.mouse.ForEach(mouse => tw.WriteLine("- " + mouse));
-                    SMT_Main.RESULTS.mouse.ForEach(mouse => string_file += mouse + "|");
+                    SMT_Main.RESULTS.mouse.ForEach(mouse => string_file += mouse + "ƒ");
 
                     string_file += "&";
                 }
                 else
                 {
-                    Console.WriteLine("- No input devices found");
+                    //Console.WriteLine("- No input devices found");
                     string_file += "- No input devices found&";
                     tw.WriteLine("- No input devices found");
                 }
 
                 string_file += "PCA=";
 
-                WriteLine("\nPcaClient files (no duplicated files):\n", ConsoleColor.Yellow); //fatto
+                //WriteLine("\nPcaClient files (no duplicated files):\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nPcaClient files (no duplicated files):\n");
                 if (SMT_Main.RESULTS.pcaclient.Count > 0)
                 {
-                    SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => WriteLine("- " + mouse));
+                    //SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => WriteLine("- " + mouse));
                     SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => tw.WriteLine("- " + mouse));
-                    SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => string_file += negritos(mouse) + "|");
+                    SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => string_file += negritos(mouse) + "ƒ");
 
                     string_file += "&";
                 }
                 else
                 {
-                    Console.WriteLine("- No PcaClient files found");
+                    //Console.WriteLine("- No PcaClient files found");
                     string_file += "No PcaClient files found&";
                     tw.WriteLine("- No PcaClient files found");
                 }
@@ -987,13 +1010,13 @@ namespace SMT.helpers
 
                 #region Check 2
 
-                WriteLine("\nChecks:", ConsoleColor.Red);
+                //WriteLine("\nChecks:", ConsoleColor.Red);
                 tw.WriteLine("\nChecks:");
 
                 if (SMT_Main.RESULTS.Errors.Count > 0) // done
                 {
                     tw.WriteLine("[WARNING] ERRORS:");
-                    SMT_Main.RESULTS.Errors.Distinct().ToList().ForEach(jna => WriteLine("   " + jna));
+                    //SMT_Main.RESULTS.Errors.Distinct().ToList().ForEach(jna => WriteLine("   " + jna));
                     SMT_Main.RESULTS.Errors.Distinct().ToList().ForEach(jna => tw.WriteLine("   " + jna));
                 }
 
@@ -1001,14 +1024,14 @@ namespace SMT.helpers
 
                 if (SMT_Main.RESULTS.possible_replaces.Count > 0) // done
                 {
-                    WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} File's actions file(s):");
+                    //WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} File's actions file(s):");
                     tw.WriteLine("\nFile's actions file(s):");
                     string_file += "FilesActions=";
 
                     SMT_Main.RESULTS.possible_replaces.Sort();
-                    SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
+                    //SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
                     SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => tw.WriteLine("   " + replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
-                    SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => string_file += negritos(replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "<").Replace(" [ ", "<").Replace("[ ", "").Replace(" ]", "")) + "|");
+                    SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => string_file += negritos(replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "Ø").Replace(" [ ", "Ø").Replace("[ ", "").Replace(" ]", "")) + "ƒ");
 
                     string_file += "&";
                 }
@@ -1022,15 +1045,15 @@ namespace SMT.helpers
 
                 if (SMT_Main.RESULTS.bypass_methods.Count > 0) // done
                 {
-                    WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} Bypass methods:");
+                    //WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} Bypass methods:");
                     tw.WriteLine("\nBypass methods:");
 
                     string_file += "Checks=";
 
                     SMT_Main.RESULTS.bypass_methods.Sort();
-                    SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
+                    //SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
                     SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => tw.WriteLine("   " + replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
-                    SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => string_file += negritos(replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "<").Replace(" [ ", "<").Replace("[ ", "").Replace(" ]", "")) + "|");
+                    SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => string_file += negritos(replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "Ø").Replace(" [ ", "Ø").Replace("[ ", "").Replace(" ]", "")) + "ƒ");
 
                     string_file += "&";
                 }
@@ -1043,30 +1066,32 @@ namespace SMT.helpers
 
                 if (SMT_Main.RESULTS.suspy_files.Count > 0) // done
                 {
-                    WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} Generic file attributes:");
+                    //WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} Generic file attributes:");
                     tw.WriteLine("\nGeneric file attributes:");
 
                     string_file += "SUS=";
 
                     SMT_Main.RESULTS.suspy_files.Sort();
-                    SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => WriteLine("   " + suspy));
+                    //SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => WriteLine("   " + suspy));
                     SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => tw.WriteLine("   " + suspy.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
-                    SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => string_file += negritos(suspy.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "<").Replace(" [ ", "<").Replace("[ ", "").Replace(" ]", "")) + "|");
+                    SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => string_file += negritos(suspy.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "Ø").Replace(" [ ", "Ø").Replace("[ ", "").Replace(" ]", "")) + "ƒ");
 
                     string_file += "&";
 
                 }
                 else
                 {
-                    WriteLine("\nWarning:\n", ConsoleColor.Yellow);
+                    //WriteLine("\nWarning:\n", ConsoleColor.Yellow);
                     tw.WriteLine("\nWarning:\n");
-                    Console.WriteLine("- No suspicious file found, if user uses \"Kaspersky\" please disable it and rescan");
+                    //Console.WriteLine("- No suspicious file found, if user uses \"Kaspersky\" please disable it and rescan");
                     tw.WriteLine("- No suspicious file found, if user uses \"Kaspersky\" please disable it and rescan");
                 }
 
                 #endregion
 
-                Process.Start(string_file.Replace("|&", "&"));
+                WriteLine($@"If link doesn't work: ".Pastel(Color.LightYellow) + $@"C:\ProgramData\SMT-{SMTDir}\SMT-log.txt", ConsoleColor.White);
+
+                Process.Start(string_file.Replace("ƒ&", "&"));
             }
 
             try

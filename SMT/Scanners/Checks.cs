@@ -386,49 +386,64 @@ namespace SMT.scanners
 
             others_tasks.Add(Task.Run(() =>
             {
+                string[] s = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.Recent));
+
+                if (s.Length == 0)
+                {
+                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Recent is empty", Informations));
+                }
+
+            }));
+
+            others_tasks.Add(Task.Run(() =>
+            {
                 Dictionary<int, string> check_for_recycle = new Dictionary<int, string>();
 
                 #region Wmic da regedit
 
                 string regedit_replace = "";
-                Regex DiscoC = new Regex(@"\\Device\\HarddiskVolume4\\");
-                Regex remove_stream = new Regex(@":.*?$");
-                Regex jessica = new Regex(@".*?$");
+            Regex DiscoC = new Regex(@"\\Device\\HarddiskVolume4\\");
+            Regex remove_stream = new Regex(@":.*?$");
+            Regex jessica = new Regex(@".*?$");
 
-                using (RegistryKey get_subkeynames = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\bam\State\UserSettings"))
+            using (RegistryKey get_subkeynames = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\bam\State\UserSettings"))
+            {
+                Parallel.ForEach(get_subkeynames.GetSubKeyNames(), (subkey_name) =>
                 {
-                    Parallel.ForEach(get_subkeynames.GetSubKeyNames(), (subkey_name) =>
+                    using (RegistryKey correct_key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\bam\State\UserSettings\" + subkey_name))
                     {
-                        using (RegistryKey correct_key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\bam\State\UserSettings\" + subkey_name))
+                        try
                         {
                             if (!check_for_recycle.ContainsKey(correct_key.GetValueNames().Count()) && !check_for_recycle.ContainsValue(subkey_name))
                             {
                                 check_for_recycle.Add(correct_key.GetValueNames().Count(), subkey_name);
                             }
+                        }
+                        catch { }
 
-                            foreach (string values in correct_key.GetValueNames())
+                        foreach (string values in correct_key.GetValueNames())
+                        {
+                            if (values.Contains(":")
+                                && values.Contains(@"\Device\HarddiskVolume4\"))
                             {
-                                if (values.Contains(":")
-                                    && values.Contains(@"\Device\HarddiskVolume4\"))
-                                {
-                                    Match mch = jessica.Match(values);
-                                    regedit_replace = DiscoC.Replace(mch.Value, $"{Path.GetPathRoot(Environment.SystemDirectory)}");
+                                Match mch = jessica.Match(values);
+                                regedit_replace = DiscoC.Replace(mch.Value, $"{Path.GetPathRoot(Environment.SystemDirectory)}");
 
-                                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, regedit_replace, "Wmic started few days ago #2"));
-                                }
-                                else if (values.Contains(":")
-                                    && !values.Contains(@"\Device\HarddiskVolume4\"))
-                                {
-                                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, values, "Wmic started few days ago #2"));
-                                }
+                                SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, regedit_replace, "Wmic started few days ago #2"));
+                            }
+                            else if (values.Contains(":")
+                                && !values.Contains(@"\Device\HarddiskVolume4\"))
+                            {
+                                SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, values, "Wmic started few days ago #2"));
                             }
                         }
-                    });
-                }
+                    }
+                });
+            }
 
-                IOrderedEnumerable<KeyValuePair<int, string>> sortedDict = from entry in check_for_recycle orderby entry.Key ascending select entry;
+            IOrderedEnumerable<KeyValuePair<int, string>> sortedDict = from entry in check_for_recycle orderby entry.Key ascending select entry;
 
-                SMT_Main.RESULTS.recyble_bins = File.GetLastWriteTime($@"C:\$Recycle.bin\{sortedDict.ElementAt(sortedDict.Count() - 1).Value}").ToString();
+            SMT_Main.RESULTS.recyble_bins = File.GetLastWriteTime($@"C:\$Recycle.bin\{sortedDict.ElementAt(sortedDict.Count() - 1).Value}").ToString();
 
                 #endregion
 
@@ -515,7 +530,9 @@ namespace SMT.scanners
                             {
                                 inUsingFile++;
 
-                                if (!GL_Contains(s, calcoloSHA256(new FileStream(jar_file, FileMode.Open))))
+                                if (!GL_Contains(s, calcoloSHA256(new FileStream(jar_file, FileMode.Open)))
+                                && !GL_Contains(MinecraftMainProcess, "Lunar Client")
+                                && !GL_Contains(MinecraftMainProcess, "Badlion"))
                                 {
                                     SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Modified version found: {Path.GetFileName(jar_file)}", Informations));
                                 }
@@ -534,7 +551,7 @@ namespace SMT.scanners
                 }
                 else if (inUsingFile == 0)
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "No versions used in .minecraft, is it possible?", "(BETA Method)"));
+                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "No versions used in .minecraft", "(BETA Method)"));
                 }
 
                 #endregion
@@ -613,6 +630,7 @@ namespace SMT.scanners
                     }
                     else if (GL_Contains(index, @"\\?\volume{")
                     && GL_Contains(index, "-")
+                    && prefetchfiles.Where(x => x.Contains(Path.GetFileName("MOUNTVOL.EXE").ToUpper())).FirstOrDefault() != null
                     && index.Length >= 50)
                     {
                         Match volume = mountvol_Method.Match(index);
@@ -726,7 +744,7 @@ namespace SMT.scanners
 
                                                         if (GL_Contains(f, "main-class"))
                                                         {
-                                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Possible Java -jar found on: {trytoget_disk.Replace(@"\\", "\\")}", "(BETA Method)"));
+                                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"{trytoget_disk.Replace(@"\\", "\\")} is runnable", "Found in JAVA/JAVAW's Prefetch (Possible java -jar?)"));
                                                         }
                                                     }
                                                 }
@@ -829,7 +847,7 @@ namespace SMT.scanners
 
             Task.WaitAll(others_tasks.ToArray());
 
-    #region Check Journal
+            #region Check Journal
 
             int cacls_counter = 0;
 
@@ -861,7 +879,7 @@ namespace SMT.scanners
                                 {
                                     if (GL_Contains(d.Name, "ConsoleHost_history.txt"))
                                     {
-                                        var s = getDirectoryfromJournal(journal, d, drive);
+                                        string s = getDirectoryfromJournal(journal, d, drive);
 
                                         if ((d.Reason == 4096 || d.Reason == 2147484160) && s != "Unavailable" && GL_Contains(s, $@"C:\Users\{username}\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine"))
                                         {
@@ -871,12 +889,12 @@ namespace SMT.scanners
 
                                     if (GL_Contains(d.Name, ".lnk"))
                                     {
-                                        var s = getDirectoryfromJournal(journal, d, drive);
-                                        var path = Environment.GetFolderPath(Environment.SpecialFolder.Recent);
+                                        string s = getDirectoryfromJournal(journal, d, drive);
+                                        string path = Environment.GetFolderPath(Environment.SpecialFolder.Recent);
 
                                         if (s == "Unavailable" && s.Contains(path) && GL_Contains(d.Name, ".pf"))
                                         {
-                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"PF file was edited", $"File name: {Path.GetFileName(d.Name)}"));
+                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, d.Name, $"PF file was edited"));
                                         }
                                     }
 
@@ -884,23 +902,35 @@ namespace SMT.scanners
                                     {
                                         string getPath = getDirectoryfromJournal(journal, d, drive);
 
-                                        foreach (var f in journal_names)
+                                        foreach (string f in journal_names)
                                         {
                                             if (GL_Contains(f, d.Name) && (d.Reason == 2147484160 || d.Reason == 4096 || d.Reason == 8192))
                                             {
                                                 if (TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
                                                         >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
+                                                {
                                                     SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, d.Name + " on: " + drive.Name + " volume", $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                }
                                             }
+                                        }
+
+                                        if (d.Reason == 2147483652 && Path.GetExtension(d.Name).ToUpper() == ".PF")
+                                        {
+                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, d.Name, "PF file was edited"));
                                         }
 
                                         if (d.Reason == 2149581088)
                                         {
                                             if (getPath != "Unavailable")
+                                            {
                                                 SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, getPath, $"Wmic method started today at {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                            }
                                             else if (getPath == "Unavailable")
+                                            {
                                                 SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, d.Name + " on: " + drive.Name + " volume", $"Wmic method started today at {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                            }
                                         }
+
                                         else if (suspy_extension.Contains(Path.GetExtension(d.Name.ToUpper())) && TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp) >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
                                         {
                                             if (!GL_Contains(d.Name, "jnativehook") && !GL_Contains(Path.GetExtension(d.Name), ".dll"))
@@ -913,8 +943,12 @@ namespace SMT.scanners
                                                             SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_MOVED_RENAMED, getPath, $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                                         }
                                                         else if (getPath == "Unavailable")
+                                                        {
                                                             SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_MOVED_RENAMED, d.Name + " on: " + drive.Name + " volume", $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                        }
+
                                                         break;
+
                                                     case 2147484160:
                                                         if (File.Exists(getPath))
                                                         {
@@ -923,7 +957,9 @@ namespace SMT.scanners
                                                                 SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_REPLACED, getPath, $"File was replaced after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                                             }
                                                             else if (getPath == "Unavailable")
+                                                            {
                                                                 SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_REPLACED, d.Name + " on: " + drive.Name + " volume", $"File was replaced after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                            }
                                                         }
                                                         else
                                                         {
@@ -932,7 +968,9 @@ namespace SMT.scanners
                                                                 SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, getPath, $"File was deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                                             }
                                                             else if (getPath == "Unavailable")
+                                                            {
                                                                 SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, d.Name + " on: " + drive.Name + " volume", $"File was deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                            }
                                                         }
                                                         break;
                                                 }
@@ -990,7 +1028,7 @@ namespace SMT.scanners
 
             Console.WriteLine(Detection(DETECTION_VALUES.STAGE_PRC, "", "USNJournal check completed"));
 
-#endregion
+            #endregion
 
             Console.WriteLine(Detection(DETECTION_VALUES.STAGE_PRC, "", "Other checks completed"));
         } //Refractored
