@@ -42,8 +42,10 @@ Features da aggiungere nella prossima release (1.11):
 
 Checks per la 1.12:
 
-- [ ] Check universale recording software - per la 1.12
-- [ ] Check per le estensioni spoffate - per la 1.12
+- [ ] Check universale recording software
+- [ ] Check per le estensioni spoffate
 - [ ] Check metodo rundll32 e regsvc
+- [ ] Nuovo metodo per controllare le stringhe (senza usare software di 3° parti)
+- [ ] Nuovi metodi/processi per trovare le stringhe dei clients
 
 Official Telegram channel @SMTool
