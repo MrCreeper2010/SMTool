@@ -1,6 +1,8 @@
 # SMT-v3.0-master
 Lista features:
 
+Web results added in 1.11 x)
+
 - [X] Check degli alts
 - [X] Check del recycle.bin
 - [X] Check per software di recording in background (NVIDIA SHARE etc..)
@@ -23,7 +25,7 @@ Lista features:
 - [X] Check per trovare se il regedit è stato disabilitato
 - [X] Check del wmic (qualunque estensione e stream)
 
-Features da aggiungere nella prossima release (quelle con la spunta già sono state aggiunte ma non ufficialmente):
+Features da aggiungere nella prossima release (1.11):
 
 - [X] Check PcaClient
 - [X] Check di alcune macro (sezione da aggiornare)
@@ -31,15 +33,19 @@ Features da aggiungere nella prossima release (quelle con la spunta già sono st
 - [X] Check metodo java -jar
 - [X] Check universale per trovare QUALUNQUE ghost client di qualunque versione (sia optifine che vanilla)
 - [X] Check per il tipo di PC (laptop o desktop)
-- [X] USNJournal anche su USB e HardDisk esterni
+- [X] USNJournal check anche su USB e/o HardDisk esterni
 - [X] Check USB con FAT32
-- [X] Check per tutti i volumi/USB del PC attualmente connessi
 - [X] Explorer report (file:// senza duplicati e false-flags)
 - [X] Check per i files PF modificati
-- [X] Check metodo rundll32 e regsvc
-- [ ] Check per le estensioni spoffate - per la 1.12
-- [X] Directory journal aggiunte!
-- [ ] Check universale recording software - per la 1.12
-- Web results added
+- [X] Directory journal aggiunte
+- [X] Web Results
+
+Checks per la 1.12:
+
+- [ ] Check universale recording software
+- [ ] Check per le estensioni spoffate
+- [ ] Check metodo rundll32 e regsvc
+- [ ] Nuovo metodo per controllare le stringhe (senza usare software di 3° parti)
+- [ ] Nuovi metodi/processi per trovare le stringhe dei clients
 
 Official Telegram channel @SMTool
