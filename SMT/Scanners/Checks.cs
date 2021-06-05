@@ -353,36 +353,7 @@ namespace SMT.scanners
             List<string> tda = new List<string>();
             bool unicode_char = false;
 
-            #region Metodo da riprendere
-
-            /*
-            others_tasks.Add(Task.Run(() =>
-            {
-                Parallel.ForEach(Process.GetProcesses(), (single_process) =>
-                {
-                    try
-                    {
-                        var processFileName = Path.GetFileName(single_process.MainModule.FileName).ToUpper();
-
-                        if (GetSign(single_process.MainModule.FileName) != "Signed"
-                        && single_process.MainModule.FileName != Assembly.GetExecutingAssembly().Location
-                        && prefetchfiles.Where(x => x.Contains(processFileName)) != null
-                        && prefetchfiles.Where(f => File.GetLastWriteTime(processFileName)
-                        >= PC_StartTime()) != null)
-                        {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Unsigned process is in background", $"Process's name: {single_process.MainModule.FileName}"));
-                        }
-
-                    }
-                    catch
-                    {
-
-                    }
-                });
-            }));
-            */
-
-            #endregion
+            //Check if Recent is empty
 
             others_tasks.Add(Task.Run(() =>
             {
@@ -394,6 +365,8 @@ namespace SMT.scanners
                 }
 
             }));
+
+            //WMIC
 
             others_tasks.Add(Task.Run(() =>
             {
@@ -419,7 +392,10 @@ namespace SMT.scanners
                                 check_for_recycle.Add(correct_key.GetValueNames().Count(), subkey_name);
                             }
                         }
-                        catch { }
+                        catch 
+                        {
+                            SMT_Main.RESULTS.report_bugs.Add("Recycle.bin error: " + correct_key.GetValueNames().Count() + " " + subkey_name);
+                        }
 
                         foreach (string values in correct_key.GetValueNames())
                         {
@@ -476,10 +452,12 @@ namespace SMT.scanners
                 }
 
                 #endregion
+
             }));
 
             others_tasks.Add(Task.Run(() =>
             {
+
                 #region Check delle macro
 
                 if (Directory.Exists($@"C:\Users\{username}\AppData\Local\LGHUB\")
@@ -497,6 +475,7 @@ namespace SMT.scanners
 
 
                 #endregion
+
             }));
 
             others_tasks.Add(Task.Run(() =>
@@ -524,6 +503,17 @@ namespace SMT.scanners
                         {
                             string version = sda.Value.Replace("--version ", "").Replace(" --gameDir", "");
 
+                            if (version[0] == '\"' && version[version.Length - 1] == '\"')
+                            {
+                                StringBuilder sb = new StringBuilder(version);
+                                sb.Remove(0, 1);
+
+                                int reutnr_value = version.Length - 2;
+
+                                sb.Remove(reutnr_value, 1);
+                                version = sb.ToString();
+                            }
+
                             string jar_file = default_mc_path + "\\" + version + "\\" + version + ".jar";
 
                             if (IsFileLocked(new FileInfo(jar_file)))
@@ -531,15 +521,19 @@ namespace SMT.scanners
                                 inUsingFile++;
 
                                 if (!GL_Contains(s, calcoloSHA256(new FileStream(jar_file, FileMode.Open)))
-                                && !GL_Contains(MinecraftMainProcess, "Lunar Client")
-                                && !GL_Contains(MinecraftMainProcess, "Badlion"))
+                                && !Process.GetProcessesByName(MinecraftMainProcess)[0].MainWindowTitle.Contains("Lunar")
+                                && !Process.GetProcessesByName(MinecraftMainProcess)[0].MainWindowTitle.Contains("Badlion"))
                                 {
-                                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Modified version found: {Path.GetFileName(jar_file)}", Informations));
+                                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
+                                        $"Modified version found: {version}", "(SHA256 check from 1.8 version to 1.16.5)"));
                                 }
                             }
                         }
                         else
                         {
+                            SMT_Main.RESULTS.report_bugs.Add("MC Version title: " + Process.GetProcessesByName(MinecraftMainProcess)[0].MainWindowTitle 
+                                + "\n" + "Command-line error:\n\n" + o["CommandLine"].ToString());
+
                             SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Impossible to get {o["Name"]}'s informations", $"PID: {int.Parse(o["Handle"].ToString())}"));
                         }
                     }
@@ -675,7 +669,7 @@ namespace SMT.scanners
 
                 if (file_size == 0)
                 {
-                    SMT_Main.RESULTS.Errors.Add("Explorer file is empty, this error is automatically reported to developer =)");
+                    SMT_Main.RESULTS.report_bugs.Add("Explorer file is empty, this error is automatically reported to developer =)");
                 }
 
                 #endregion
@@ -909,7 +903,7 @@ namespace SMT.scanners
                                                 if (TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
                                                         >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
                                                 {
-                                                    SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, d.Name + " on: " + drive.Name + " volume", $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                    SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, d.Name + " on: " + drive.Name + " volume (FROM JAVA.EXE Prefetch's log)", $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                                 }
                                             }
                                         }
@@ -919,7 +913,7 @@ namespace SMT.scanners
                                             SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, d.Name, "PF file was edited"));
                                         }
 
-                                        if (d.Reason == 2149581088)
+                                        if (d.Reason == 2149581088 || d.Reason == 2147483744)
                                         {
                                             if (getPath != "Unavailable")
                                             {

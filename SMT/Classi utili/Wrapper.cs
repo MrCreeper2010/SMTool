@@ -1,5 +1,6 @@
 ﻿using AuthenticodeExaminer;
 using Discord;
+using Newtonsoft.Json;
 using Pastel;
 using SMT.Helpers;
 using System;
@@ -11,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -70,6 +72,9 @@ namespace SMT.helpers
                 case 2149581088:
                     return_value = "Wmic";
                     break;
+                case 2147483744:
+                    return_value = "Wmic #1";
+                    break;
                 case 2147483652:
                     return_value = "PF EDITED";
                     break;
@@ -113,11 +118,6 @@ namespace SMT.helpers
             Console.ForegroundColor = backupColor;
         }
 
-        private static void ThrowException()
-        {
-            SMT_Main.RESULTS.Errors.Add("An error occured meanwhile SMT was scanning, please restart SMT");
-        }
-
         public static void runCheckAsync(Action check)
         {
             try
@@ -126,7 +126,10 @@ namespace SMT.helpers
                 tasks.Add(Task.Factory.StartNew(async () => check()));
 #pragma warning restore CS1998 // Il metodo asincrono non contiene operatori 'await', pertanto verrà eseguito in modo sincrono
             }
-            catch { ThrowException(); }
+            catch
+            {
+                SMT_Main.RESULTS.report_bugs.Add("[THREADING ERROR] An error occured meanwhile SMT was scanning, please restart SMT");
+            }
         }
 
         public static bool GL_Contains(string source, string toCheck)
@@ -247,7 +250,7 @@ namespace SMT.helpers
             }
             else
             {
-                SMT_Main.RESULTS.Errors.Add(@"C:\ProgramData directory doesn't exist, please create it and restart smt");
+                SMT_Main.RESULTS.report_bugs.Add(@"C:\ProgramData directory doesn't exist, please create it and restart smt");
                 WriteLine(@"C:\ProgramData directory doesn't exist, please create it and restart smt", ConsoleColor.Yellow);
                 Console.ReadLine();
             }
@@ -278,7 +281,7 @@ namespace SMT.helpers
 
             if (check.ExitCode != 0)
             {
-                SMT_Main.RESULTS.Errors.Add("AntiSS Tool detected, please check programs in background, some checks will be skipped");
+                SMT_Main.RESULTS.report_bugs.Add("AntiSS Tool detected, please check programs in background, some checks will be skipped");
                 Console.WriteLine("There is a problem with some checks, please disable antivirus and restart SMT");
                 Console.ReadLine();
             }
@@ -424,7 +427,7 @@ namespace SMT.helpers
                     }
                     else
                     {
-                        
+
                     }
                 }
             }
@@ -554,6 +557,20 @@ namespace SMT.helpers
             //Explorer
             try
             {
+
+                if (Process.GetProcessesByName("explorer")[0].PagedMemorySize64 > Process.GetProcessesByName("explorer")[1].PagedMemorySize64)
+                {
+                    //UnProtectProcess(Process.GetProcessesByName("csrss")[0].Id);
+                    SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {Process.GetProcessesByName("explorer")[0].Id} > C:\ProgramData\SMT-{SMTDir}\explorer.txt");
+                }
+                else
+                {
+                    //UnProtectProcess(Process.GetProcessesByName("csrss")[1].Id);
+                    SaveFile($@"C:\ProgramData\SMT-{SMTDir}\strings2.exe -pid {Process.GetProcessesByName("explorer")[1].Id} > C:\ProgramData\SMT-{SMTDir}\explorer.txt");
+                }
+            }
+            catch
+            {
                 if (Process.GetProcessesByName("explorer")[0].Id.ToString().Length > 0)
                 {
                     //UnProtectProcess(Convert.ToInt32(GetPID("explorer")));
@@ -564,10 +581,6 @@ namespace SMT.helpers
                 {
                     SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Explorer missed", Informations));
                 }
-            }
-            catch
-            {
-
             }
         }
 
@@ -581,7 +594,7 @@ namespace SMT.helpers
         {
             string process = "";
 
-            if (Process.GetProcessesByName("javaw").Length > 0 && Process.GetProcessesByName("java").Length > 0)
+            if ((Process.GetProcessesByName("javaw").Length & Process.GetProcessesByName("java").Length) > 0)
             {
                 using (Process Javaw = Process.GetProcessesByName("javaw")[0])
                 {
@@ -606,8 +619,7 @@ namespace SMT.helpers
             {
                 process += "java";
             }
-            else if (Process.GetProcessesByName("javaw").Length == 0
-                && Process.GetProcessesByName("java").Length == 0
+            else if((Process.GetProcessesByName("javaw").Length & Process.GetProcessesByName("java").Length) == 0 
                 && Process.GetProcessesByName("launcher").Length > 0)
             {
                 process += "launcher";
@@ -658,25 +670,6 @@ namespace SMT.helpers
         #region DiscordWebHook
 
         public static string URL = DownloadString("https://pastebin.com/raw/8yBBh1Wt");
-
-        public static byte[] initializeURL(string URL, NameValueCollection pairs)
-        {
-            using (WebClient web = new WebClient())
-            {
-                return web.UploadValues(URL, pairs);
-            }
-        }
-
-        public static void sendMessage(string message)
-        {
-            initializeURL(URL, new NameValueCollection()
-            {
-                {
-                    "content",
-                     message
-                }
-            });
-        }
 
         public static void Send(Discord.DiscordMessage message, FileInfo file = null)
         {
@@ -755,35 +748,6 @@ namespace SMT.helpers
             return finalpid;
         }
 
-        public static string getCommand(string volume_name, string rfn)
-        {
-            string return_value = "";
-
-            Process p = new Process();
-            // Redirect the output stream of the child process.
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.FileName = "cmd.exe";
-            p.StartInfo.Arguments = $"/C fsutil file queryfilenamebyid {volume_name} {rfn}";
-            p.Start();
-
-            string output = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
-
-            if (!output.Contains(@"\\?\"))
-            {
-                return_value = "";
-            }
-            else
-            {
-                Regex rgx = new Regex("\\\\.*?$");
-                Match d = rgx.Match(output);
-                return_value = d.Value;
-            }
-
-            return return_value;
-        }
-
         public static void UnProtectProcess(int PID)
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -835,10 +799,56 @@ namespace SMT.helpers
             return fsda;
         }
 
+        #region TODO
+        //public static async Task url_shortener(string long_url)
+        //{
+        //    var payload = new
+        //    {
+        //        destination = long_url,
+        //        domain = new
+        //        {
+        //            fullName = "rebrand.ly"
+        //        }
+        //    };
+
+        //    using (HttpClient httpClient = new HttpClient { BaseAddress = new Uri("https://api.rebrandly.com") })
+        //    {
+        //        httpClient.DefaultRequestHeaders.Add("apikey", "e92c420f64cd457cb716155a32463a55");
+
+        //        StringContent body = new StringContent(
+        //            JsonConvert.SerializeObject(payload), UnicodeEncoding.UTF8, "application/json");
+
+        //        using (HttpResponseMessage response = await httpClient.PostAsync("/v1/links", body))
+        //        {
+        //            response.EnsureSuccessStatusCode();
+
+        //            dynamic link = JsonConvert.DeserializeObject<dynamic>(
+        //                await response.Content.ReadAsStringAsync());
+
+        //            FinalURL = link.shortUrl;
+        //        }
+        //    }
+        //}
+        #endregion
+
+        public static string genRandomID()
+        {
+            string string_to_return = "";
+            Random rdm = new Random();
+
+            for(int j = 0; j < 10; j++)
+            {
+                string_to_return += correctWords[rdm.Next(0, correctWords.Length)];
+            }
+
+            return string_to_return;
+        }
 
         public static void enumResults()
         {
             FileStream mystream = new FileStream(file, FileMode.OpenOrCreate, FileAccess.Write);
+
+            string isThereAnError = "";
 
             using (StreamWriter tw = new StreamWriter(mystream))
             {
@@ -860,6 +870,11 @@ namespace SMT.helpers
 
                 tw.Write("Explorer report: \n");
                 tw.WriteLine($"C:\\ProgramData\\SMT-{SMTDir}\\explorer_helper.txt");
+
+                tw.Write("\nID univoco dello scan: ");
+                tw.WriteLine($"#{genRandomID()}");
+
+                string_file += $"ID={genRandomID()}&";
 
                 tw.WriteLine("\nPC Type:\n");
                 tw.WriteLine((SystemInformation.PowerStatus.BatteryChargeStatus == BatteryChargeStatus.NoSystemBattery)
@@ -1013,11 +1028,16 @@ namespace SMT.helpers
                 //WriteLine("\nChecks:", ConsoleColor.Red);
                 tw.WriteLine("\nChecks:");
 
-                if (SMT_Main.RESULTS.Errors.Count > 0) // done
+                if (SMT_Main.RESULTS.report_bugs.Count > 0)
                 {
+                    isThereAnError = "[ERRORS FOUND IN SCAN] ";
+
                     tw.WriteLine("[WARNING] ERRORS:");
-                    //SMT_Main.RESULTS.Errors.Distinct().ToList().ForEach(jna => WriteLine("   " + jna));
-                    SMT_Main.RESULTS.Errors.Distinct().ToList().ForEach(jna => tw.WriteLine("   " + jna));
+
+                    foreach (string s in SMT_Main.RESULTS.report_bugs)
+                    {
+                        tw.WriteLine(s);
+                    }
                 }
 
                 //Files Actions
@@ -1089,16 +1109,34 @@ namespace SMT.helpers
 
                 #endregion
 
-                WriteLine($@"If link doesn't work: ".Pastel(Color.LightYellow) + $@"C:\ProgramData\SMT-{SMTDir}\SMT-log.txt", ConsoleColor.White);
+                try
+                {
 
-                Process.Start(string_file.Replace("ƒ&", "&"));
+                    string string_to_format = $@"{string_file.Replace("ƒ&", "&")}";
+
+                    //Task t = Task.Run(() => url_shortener(string_to_format));
+                    //t.Wait();
+
+                    //Console.WriteLine("\nYour results are ready: " + FinalURL);
+
+                    Process.Start(string_to_format);
+                }
+                catch
+                {
+                    Console.WriteLine("\nThere are too many results to display in website, we will fix next release =)");
+
+                    Process.Start($@"C:\ProgramData\SMT-{SMTDir}\SMT-log.txt");
+                }
+
+                Console.WriteLine("\nSMT Log: " + $@"C:\ProgramData\SMT-{SMTDir}\SMT-log.txt");
             }
 
             try
             {
                 DiscordMessage message = new DiscordMessage
                 {
-                    Content = $@"L'utente con HWID: {HardwareID()} ha eseguito uno scan di: {SMT_Main.final_scan}ms"
+                    Content = $"{isThereAnError}L'utente con HWID: {HardwareID()} ha eseguito uno scan di:" +
+                    $" {SMT_Main.final_scan}ms\nLink scan: {FinalURL}"
                 };
 
                 Send(message, new FileInfo($@"C:\ProgramData\SMT-{SMTDir}\SMT-log.txt"));
@@ -1115,8 +1153,9 @@ namespace SMT.helpers
 
             #region Nothing Found
 
-            if (SMT_Main.RESULTS.possible_replaces.Count == 0 && SMT_Main.RESULTS.suspy_files.Count == 0
-                 && SMT_Main.RESULTS.string_scan.Count == 0 && SMT_Main.RESULTS.bypass_methods.Count == 0)
+            if((SMT_Main.RESULTS.possible_replaces.Count 
+                & SMT_Main.RESULTS.suspy_files.Count
+                & SMT_Main.RESULTS.bypass_methods.Count) == 0)
             {
                 WriteLine("\nNothing Found", ConsoleColor.Green);
             }

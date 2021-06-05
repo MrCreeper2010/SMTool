@@ -73,6 +73,7 @@ namespace SMT.Helpers
         public static Checks checks = new Checks();
         public static DriveInfo[] drives = DriveInfo.GetDrives();
 
+        public static string correctWords = "abcdefghilmnopqrstuvzABCDEFGHILMNOPQRSTUVZ0123456789";
         public static string strings2, unprotect;
         public static string Informations = "No more Informations";
         
