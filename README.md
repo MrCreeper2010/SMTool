@@ -1,16 +1,14 @@
 # SMT-v3.0-master
 Lista features:
 
-Web results added in 1.11 x)
-
 - [X] Check degli alts
 - [X] Check del recycle.bin
 - [X] Check per software di recording in background (NVIDIA SHARE etc..)
 - [X] Check per controllare quali dispositivi sono attualmente collegati
 - [X] Check per le xray resource pack
 - [X] Check delle date di avvio dei processi
-- [X] Check deile USB connesse (nel caso l'utente ha connesso delle USB saranno flaggate)
-- [X] Check deila firma digitale (sia se non c'è alcuna firma che se è fasulla)
+- [X] Check delle USB connesse (nel caso l'utente ha connesso delle USB saranno flaggate)
+- [X] Check deila firma digitale (sia se non c'è alcuna firma che se è **fasulla**)
 - [X] Check di Autoclickers/Clients + Metodi generici di self-destruct
 - [X] Check dei siti sospetti visitati (vape.gg, iridium.xyz etc..)
 - [X] Check per files rinominati/mossi/eliminati
@@ -38,7 +36,7 @@ Features da aggiungere nella prossima release (1.11):
 - [X] Explorer report (file:// senza duplicati e false-flags)
 - [X] Check per i files PF modificati
 - [X] Directory journal aggiunte
-- [X] Web Results
+- [X] **Web Results**
 
 Checks per la 1.12:
 
