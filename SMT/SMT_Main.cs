@@ -16,9 +16,7 @@ namespace SMT
         /// </summary>
 
         /*
-         *  1.Vari checks powershell
-            2.Clicker bat Eventi ps
-            3.Checks solo lettura cronologia pw
+         *  1. fix USB connected
          */
 
         public static Results RESULTS = new Results();

@@ -29,3 +29,4 @@ C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\Google
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\Google.Apis.Urlshortener.v1.dll
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\Google.Apis.Urlshortener.v1.pdb
 C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\obj\Debug\SMT_Tests.exe.config
+C:\Users\Mattia\Documents\Progetti\Progetti C#\SMTool\SMT_Tests\bin\Debug\Usb.Events.dll

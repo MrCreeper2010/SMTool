@@ -207,28 +207,28 @@ namespace SMT.scanners
                     {
                         if (index.InstanceId == 1102)
                         {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Security logs deleted", Informations));
+                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "\"Security\" logs deleted", Informations));
                         }
                     }
                 });
 
-                Parallel.ForEach(System_entries, (Security) =>
+                foreach(var System in System_entries)
                 {
-                    if (PC_StartTime() <= Security.TimeGenerated)
+                    if (PC_StartTime() <= System.TimeGenerated)
                     {
-                        if (Security.InstanceId == 104)
+                        if (System.InstanceId == 104)
                         {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "\"Security\" logs deleted", Informations));
+                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "\"Application\" or \"System\" logs deleted", Informations));
                         }
-                        else if (Security.EventID == 7031)
+                        else if (System.InstanceId == 3221232503)
                         {
-                            foreach (byte single_bytes in Security.Data)
+                            foreach (byte single_bytes in System.Data)
                             {
                                 bytes += single_bytes;
                             }
                         }
                     }
-                });
+                }
 
                 Parallel.ForEach(Application_entries, (Application_log) =>
                 {
@@ -285,9 +285,11 @@ namespace SMT.scanners
             {
 
                 EventLogQuery elQuery = new EventLogQuery(LogSource, PathType.LogName, sQuery);
-
+                
                 using (EventLogReader elReader = new EventLogReader(elQuery))
                 {
+                    //Console.WriteLine(elReader.BatchSize);
+
                     for (EventRecord dodo = elReader.ReadEvent(); dodo != null; dodo = elReader.ReadEvent())
                     {
                         if (MinecraftMainProcess != "" && dodo.TimeCreated >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
@@ -302,26 +304,26 @@ namespace SMT.scanners
 
             #region Uso di USB
 
-            eventvwr_tasks.Add(Task.Run(() =>
-            {
+            //eventvwr_tasks.Add(Task.Run(() =>
+            //{
 
-                EventLogQuery rQuery = new EventLogQuery(StorageSpaces, PathType.LogName, bQuery);
-                using (EventLogReader elReader = new EventLogReader(rQuery))
-                {
-                    for (EventRecord dodo = elReader.ReadEvent(); dodo != null; dodo = elReader.ReadEvent())
-                    {
-                        DateTime UpdatedTime = (DateTime)dodo.TimeCreated;
+            //    //EventLogQuery rQuery = new EventLogQuery(StorageSpaces, PathType.LogName, bQuery);
+            //    //using (EventLogReader elReader = new EventLogReader(rQuery))
+            //    //{
+            //    //    for (EventRecord dodo = elReader.ReadEvent(); dodo != null; dodo = elReader.ReadEvent())
+            //    //    {
+            //    //        DateTime UpdatedTime = (DateTime)dodo.TimeCreated;
 
-                        if (dodo.TimeCreated > PC_StartTime()
-                        && UpdatedTime.AddMinutes(-5) > PC_StartTime())
-                        {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
-                                "Volume/USB connected", dodo.TimeCreated.ToString()));
-                        }
-                    }
-                }
+            //    //        if (dodo.TimeCreated > PC_StartTime()
+            //    //        && UpdatedTime.AddMinutes(-5) > PC_StartTime())
+            //    //        {
+            //    //            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
+            //    //                "Volume/USB connected", dodo.TimeCreated.ToString()));
+            //    //        }
+            //    //    }
+            //    //}
 
-            }));
+            //}));
 
             #endregion
 
@@ -520,13 +522,18 @@ namespace SMT.scanners
                             {
                                 inUsingFile++;
 
-                                if (!GL_Contains(s, calcoloSHA256(new FileStream(jar_file, FileMode.Open)))
-                                && !Process.GetProcessesByName(MinecraftMainProcess)[0].MainWindowTitle.Contains("Lunar")
-                                && !Process.GetProcessesByName(MinecraftMainProcess)[0].MainWindowTitle.Contains("Badlion"))
+                                try
                                 {
-                                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
-                                        $"Modified version found: {version}", "(SHA256 check from 1.8 version to 1.16.5)"));
+
+                                    if (!GL_Contains(s, calcoloSHA256(new FileStream(jar_file, FileMode.Open)))
+                                    && !Process.GetProcessesByName(MinecraftMainProcess)[0].MainWindowTitle.Contains("Lunar")
+                                    && !Process.GetProcessesByName(MinecraftMainProcess)[0].MainWindowTitle.Contains("Badlion"))
+                                    {
+                                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
+                                            $"Modified version found: {version}", "(SHA256 check from 1.8 version to 1.16.5)"));
+                                    }
                                 }
+                                catch { }
                             }
                         }
                         else
@@ -588,7 +595,7 @@ namespace SMT.scanners
                     && !index.Contains("\"backgroundColor\"")
                         && !index.Contains("\"displayText\"")
                         && !GL_Contains(index, "visited: ")
-                        && index.Length >= 14
+                        && index.Length >= 12
                         && !GL_Contains(index, $": {username}@file:///")
                         && !index.Contains("?")
                         && !GL_Contains(index, "\""))
@@ -696,7 +703,7 @@ namespace SMT.scanners
                         }
                         else if (GL_Contains(index, "regsvc32.exe"))
                         {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Regsvc32 used after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
+                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Regsvc32 command used after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
                         }
                     }
 
@@ -766,6 +773,15 @@ namespace SMT.scanners
             Parallel.ForEach(CSRSS_file, (index) =>
             {
                 Match Csrss_path = regex_path.Match(index);
+
+                if(Csrss_path.Success && !GL_Contains(Csrss_path.Value, Path.GetPathRoot(Environment.SystemDirectory)))
+                {
+                    if(Path.GetExtension(Csrss_path.Value).Length > 0)
+                    {
+                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
+                                $"{Csrss_path.Value} ran in USB/Volume connected today", "Volume name: " + Csrss_path.Value[0] + Csrss_path.Value[1]));
+                    }
+                }
 
                 if (Csrss_path.Success && File.Exists(Csrss_path.Value))
                 {

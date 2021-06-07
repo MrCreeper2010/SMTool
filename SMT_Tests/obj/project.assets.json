@@ -108,6 +108,24 @@
           "lib/net461/System.Buffers.dll": {}
         }
       },
+      "System.Management/4.7.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Management"
+        ],
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/net45/_._": {
+            "assetType": "runtime",
+            "rid": "win"
+          }
+        }
+      },
       "System.Memory/4.5.4": {
         "type": "package",
         "dependencies": {
@@ -149,6 +167,28 @@
         },
         "runtime": {
           "lib/net461/System.Runtime.CompilerServices.Unsafe.dll": {}
+        }
+      },
+      "Usb.Events/1.1.1.1": {
+        "type": "package",
+        "dependencies": {
+          "System.Management": "4.7.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Usb.Events.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Usb.Events.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/UsbEventWatcher.Linux.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/osx-x64/native/UsbEventWatcher.Mac.dylib": {
+            "assetType": "native",
+            "rid": "osx-x64"
+          }
         }
       }
     },
@@ -259,6 +299,18 @@
           "lib/net461/System.Buffers.dll": {}
         }
       },
+      "System.Management/4.7.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Management"
+        ],
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "runtimes/win/lib/net45/_._": {}
+        }
+      },
       "System.Memory/4.5.4": {
         "type": "package",
         "dependencies": {
@@ -300,6 +352,18 @@
         },
         "runtime": {
           "lib/net461/System.Runtime.CompilerServices.Unsafe.dll": {}
+        }
+      },
+      "Usb.Events/1.1.1.1": {
+        "type": "package",
+        "dependencies": {
+          "System.Management": "4.7.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Usb.Events.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Usb.Events.dll": {}
         }
       }
     },
@@ -410,6 +474,18 @@
           "lib/net461/System.Buffers.dll": {}
         }
       },
+      "System.Management/4.7.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Management"
+        ],
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
       "System.Memory/4.5.4": {
         "type": "package",
         "dependencies": {
@@ -451,6 +527,18 @@
         },
         "runtime": {
           "lib/net461/System.Runtime.CompilerServices.Unsafe.dll": {}
+        }
+      },
+      "Usb.Events/1.1.1.1": {
+        "type": "package",
+        "dependencies": {
+          "System.Management": "4.7.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Usb.Events.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Usb.Events.dll": {}
         }
       }
     },
@@ -561,6 +649,18 @@
           "lib/net461/System.Buffers.dll": {}
         }
       },
+      "System.Management/4.7.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Management"
+        ],
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
       "System.Memory/4.5.4": {
         "type": "package",
         "dependencies": {
@@ -602,6 +702,18 @@
         },
         "runtime": {
           "lib/net461/System.Runtime.CompilerServices.Unsafe.dll": {}
+        }
+      },
+      "Usb.Events/1.1.1.1": {
+        "type": "package",
+        "dependencies": {
+          "System.Management": "4.7.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Usb.Events.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Usb.Events.dll": {}
         }
       }
     }
@@ -788,6 +900,30 @@
         "version.txt"
       ]
     },
+    "System.Management/4.7.0": {
+      "sha512": "IY+uuGhgzWiCg21i8IvQeY/Z7m1tX8VuPF+ludfn7iTCaccTtJo5HkjZbBEL8kbBubKhAKKtNXr7uMtmAc28Pw==",
+      "type": "package",
+      "path": "system.management/4.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net45/_._",
+        "lib/netstandard2.0/System.Management.dll",
+        "lib/netstandard2.0/System.Management.xml",
+        "ref/net45/_._",
+        "ref/netstandard2.0/System.Management.dll",
+        "ref/netstandard2.0/System.Management.xml",
+        "runtimes/win/lib/net45/_._",
+        "runtimes/win/lib/netcoreapp2.0/System.Management.dll",
+        "runtimes/win/lib/netcoreapp2.0/System.Management.xml",
+        "system.management.4.7.0.nupkg.sha512",
+        "system.management.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
     "System.Memory/4.5.4": {
       "sha512": "1MbJTHS1lZ4bS4FmsJjnuGJOu88ZzTT2rLvrhW7Ygic+pC0NWA+3hgAen0HRdsocuQXCkUTdFn9yHJJhsijDXw==",
       "type": "package",
@@ -886,6 +1022,20 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "Usb.Events/1.1.1.1": {
+      "sha512": "/u+OJ40zwpks1/IGCQXlm550irx6AEbaZBE0euYnJzeJdrO8xNEHUr/7zSEzK/EMg9ZsGw242zAG6FsvpcvZAA==",
+      "type": "package",
+      "path": "usb.events/1.1.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Usb.Events.dll",
+        "runtimes/linux-x64/native/UsbEventWatcher.Linux.so",
+        "runtimes/osx-x64/native/UsbEventWatcher.Mac.dylib",
+        "usb.events.1.1.1.1.nupkg.sha512",
+        "usb.events.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
@@ -894,7 +1044,8 @@
       "Google.Apis.Urlshortener.v1 >= 1.41.1.138",
       "Json.Net >= 1.0.33",
       "Newtonsoft.Json >= 13.0.1",
-      "System.Memory >= 4.5.4"
+      "System.Memory >= 4.5.4",
+      "Usb.Events >= 1.1.1.1"
     ]
   },
   "packageFolders": {
@@ -949,6 +1100,10 @@
           "System.Memory": {
             "target": "Package",
             "version": "[4.5.4, )"
+          },
+          "Usb.Events": {
+            "target": "Package",
+            "version": "[1.1.1.1, )"
           }
         }
       }
