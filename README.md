@@ -7,7 +7,7 @@ Lista features:
 - [X] Check per controllare quali dispositivi sono attualmente collegati
 - [X] Check per le xray resource pack
 - [X] Check delle date di avvio dei processi
-- [X] Check delle USB connesse (nel caso l'utente ha connesso delle USB saranno flaggate)
+- [X] Check delle USB connesse oggi (solamente se almeno un file è stato avviato)
 - [X] Check deila firma digitale (sia se non c'è alcuna firma che se è **fasulla**)
 - [X] Check di Autoclickers/Clients + Metodi generici di self-destruct
 - [X] Check dei siti sospetti visitati (vape.gg, iridium.xyz etc..)
