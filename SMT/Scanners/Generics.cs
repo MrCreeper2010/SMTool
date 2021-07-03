@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using SMT.helpers;
 using SMT.Helpers;
+using SMT.scanners;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -40,17 +41,20 @@ namespace SMT
                 {
                     int javaw = Process.GetProcessesByName(MinecraftMainProcess)[0].Id;
 
-                    SMT_Main.RESULTS.processes_starts.Add("Javaw: ", Process.GetProcessById(javaw).StartTime.ToString());
+                    Auth.RESULTS.processes_starts.Add("Javaw", Checks.GetCurrentMilli(Process.GetProcessById(javaw).StartTime));
                 }
                 else
                 {
-                    SMT_Main.RESULTS.processes_starts.Add("Javaw: ", "missed");
+                    Auth.RESULTS.processes_starts.Add("Javaw", 0);
                 }
 
-                SMT_Main.RESULTS.processes_starts.Add("Explorer: ", Process.GetProcessById(explorerPID).StartTime.ToString());
-                SMT_Main.RESULTS.processes_starts.Add("System: ", PC_StartTime().ToString());
+                Console.WriteLine(Checks.GetCurrentMilli(Process.GetProcessById(explorerPID).StartTime));
+                Auth.RESULTS.processes_starts.Add("Explorer", Checks.GetCurrentMilli(Process.GetProcessById(explorerPID).StartTime));
+                Auth.RESULTS.processes_starts.Add("System", Checks.GetCurrentMilli(PC_StartTime()));
 
             }));
+
+            
 
             #endregion
 
@@ -64,7 +68,7 @@ namespace SMT
 
                 Parallel.ForEach(Mouse_device, (index) =>
                 {
-                    SMT_Main.RESULTS.mouse.Add(index["Name"].ToString());
+                    Auth.RESULTS.mouse.Add(index["Name"].ToString());
                 });
             }));
 
@@ -96,7 +100,7 @@ namespace SMT
                 {
                     if (Process.GetProcessesByName(index).Length != 0)
                     {
-                        SMT_Main.RESULTS.recording_softwares.Add(index + ", ");
+                        Auth.RESULTS.recording_softwares.Add(index + ", ");
                         recordingProcessesFound++;
                     }
                 });
@@ -118,13 +122,13 @@ namespace SMT
                         FileInfo finfo = new FileInfo(resourcepack);
                         if (File.ReadAllText(resourcepack).Contains(".json") && finfo.Length < 1000000)
                         {
-                            SMT_Main.RESULTS.xray_packs.Add(resourcepack);
+                            Auth.RESULTS.xray_packs.Add(resourcepack);
                         }
                     });
                 }
                 catch
                 {
-                    SMT_Main.RESULTS.xray_packs.Add("Nothing Found");
+                    Auth.RESULTS.xray_packs.Add("Nothing Found");
                 }
             }));
 
@@ -147,19 +151,19 @@ namespace SMT
 
                         if (mhc.Success)
                         {
-                            SMT_Main.RESULTS.alts.Add(obj["accounts"][mhc.Value.Replace("\"", "")]["minecraftProfile"]["name"].ToString() + ", ");
+                            Auth.RESULTS.alts.Add(obj["accounts"][mhc.Value.Replace("\"", "")]["minecraftProfile"]["name"].ToString());
                             alts_counter++;
                         }
                     }
                 }
                 catch
                 {
-                    SMT_Main.RESULTS.alts.Add("No Alt(s) found(s)");
+                    Auth.RESULTS.alts.Add("No Alt(s) found(s)");
                 }
 
                 if (alts_counter == 0)
                 {
-                    SMT_Main.RESULTS.alts.Add("No Alt(s) found(s)");
+                    Auth.RESULTS.alts.Add("No Alt(s) found(s)");
                 }
 
             }));

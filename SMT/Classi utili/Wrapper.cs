@@ -1,11 +1,14 @@
 ﻿using AuthenticodeExaminer;
 using Discord;
+using eSStool.json;
 using Newtonsoft.Json;
 using Pastel;
 using SMT.Helpers;
+using SMT.scanners;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -13,6 +16,7 @@ using System.Linq;
 using System.Management;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -30,6 +34,8 @@ namespace SMT.helpers
         public static readonly List<Task> generic_tasks = new List<Task>();
         public static readonly List<Task> eventvwr_tasks = new List<Task>();
         public static readonly List<Task> others_tasks = new List<Task>();
+
+        public static Pin usedPin;
 
         public enum DETECTION_VALUES
         {
@@ -92,14 +98,18 @@ namespace SMT.helpers
             return return_value;
         }
 
-        public static void doScan()
+        public static void doScan(BackgroundWorker backGroundWorker)
         {
-            Parallel.For(0, CheckActions_List.Length, (j) =>
+            new Checks().DoStringScan();
+            new Checks().OtherChecks();
+            new Checks().EventVwrCheck();
+            new Generics().GlobalGeneric_check();
+            /*Parallel.For(0, CheckActions_List.Length, (j) =>
             {
-                runCheckAsync(CheckActions_List[j]);
+                runCheckAsync(CheckActions_List[j], backGroundWorker);
             });
 
-            Task.WaitAll(tasks.ToArray());
+            Task.WaitAll(tasks.ToArray());*/
         }
 
         public static void WriteLine(string text, ConsoleColor consoleColor = ConsoleColor.White)
@@ -118,17 +128,20 @@ namespace SMT.helpers
             Console.ForegroundColor = backupColor;
         }
 
-        public static void runCheckAsync(Action check)
+        public static void runCheckAsync(Action check, BackgroundWorker worker)
         {
             try
             {
 #pragma warning disable CS1998 // Il metodo asincrono non contiene operatori 'await', pertanto verrà eseguito in modo sincrono
-                tasks.Add(Task.Factory.StartNew(async () => check()));
+                tasks.Add(Task.Factory.StartNew(async () =>
+                {
+                    check();
+                }));
 #pragma warning restore CS1998 // Il metodo asincrono non contiene operatori 'await', pertanto verrà eseguito in modo sincrono
             }
             catch
             {
-                SMT_Main.RESULTS.report_bugs.Add("[THREADING ERROR] An error occured meanwhile SMT was scanning, please restart SMT");
+                Auth.RESULTS.report_bugs.Add("[THREADING ERROR] An error occured meanwhile SMT was scanning, please restart SMT");
             }
         }
 
@@ -183,19 +196,11 @@ namespace SMT.helpers
                 proc.StartInfo = procStartInfo;
                 proc.Start();
             }
-            Environment.Exit(0);
+            //Environment.Exit(0);
         } //Refractored
 
         public static void GoodBye()
         {
-            WriteLine("\nOpen Source project!\n", ConsoleColor.Yellow);
-            WriteLine("Ci vedremo presto, ne sono sicuro ;)", ConsoleColor.Green);
-            WriteLine("Scritto da: MrCreeper2010 | @SMTool su Telegram", ConsoleColor.White);
-            WriteLine("Buona giornata cocchitos! =)", ConsoleColor.Red);
-            Console.Write("\nPress ENTER to exit");
-            Console.ReadLine();
-            Console.Write("\nConfirm exit -> press ENTER");
-            Console.ReadLine();
             Clean();
         }
 
@@ -250,7 +255,7 @@ namespace SMT.helpers
             }
             else
             {
-                SMT_Main.RESULTS.report_bugs.Add(@"C:\ProgramData directory doesn't exist, please create it and restart smt");
+                Auth.RESULTS.report_bugs.Add(@"C:\ProgramData directory doesn't exist, please create it and restart smt");
                 WriteLine(@"C:\ProgramData directory doesn't exist, please create it and restart smt", ConsoleColor.Yellow);
                 Console.ReadLine();
             }
@@ -273,6 +278,8 @@ namespace SMT.helpers
                 Arguments = $@"/C {arg}",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
             };
 
             Process check = Process.Start(scan);
@@ -281,7 +288,7 @@ namespace SMT.helpers
 
             if (check.ExitCode != 0)
             {
-                SMT_Main.RESULTS.report_bugs.Add("AntiSS Tool detected, please check programs in background, some checks will be skipped");
+                Auth.RESULTS.report_bugs.Add("AntiSS Tool detected, please check programs in background, some checks will be skipped");
                 Console.WriteLine("There is a problem with some checks, please disable antivirus and restart SMT");
                 Console.ReadLine();
             }
@@ -362,7 +369,7 @@ namespace SMT.helpers
                 #region Signature type
 
                 case DETECTION_VALUES.UNSIGNED: //rosso
-                    detection_return = $@"{"[".Pastel(Color.White)} {$"UNSIGNED".Pastel(Color.FromArgb(240, 255, 0))} {"]".Pastel(Color.White)} {detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
+                    detection_return = $@"{detection} [ { $"{time}".Pastel(Color.FromArgb(165, 229, 250))} ]";
                     break;
                 #endregion
 
@@ -482,7 +489,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "PcaSvc missed", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "PcaSvc missed", Informations));
                 }
             }
             catch { }
@@ -498,13 +505,13 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DPS missed", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DPS missed", Informations));
                 }
             }
             catch { }
 
             //lsass
-            try
+            /*try
             {
                 if (Process.GetProcessesByName("lsass")[0].Id > 0)
                 {
@@ -513,7 +520,7 @@ namespace SMT.helpers
                     lsass = true;
                 }
             }
-            catch { }
+            catch(Exception ex) { MessageBox.Show(ex.Message); }*/
 
             //DNS
             try
@@ -526,7 +533,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DNS missed", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DNS missed", Informations));
                 }
             }
             catch { }
@@ -544,12 +551,12 @@ namespace SMT.helpers
                         && DiagTrack_lines.ToList().Contains("del")
                         && DiagTrack_lines.ToList().Contains(".pf"))
                     {
-                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Generic self-destruct", Informations));
+                        Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Generic self-destruct", Informations));
                     }
                 }
                 else
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DiagTrack missed", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DiagTrack missed", Informations));
                 }
             }
             catch { }
@@ -579,7 +586,7 @@ namespace SMT.helpers
                 }
                 else
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Explorer missed", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Explorer missed", Informations));
                 }
             }
         }
@@ -633,17 +640,25 @@ namespace SMT.helpers
             return process;
         }
 
+
+
         public static bool isCorrectMC()
         {
+            IntPtr hwndtargetWindow = FindWindow("LWJGL", null);
             bool isMc = false;
 
-            if (Process.GetProcessesByName(GetCorrectMCProcess()).Length > 0)
+            if (/*Process.GetProcessesByName(GetCorrectMCProcess()).Length == 1 && */hwndtargetWindow != IntPtr.Zero)
             {
                 isMc = true;
             }
 
             return isMc;
         }
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out Int32 lpdwProcessId);
 
         public static bool isMCRunning()
         {
@@ -655,8 +670,7 @@ namespace SMT.helpers
             }
             else
             {
-                WriteLine("[!] Minecraft missed, press any key to exit", ConsoleColor.Yellow);
-                Console.ReadLine();
+                MessageBox.Show("[!] Minecraft missed!\nYour pin can still be used.");
                 Environment.Exit(0);
 
                 return_value = false;
@@ -766,8 +780,8 @@ namespace SMT.helpers
 
         public static bool isLegit()
         {
-            return (SMT_Main.RESULTS.bypass_methods.Count > 0
-            || SMT_Main.RESULTS.possible_replaces.Count > 0);
+            return (Auth.RESULTS.bypass_methods.Count > 0
+            || Auth.RESULTS.possible_replaces.Count > 0);
         }
 
         public static string negritos(string s)
@@ -846,7 +860,87 @@ namespace SMT.helpers
 
         public static void enumResults()
         {
-            FileStream mystream = new FileStream(file, FileMode.OpenOrCreate, FileAccess.Write);
+            #region new_site
+
+            Scan scan = new Scan();
+            List<string> strings = new List<string>();
+            scan.id = "nah";
+            scan.userId = usedPin.userId;
+
+            if ((Auth.RESULTS.possible_replaces.Count & Auth.RESULTS.suspy_files.Count & Auth.RESULTS.bypass_methods.Count) == 0)
+            {
+                scan.legit = true;
+            }
+            else
+            {
+                scan.legit = false;
+            }
+
+            scan.date = Checks.GetCurrentMilli(DateTime.Now);
+            scan.recycleBinMillis = Auth.RESULTS.recyble_bins;
+            scan.pcType = (SystemInformation.PowerStatus.BatteryChargeStatus == BatteryChargeStatus.NoSystemBattery)
+                    ? "Desktop PC"
+                    : "Laptop PC";
+
+            scan.explorerReport = @"C:\ProgramData\SMT-" + SMTDir + @"\explorer_helper.txt";
+            scan.success = true;
+            scan.blocked = false;
+            scan.antiss = false;
+            scan.endTime = Auth.stopwatch.ElapsedMilliseconds;
+            scan.hwid = HardwareID();
+            scan.vpn = false;
+            scan.vm = false;
+            scan.accounts = Auth.RESULTS.alts;
+            scan.recordingSoftwares = Auth.RESULTS.recording_softwares;
+            scan.processStartTime = Auth.RESULTS.processes_starts;
+            scan.connectedDevices = Auth.RESULTS.mouse;
+
+            scan.checks = new Dictionary<string, string>();
+            scan.pcaClientFiles = Auth.RESULTS.pcaclient;
+            scan.fileActions = new Dictionary<string, string>();
+            
+            List<string> suspFiles = new List<string>();
+            foreach(String toReplace in Auth.RESULTS.suspy_files)
+            {
+                suspFiles.Add(toReplace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "Ø").Replace(" [ ", "Ø").Replace("[ ", "").Replace(" ]", "").Replace("Ø", " "));
+            }
+
+
+            scan.suspiciousFiles = suspFiles;
+
+
+            if(Auth.RESULTS.xray_packs.Count == 0)
+            {
+                strings.Add("No xray pack found!");
+            }
+            else
+            {
+                strings = Auth.RESULTS.xray_packs;
+            }
+            scan.xRayResourcePacks = strings;
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://localhost/scans/create");
+            request.Method = "POST";
+            request.ContentType = "application/json; charset=utf-8";
+            request.Headers.Add("SMT-Header:true");
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                string json = JsonConvert.SerializeObject(scan);
+
+                streamWriter.Write(json);
+            }
+
+            WebResponse response = request.GetResponse();
+
+            Stream dataStream = response.GetResponseStream();
+
+            StreamReader reader = new StreamReader(dataStream);
+            string responseFromServer = reader.ReadToEnd();
+            Console.WriteLine(responseFromServer);
+
+
+            #endregion
+            /*FileStream mystream = new FileStream(file, FileMode.OpenOrCreate, FileAccess.Write);
 
             string isThereAnError = "";
 
@@ -861,7 +955,7 @@ namespace SMT.helpers
                 tw.WriteLine("Generic Informations: \n");
 
                 string_file += $"Date_scan={DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}&";
-                string_file += $"scan_speed={SMT_Main.final_scan.ToString()}&";
+                string_file += $"scan_speed={Auth.final_scan.ToString()}&";
                 string_file += $"response={isLegit()}&";
 
                 //Write("Explorer report: ", ConsoleColor.Yellow);
@@ -897,17 +991,17 @@ namespace SMT.helpers
                 tw.WriteLine("\nAlts:\n");
                 try
                 {
-                    string s = SMT_Main.RESULTS.alts.Last();
-                    SMT_Main.RESULTS.alts.RemoveAt(SMT_Main.RESULTS.alts.Count - 1);
-                    SMT_Main.RESULTS.alts.Add(s.Replace(",", ""));
+                    string s = Auth.RESULTS.alts.Last();
+                    Auth.RESULTS.alts.RemoveAt(Auth.RESULTS.alts.Count - 1);
+                    Auth.RESULTS.alts.Add(s.Replace(",", ""));
                 }
                 catch { }
 
                 string_file += "Alts=";
 
-                //SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => Write(alt));
-                SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => string_file += negritos(alt) + "ƒ");
-                SMT_Main.RESULTS.alts.Distinct().ToList().ForEach(alt => tw.WriteLine("- " + alt));
+                //Auth.RESULTS.alts.Distinct().ToList().ForEach(alt => Write(alt));
+                Auth.RESULTS.alts.Distinct().ToList().ForEach(alt => string_file += negritos(alt) + "ƒ");
+                Auth.RESULTS.alts.Distinct().ToList().ForEach(alt => tw.WriteLine("- " + alt));
 
                 string_file += "&Recyclebin=";
 
@@ -915,11 +1009,11 @@ namespace SMT.helpers
 
                 try
                 {
-                    //Write(SMT_Main.RESULTS.recyble_bins);
-                    string_file += $"{SMT_Main.RESULTS.recyble_bins}";
+                    //Write(Auth.RESULTS.recyble_bins);
+                    string_file += $"{Auth.RESULTS.recyble_bins}";
 
                     tw.WriteLine("\nRecycle.bin: ");
-                    tw.WriteLine(SMT_Main.RESULTS.recyble_bins);
+                    tw.WriteLine(Auth.RESULTS.recyble_bins);
                 }
                 catch
                 {
@@ -928,18 +1022,18 @@ namespace SMT.helpers
 
                 string_file += "&Recording=";
 
-                if (SMT_Main.RESULTS.recording_softwares.Count > 0)
+                if (Auth.RESULTS.recording_softwares.Count > 0)
                 {
                     //Write("\n\nRecording Software(s): ", ConsoleColor.Yellow);
-                    string b = SMT_Main.RESULTS.recording_softwares.Last();
-                    SMT_Main.RESULTS.recording_softwares.RemoveAt(SMT_Main.RESULTS.recording_softwares.Count - 1);
-                    SMT_Main.RESULTS.recording_softwares.Add(b.Replace(",", ""));
-                    //SMT_Main.RESULTS.recording_softwares.ForEach(recording => Write(recording));
+                    string b = Auth.RESULTS.recording_softwares.Last();
+                    Auth.RESULTS.recording_softwares.RemoveAt(Auth.RESULTS.recording_softwares.Count - 1);
+                    Auth.RESULTS.recording_softwares.Add(b.Replace(",", ""));
+                    //Auth.RESULTS.recording_softwares.ForEach(recording => Write(recording));
 
                     tw.WriteLine("\n\nRecording Software(s):\n ");
-                    SMT_Main.RESULTS.recording_softwares.ForEach(recording => tw.WriteLine("- " + recording));
+                    Auth.RESULTS.recording_softwares.ForEach(recording => tw.WriteLine("- " + recording));
 
-                    SMT_Main.RESULTS.recording_softwares.ForEach(recording => string_file += recording + "ƒ");
+                    Auth.RESULTS.recording_softwares.ForEach(recording => string_file += recording + "ƒ");
                     string_file += "&";
                 }
                 else
@@ -955,7 +1049,7 @@ namespace SMT.helpers
                 tw.WriteLine("\nProcess(es) Start Time:\n");
                 string_file += "PST=";
 
-                foreach (KeyValuePair<string, string> processStart in SMT_Main.RESULTS.processes_starts)
+                foreach (KeyValuePair<string, long> processStart in Auth.RESULTS.processes_starts)
                 {
                     //WriteLine("- " + processStart.Key + processStart.Value);
                     tw.WriteLine("- " + processStart.Key + processStart.Value);
@@ -967,11 +1061,11 @@ namespace SMT.helpers
                 //WriteLine("\nXray Resource Pack(s):\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nXray Resource Pack(s):\n");
 
-                if (SMT_Main.RESULTS.xray_packs.Count > 0)
+                if (Auth.RESULTS.xray_packs.Count > 0)
                 {
-                    //SMT_Main.RESULTS.xray_packs.ForEach(xray => WriteLine("- " + xray));
-                    SMT_Main.RESULTS.xray_packs.ForEach(xray => tw.WriteLine("- " + xray));
-                    SMT_Main.RESULTS.xray_packs.ForEach(xray => string_file += negritos(xray) + "ƒ");
+                    //Auth.RESULTS.xray_packs.ForEach(xray => WriteLine("- " + xray));
+                    Auth.RESULTS.xray_packs.ForEach(xray => tw.WriteLine("- " + xray));
+                    Auth.RESULTS.xray_packs.ForEach(xray => string_file += negritos(xray) + "ƒ");
 
                     string_file += "&";
                 }
@@ -987,11 +1081,11 @@ namespace SMT.helpers
                 //WriteLine("\nInput Device(s):\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nInput Device(s):\n");
 
-                if (SMT_Main.RESULTS.mouse.Count > 0)
+                if (Auth.RESULTS.mouse.Count > 0)
                 {
-                    //SMT_Main.RESULTS.mouse.ForEach(mouse => WriteLine("- " + mouse));
-                    SMT_Main.RESULTS.mouse.ForEach(mouse => tw.WriteLine("- " + mouse));
-                    SMT_Main.RESULTS.mouse.ForEach(mouse => string_file += mouse + "ƒ");
+                    //Auth.RESULTS.mouse.ForEach(mouse => WriteLine("- " + mouse));
+                    Auth.RESULTS.mouse.ForEach(mouse => tw.WriteLine("- " + mouse));
+                    Auth.RESULTS.mouse.ForEach(mouse => string_file += mouse + "ƒ");
 
                     string_file += "&";
                 }
@@ -1006,11 +1100,11 @@ namespace SMT.helpers
 
                 //WriteLine("\nPcaClient files (no duplicated files):\n", ConsoleColor.Yellow); //fatto
                 tw.WriteLine("\nPcaClient files (no duplicated files):\n");
-                if (SMT_Main.RESULTS.pcaclient.Count > 0)
+                if (Auth.RESULTS.pcaclient.Count > 0)
                 {
-                    //SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => WriteLine("- " + mouse));
-                    SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => tw.WriteLine("- " + mouse));
-                    SMT_Main.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => string_file += negritos(mouse) + "ƒ");
+                    //Auth.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => WriteLine("- " + mouse));
+                    Auth.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => tw.WriteLine("- " + mouse));
+                    Auth.RESULTS.pcaclient.Distinct().ToList().ForEach(mouse => string_file += negritos(mouse) + "ƒ");
 
                     string_file += "&";
                 }
@@ -1028,13 +1122,13 @@ namespace SMT.helpers
                 //WriteLine("\nChecks:", ConsoleColor.Red);
                 tw.WriteLine("\nChecks:");
 
-                if (SMT_Main.RESULTS.report_bugs.Count > 0)
+                if (Auth.RESULTS.report_bugs.Count > 0)
                 {
                     isThereAnError = "[ERRORS FOUND IN SCAN] ";
 
                     tw.WriteLine("[WARNING] ERRORS:");
 
-                    foreach (string s in SMT_Main.RESULTS.report_bugs)
+                    foreach (string s in Auth.RESULTS.report_bugs)
                     {
                         tw.WriteLine(s);
                     }
@@ -1042,16 +1136,16 @@ namespace SMT.helpers
 
                 //Files Actions
 
-                if (SMT_Main.RESULTS.possible_replaces.Count > 0) // done
+                if (Auth.RESULTS.possible_replaces.Count > 0) // done
                 {
                     //WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} File's actions file(s):");
                     tw.WriteLine("\nFile's actions file(s):");
                     string_file += "FilesActions=";
 
-                    SMT_Main.RESULTS.possible_replaces.Sort();
-                    //SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
-                    SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => tw.WriteLine("   " + replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
-                    SMT_Main.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => string_file += negritos(replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "Ø").Replace(" [ ", "Ø").Replace("[ ", "").Replace(" ]", "")) + "ƒ");
+                    Auth.RESULTS.possible_replaces.Sort();
+                    //Auth.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
+                    Auth.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => tw.WriteLine("   " + replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
+                    Auth.RESULTS.possible_replaces.Distinct().ToList().ForEach(replace => string_file += negritos(replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "Ø").Replace(" [ ", "Ø").Replace("[ ", "").Replace(" ]", "")) + "ƒ");
 
                     string_file += "&";
                 }
@@ -1063,17 +1157,17 @@ namespace SMT.helpers
 
                 //Checks
 
-                if (SMT_Main.RESULTS.bypass_methods.Count > 0) // done
+                if (Auth.RESULTS.bypass_methods.Count > 0) // done
                 {
                     //WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} Bypass methods:");
                     tw.WriteLine("\nBypass methods:");
 
                     string_file += "Checks=";
 
-                    SMT_Main.RESULTS.bypass_methods.Sort();
-                    //SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
-                    SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => tw.WriteLine("   " + replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
-                    SMT_Main.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => string_file += negritos(replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "Ø").Replace(" [ ", "Ø").Replace("[ ", "").Replace(" ]", "")) + "ƒ");
+                    Auth.RESULTS.bypass_methods.Sort();
+                    //Auth.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => WriteLine("   " + replace));
+                    Auth.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => tw.WriteLine("   " + replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
+                    Auth.RESULTS.bypass_methods.Distinct().ToList().ForEach(replace => string_file += negritos(replace.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "Ø").Replace(" [ ", "Ø").Replace("[ ", "").Replace(" ]", "")) + "ƒ");
 
                     string_file += "&";
                 }
@@ -1084,17 +1178,17 @@ namespace SMT.helpers
 
                 //Files actions
 
-                if (SMT_Main.RESULTS.suspy_files.Count > 0) // done
+                if (Auth.RESULTS.suspy_files.Count > 0) // done
                 {
                     //WriteLine($"\n{"[".Pastel(Color.White)}{$"!".Pastel(Color.FromArgb(240, 52, 52))}{"]".Pastel(Color.White)} Generic file attributes:");
                     tw.WriteLine("\nGeneric file attributes:");
 
                     string_file += "SUS=";
 
-                    SMT_Main.RESULTS.suspy_files.Sort();
-                    //SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => WriteLine("   " + suspy));
-                    SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => tw.WriteLine("   " + suspy.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
-                    SMT_Main.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => string_file += negritos(suspy.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "Ø").Replace(" [ ", "Ø").Replace("[ ", "").Replace(" ]", "")) + "ƒ");
+                    Auth.RESULTS.suspy_files.Sort();
+                    //Auth.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => WriteLine("   " + suspy));
+                    Auth.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => tw.WriteLine("   " + suspy.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]")));
+                    Auth.RESULTS.suspy_files.Distinct().ToList().ForEach(suspy => string_file += negritos(suspy.Replace("[38;2;255;255;255m[[0m [38;2;240;52;52m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;235;149;50m", "[ ").Replace("[38;2;255;255;255m[[0m [38;2;240;255;0m", "[ ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace("[0m [38;2;255;255;255m][0m ", " ] ").Replace(" [ [38;2;165;229;250m", " [ ").Replace("[0m ]", " ]").Replace(" ] ", "Ø").Replace(" [ ", "Ø").Replace("[ ", "").Replace(" ]", "")) + "ƒ");
 
                     string_file += "&";
 
@@ -1136,7 +1230,7 @@ namespace SMT.helpers
                 DiscordMessage message = new DiscordMessage
                 {
                     Content = $"{isThereAnError}L'utente con HWID: {HardwareID()} ha eseguito uno scan di:" +
-                    $" {SMT_Main.final_scan}ms\nLink scan: {FinalURL}"
+                    $" {Auth.final_scan}ms\nLink scan: {FinalURL}"
                 };
 
                 Send(message, new FileInfo($@"C:\ProgramData\SMT-{SMTDir}\SMT-log.txt"));
@@ -1153,14 +1247,15 @@ namespace SMT.helpers
 
             #region Nothing Found
 
-            if((SMT_Main.RESULTS.possible_replaces.Count 
-                & SMT_Main.RESULTS.suspy_files.Count
-                & SMT_Main.RESULTS.bypass_methods.Count) == 0)
+            if((Auth.RESULTS.possible_replaces.Count 
+                & Auth.RESULTS.suspy_files.Count
+                & Auth.RESULTS.bypass_methods.Count) == 0)
             {
                 WriteLine("\nNothing Found", ConsoleColor.Green);
             }
 
             #endregion
+            */
         }
 
         #endregion

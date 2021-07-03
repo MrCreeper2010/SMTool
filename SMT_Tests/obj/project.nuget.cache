@@ -1,22 +1,22 @@
 {
   "version": 2,
-  "dgSpecHash": "WRAJh+OPfU7/lVxBJfg3pJ2su2HyAM9JnBbpDf8RZ7rblRNvO+la6stV1MWLYPliPnELTwwd70UNuWdGomCCPw==",
+  "dgSpecHash": "RXNvxRyhhyP1IONDP8SUGWLSqzO20wH2sAJDNSHzyUWBfQDlbVmXEZ8lAWeUTGd8gkfzZFhGQvl1+UPg5Bu6og==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mattia\\Documents\\Progetti\\Progetti C#\\SMTool\\SMT_Tests\\SMT_Tests.csproj",
+  "projectFilePath": "H:\\Users\\Amministratore\\Documents\\GitHub\\SMTool\\SMT_Tests\\SMT_Tests.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Mattia\\.nuget\\packages\\authenticodeexaminer\\0.3.0\\authenticodeexaminer.0.3.0.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\google.apis\\1.41.1\\google.apis.1.41.1.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\google.apis.auth\\1.41.1\\google.apis.auth.1.41.1.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\google.apis.core\\1.41.1\\google.apis.core.1.41.1.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\google.apis.urlshortener.v1\\1.41.1.138\\google.apis.urlshortener.v1.1.41.1.138.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\json.net\\1.0.33\\json.net.1.0.33.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\system.management\\4.7.0\\system.management.4.7.0.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.5.3\\system.runtime.compilerservices.unsafe.4.5.3.nupkg.sha512",
-    "C:\\Users\\Mattia\\.nuget\\packages\\usb.events\\1.1.1.1\\usb.events.1.1.1.1.nupkg.sha512"
+    "C:\\Users\\admin\\.nuget\\packages\\authenticodeexaminer\\0.3.0\\authenticodeexaminer.0.3.0.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\google.apis\\1.41.1\\google.apis.1.41.1.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\google.apis.auth\\1.41.1\\google.apis.auth.1.41.1.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\google.apis.core\\1.41.1\\google.apis.core.1.41.1.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\google.apis.urlshortener.v1\\1.41.1.138\\google.apis.urlshortener.v1.1.41.1.138.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\json.net\\1.0.33\\json.net.1.0.33.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\system.management\\4.7.0\\system.management.4.7.0.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.5.3\\system.runtime.compilerservices.unsafe.4.5.3.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\usb.events\\1.1.1.1\\usb.events.1.1.1.1.nupkg.sha512"
   ],
   "logs": []
 }

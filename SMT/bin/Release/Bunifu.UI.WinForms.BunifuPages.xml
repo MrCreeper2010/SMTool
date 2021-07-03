@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Bunifu.UI.WinForms.BunifuPages</name>
+    </assembly>
+    <members>
+        <member name="T:Bunifu.UI.WinForms.BunifuPages">
+            <summary>
+            Provides controlled tab-based navigation which 
+            appears invisible to users but visible and customizable 
+            to developers, thus mimicking single-page-applications design.
+            </summary>
+        </member>
+        <member name="M:Bunifu.UI.WinForms.BunifuPages.#ctor">
+            <summary>
+            Provides controlled tab-based navigation which 
+            appears invisible to users but visible and customizable 
+            to developers, thus mimicking single-page-applications design.
+            </summary>
+        </member>
+        <member name="M:Bunifu.UI.WinForms.BunifuPages.SetPage(System.String,System.Boolean)">
+            <summary>
+            Sets the tab page that will be visible to the user.
+            </summary>
+            <param name="pageTitle">The title of the tab page to set.</param>
+            <param name="useNameInstead">
+            If set to true, the tab page name will be used 
+            instead of the page title when selecting; else, 
+            the default page title will be used by default.
+            </param>
+        </member>
+        <member name="M:Bunifu.UI.WinForms.BunifuPages.SetPage(System.Int32)">
+            <summary>
+            Sets the tab page that will be visible to the user.
+            </summary>
+            <param name="pageIndex">The tab page index to be set.</param>
+        </member>
+        <member name="M:Bunifu.UI.WinForms.BunifuPages.SetPage(System.Windows.Forms.TabPage)">
+            <summary>
+            Sets the tab page that will be visible to the user.
+            </summary>
+            <param name="page">The tab page to be set.</param>
+        </member>
+    </members>
+</doc>

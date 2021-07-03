@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Bunifu.UI.WinForms.BunifuTextbox</name>
+    </assembly>
+    <members>
+        <member name="E:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.TextChange">
+            <summary>
+            Occurs when [text change].
+            </summary>
+            
+        </member>
+        <member name="E:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.AcceptsTabChanged">
+            <summary>
+            Occurs when [accepts tab changed].
+            </summary>
+            
+        </member>
+        <member name="E:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.BorderStyleChanged">
+            <summary>
+            Occurs when [border style changed].
+            </summary>
+            
+        </member>
+        <member name="E:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.HideSelectionChanged">
+            <summary>
+            Occurs when [hide selection changed].
+            </summary>
+            
+        </member>
+        <member name="E:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.ModifiedChanged">
+            <summary>
+            Occurs when [modified changed].
+            </summary>
+            
+        </member>
+        <member name="E:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.ReadOnlyChanged">
+            <summary>
+            Occurs when [read only changed].
+            </summary>
+            
+        </member>
+        <member name="E:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.TextAlignChanged">
+            <summary>
+            Occurs when [text align changed].
+            </summary>
+            
+        </member>
+        <member name="E:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.OnIconLeftClick">
+            <summary>
+            Occurs when [icon left click].
+            </summary>
+            
+        </member>
+        <member name="E:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.OnIconRightClick">
+            <summary>
+            Occurs when [icon right click].
+            </summary>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.Style">
+            <summary>
+            Gets or sets the style.
+            </summary>
+            <value>
+            The style.
+            </value>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.IconRightCursor">
+            <summary>
+            Gets or sets the icon right cursor.
+            </summary>
+            <value>
+            The icon right cursor.
+            </value>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.IconLeftCursor">
+            <summary>
+            Gets or sets the icon left cursor.
+            </summary>
+            <value>
+            The icon left cursor.
+            </value>
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.IconLeft">
+            <summary>
+            Gets or sets the icon left.
+            </summary>
+            <value>
+            The icon left.
+            </value>]
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.IconRight">
+            <summary>
+            Gets or sets the icon right.
+            </summary>
+            <value>
+            The icon right.
+            </value>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.DefaultText">
+            <summary>
+            Gets or sets the text associated with this control.
+            </summary>
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.Text">
+            <summary>
+            Gets or sets the text associated with this control.
+            </summary>
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.IconPadding">
+            <summary>
+            Gets or sets the icon padding.
+            </summary>
+            <value>
+            The icon padding.
+            </value>
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.BorderThickness">
+            <summary>
+            Gets or sets the border thickness.
+            </summary>
+            <value>
+            The border thickness.
+            </value>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.AutoCompleteCustomSource">
+            <summary>
+            Gets or sets the automatic complete custom source.
+            </summary>
+            <value>
+            The automatic complete custom source.
+            </value>
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.BorderColorDisabled">
+            <summary>
+            Gets or sets the border color disabled.
+            </summary>
+            <value>
+            The border color disabled.
+            </value>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.BorderColorIdle">
+            <summary>
+            Gets or sets the border color idle.
+            </summary>
+            <value>
+            The border color idle.
+            </value>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.BorderColorHover">
+            <summary>
+            Gets or sets the border color hover.
+            </summary>
+            <value>
+            The border color hover.
+            </value>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.BorderColorActive">
+            <summary>
+            Gets or sets the border color active.
+            </summary>
+            <value>
+            The border color active.
+            </value>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.FillColor">
+            <summary>
+            Gets or sets the color of the fill.
+            </summary>
+            <value>
+            The color of the fill.
+            </value>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.BorderRadius">
+            <summary>
+            Gets or sets the border radius.
+            </summary>
+            <value>
+            The border radius.
+            </value>
+            
+        </member>
+        <member name="M:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.IsInDesignMode">
+            <summary>
+            Determines whether [is in design mode].
+            </summary>
+            <returns>
+              <c>true</c> if [is in design mode]; otherwise, <c>false</c>.
+            </returns>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.TextPlaceholder">
+            <summary>
+            Gets or sets the text placeholder.
+            </summary>
+            <value>
+            The text placeholder.
+            </value>
+            
+        </member>
+        <member name="P:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.isOnFocused">
+            <summary>
+            Gets a value indicating whether this instance is on focused.
+            </summary>
+        </member>
+        <member name="F:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Bunifu.UI.WinForms.BunifuTextbox.BunifuTextBox.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+    </members>
+</doc>

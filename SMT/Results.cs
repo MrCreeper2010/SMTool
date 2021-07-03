@@ -8,11 +8,11 @@ namespace SMT
 
         public List<string> alts { get; set; } = new List<string>();
         public List<string> mouse { get; set; } = new List<string>();
-        public string recyble_bins { get; set; }
+        public long recyble_bins { get; set; }
         public List<string> xray_packs { get; set; } = new List<string>();
         public List<string> recording_softwares { get; set; } = new List<string>();
         public List<string> pcaclient { get; set; } = new List<string>();
-        public Dictionary<string, string> processes_starts { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, long> processes_starts { get; set; } = new Dictionary<string, long>();
         
         #endregion
 

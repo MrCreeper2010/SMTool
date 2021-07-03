@@ -61,6 +61,26 @@ namespace SMT.Properties {
         }
         
         /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_chiudi_macos_64 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_chiudi_macos_64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_macos_riduci_a_icona_64 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_macos_riduci_a_icona_64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Byte[].
         /// </summary>
         internal static byte[] strings2 {
@@ -77,6 +97,16 @@ namespace SMT.Properties {
             get {
                 object obj = ResourceManager.GetObject("unprotect", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap v2 {
+            get {
+                object obj = ResourceManager.GetObject("v2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

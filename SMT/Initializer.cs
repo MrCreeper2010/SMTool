@@ -12,26 +12,25 @@ namespace SMT
     {
         public Initializer()
         {
-            Wrapper.WriteLine("Fammi preparare la cintura per frustare questi shitty cheaters...\n", ConsoleColor.Cyan);
 
             #region Titolo e check versione
 
             string VERSION = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
 
-            Console.Title = $"SMT v-{VERSION} (Javaw check disabled)";
+            //Console.Title = $"SMT v-{VERSION} (Javaw check disabled)";
 
-            if (VERSION != Wrapper.DownloadString("https://pastebin.com/raw/8CFatqcd"))
+            /*if (VERSION != Wrapper.DownloadString("https://pastebin.com/raw/8CFatqcd"))
             {
                 Wrapper.WriteLine(Wrapper.DownloadString("https://pastebin.com/raw/BLLzHGhc"), ConsoleColor.Yellow);
                 Wrapper.Wait();
                 Environment.Exit(0);
-            }
+            }*/
 
             #endregion
 
             #region Priorità e limite massimo di Threads
 
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
             new Thread(() =>
             {
                 while (true)

@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using SMT.helpers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
@@ -106,14 +107,14 @@ namespace SMT.scanners
                                                 if (prefetchfiles[j].Contains(cheat_filename.ToUpper())
                                                 && File.GetLastWriteTime(prefetchfiles[j]) >= PC_StartTime())
                                                 {
-                                                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.OUT_INSTANCE, cheat, "File: " + cheat_filename));
+                                                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.OUT_INSTANCE, cheat, "File: " + cheat_filename));
                                                 }
                                             }
                                         }
                                         else if (count > 3)
                                         {
 
-                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.OUT_INSTANCE, cheat, "User tried to bypass this check adding a lot of !"));
+                                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.OUT_INSTANCE, cheat, "User tried to bypass this check adding a lot of !"));
                                         }
                                     }
                                 });
@@ -135,7 +136,7 @@ namespace SMT.scanners
                                         && mch.Value.Contains(":"))
                                         {
                                             //DPS
-                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, mch.Value, "Wmic started few days ago #1"));
+                                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, mch.Value, "Wmic started few days ago #1"));
                                         }
                                     }
                                 });
@@ -144,7 +145,7 @@ namespace SMT.scanners
                             else if (link == "https://pastebin.com/raw/1LKLuNWh"
                                 && file_lines.ToLower().Contains(client_str))
                             {
-                                SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.OUT_INSTANCE, cheat, "(User isn't necessarily cheating)"));
+                                Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.OUT_INSTANCE, cheat, "(User isn't necessarily cheating)"));
                             }
 
                             #region In Instance
@@ -154,7 +155,7 @@ namespace SMT.scanners
                             //    && result.Contains(client_str)
                             //    && !cheat.Contains("Found Generic"))
                             //{
-                            //    SMT.SMT_Main.RESULTS.bypass_methods.Add(Detection("In Instance", cheat, Informations));
+                            //    SMT.Auth.RESULTS.bypass_methods.Add(Detection("In Instance", cheat, Informations));
                             //}
 
                             #endregion
@@ -168,14 +169,14 @@ namespace SMT.scanners
                 if (result.Contains(keyValuePair.Key)
                 && link == "https://pastebin.com/raw/uu6excEE")
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.IN_INSTANCE, keyValuePair.Value, Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.IN_INSTANCE, keyValuePair.Value, Informations));
                 }
             });
 
 
             for (int j = 0; j < clientsdetected.Count; j++)
             {
-                SMT_Main.RESULTS.bypass_methods.Add(clientsdetected[j]);
+                Auth.RESULTS.bypass_methods.Add(clientsdetected[j]);
             }
         } //Refractored
 
@@ -195,7 +196,7 @@ namespace SMT.scanners
 
             #region Cambio ora, logs del security eliminati, journal eliminato 
 
-            eventvwr_tasks.Add(Task.Run(() =>
+            //eventvwr_tasks.Add(Task.Run(() =>
             {
                 List<EventLogEntry> Security_entries = GetSecurity_log.Entries.Cast<EventLogEntry>().ToList();
                 List<EventLogEntry> System_entries = GetSystem_log.Entries.Cast<EventLogEntry>().ToList();
@@ -207,18 +208,18 @@ namespace SMT.scanners
                     {
                         if (index.InstanceId == 1102)
                         {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "\"Security\" logs deleted", Informations));
+                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "\"Security\" logs deleted", Informations));
                         }
                     }
                 });
 
-                foreach(var System in System_entries)
+                foreach (var System in System_entries)
                 {
                     if (PC_StartTime() <= System.TimeGenerated)
                     {
                         if (System.InstanceId == 104)
                         {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "\"Application\" or \"System\" logs deleted", Informations));
+                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "\"Application\" or \"System\" logs deleted", Informations));
                         }
                         else if (System.InstanceId == 3221232503)
                         {
@@ -236,17 +237,18 @@ namespace SMT.scanners
                     if (Application_log.EventID == 3079 && PC_StartTime() <= Application_log.TimeGenerated)
                     {
 #pragma warning restore CS0618 // Il tipo o il membro è obsoleto
-                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "USN Journal was deleted", Application_log.TimeGenerated.ToString()));
+                        Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "USN Journal was deleted", Application_log.TimeGenerated.ToString()));
                     }
                 });
+            }
 
-            }));
+            //}));
 
             #endregion
 
             #region Cambio ora preciso check
 
-            eventvwr_tasks.Add(Task.Run(() =>
+            //eventvwr_tasks.Add(Task.Run(() =>
             {
 
                 EventRecord entry;
@@ -271,21 +273,21 @@ namespace SMT.scanners
 
                     if (Math.Abs((previousTime - newTime).TotalMinutes) > 5)
                     {
-                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "System time change", $"Old -> {previousTime} New -> {newTime}"));
+                        Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "System time change", $"Old -> {previousTime} New -> {newTime}"));
                     }
                 }
-
-            }));
+            }
+            //}));
 
             #endregion
 
             #region Riavvio Explorer || DPS || Pcasvc || DiagTrack
 
-            eventvwr_tasks.Add(Task.Run(() =>
+            //eventvwr_tasks.Add(Task.Run(() =>
             {
 
                 EventLogQuery elQuery = new EventLogQuery(LogSource, PathType.LogName, sQuery);
-                
+
                 using (EventLogReader elReader = new EventLogReader(elQuery))
                 {
                     //Console.WriteLine(elReader.BatchSize);
@@ -294,11 +296,12 @@ namespace SMT.scanners
                     {
                         if (MinecraftMainProcess != "" && dodo.TimeCreated >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
                         {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Explorer was restarted after Minecraft", dodo.TimeCreated.ToString()));
+                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Explorer was restarted after Minecraft", dodo.TimeCreated.ToString()));
                         }
                     }
                 }
-            }));
+            }
+            //}));
 
             #endregion
 
@@ -317,7 +320,7 @@ namespace SMT.scanners
             //    //        if (dodo.TimeCreated > PC_StartTime()
             //    //        && UpdatedTime.AddMinutes(-5) > PC_StartTime())
             //    //        {
-            //    //            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
+            //    //            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
             //    //                "Volume/USB connected", dodo.TimeCreated.ToString()));
             //    //        }
             //    //    }
@@ -332,16 +335,16 @@ namespace SMT.scanners
             switch (bytes)
             {
                 case "68080083000":
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DPS was restarted", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DPS was restarted", Informations));
                     break;
                 case "800990970830118099000":
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "PcaSvc", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "PcaSvc", Informations));
                     break;
                 case "680105097010308401140970990107000":
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DiagTrack was restarted", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "DiagTrack was restarted", Informations));
                     break;
                 case "830121011507709701050110000":
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled (Sysmain restarted)", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled (Sysmain restarted)", Informations));
                     break;
             }
 
@@ -357,20 +360,20 @@ namespace SMT.scanners
 
             //Check if Recent is empty
 
-            others_tasks.Add(Task.Run(() =>
+            //others_tasks.Add(Task.Run(() =>
             {
                 string[] s = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.Recent));
 
                 if (s.Length == 0)
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Recent is empty", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Recent is empty", Informations));
                 }
 
-            }));
+            }//));
 
             //WMIC
 
-            others_tasks.Add(Task.Run(() =>
+            //others_tasks.Add(Task.Run(() =>
             {
                 Dictionary<int, string> check_for_recycle = new Dictionary<int, string>();
 
@@ -396,7 +399,7 @@ namespace SMT.scanners
                         }
                         catch 
                         {
-                            SMT_Main.RESULTS.report_bugs.Add("Recycle.bin error: " + correct_key.GetValueNames().Count() + " " + subkey_name);
+                            Auth.RESULTS.report_bugs.Add("Recycle.bin error: " + correct_key.GetValueNames().Count() + " " + subkey_name);
                         }
 
                         foreach (string values in correct_key.GetValueNames())
@@ -407,12 +410,12 @@ namespace SMT.scanners
                                 Match mch = jessica.Match(values);
                                 regedit_replace = DiscoC.Replace(mch.Value, $"{Path.GetPathRoot(Environment.SystemDirectory)}");
 
-                                SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, regedit_replace, "Wmic started few days ago #2"));
+                                Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, regedit_replace, "Wmic started few days ago #2"));
                             }
                             else if (values.Contains(":")
                                 && !values.Contains(@"\Device\HarddiskVolume4\"))
                             {
-                                SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, values, "Wmic started few days ago #2"));
+                                Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, values, "Wmic started few days ago #2"));
                             }
                         }
                     }
@@ -421,13 +424,13 @@ namespace SMT.scanners
 
             IOrderedEnumerable<KeyValuePair<int, string>> sortedDict = from entry in check_for_recycle orderby entry.Key ascending select entry;
 
-            SMT_Main.RESULTS.recyble_bins = File.GetLastWriteTime($@"C:\$Recycle.bin\{sortedDict.ElementAt(sortedDict.Count() - 1).Value}").ToString();
+            Auth.RESULTS.recyble_bins = Checks.GetCurrentMilli(File.GetLastWriteTime($@"C:\$Recycle.bin\{sortedDict.ElementAt(sortedDict.Count() - 1).Value}"));
 
                 #endregion
 
-            }));
+            }//));
 
-            others_tasks.Add(Task.Run(() =>
+            //others_tasks.Add(Task.Run(() =>
             {
 
                 #region Disabilitazione del Prefetch #1 e #2
@@ -436,7 +439,7 @@ namespace SMT.scanners
 
                 if (key.GetValue("EnablePrefetcher").ToString() != "3")
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", Informations));
                 }
 
                 try
@@ -445,19 +448,19 @@ namespace SMT.scanners
 
                     if (sc.Status != ServiceControllerStatus.Running)
                     {
-                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", Informations));
+                        Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", Informations));
                     }
                 }
                 catch
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Prefetch was disabled", Informations));
                 }
 
                 #endregion
 
-            }));
+            }//));
 
-            others_tasks.Add(Task.Run(() =>
+            //others_tasks.Add(Task.Run(() =>
             {
 
                 #region Check delle macro
@@ -466,21 +469,21 @@ namespace SMT.scanners
                 && (File.GetLastWriteTime($@"C:\Users\{username}\AppData\Local\LGHUB\settings.backup") >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime
                 || File.GetLastWriteTime($@"C:\Users\{username}\AppData\Local\LGHUB\settings.json") >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime))
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $@"Logitech macro detected!", "(BETA Method)"));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $@"Logitech macro detected!", "(BETA Method)"));
                 }
                 else if (Directory.Exists($@"C:\Users\{username}\AppData\Local\BY-COMBO2\")
                     && (File.GetLastWriteTime($@"C:\Users\{username}\AppData\Local\BY-COMBO2\pro.dct") >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime
                     || File.GetLastWriteTime($@"C:\Users\{username}\AppData\Local\BY-COMBO2\curid.dct") >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime))
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $@"Glorious macro detected!", "(BETA Method)"));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $@"Glorious macro detected!", "(BETA Method)"));
                 }
 
 
                 #endregion
 
-            }));
+            }//));
 
-            others_tasks.Add(Task.Run(() =>
+            //others_tasks.Add(Task.Run(() =>
             {
 
                 #region Check unlegit versions
@@ -529,7 +532,7 @@ namespace SMT.scanners
                                     && !Process.GetProcessesByName(MinecraftMainProcess)[0].MainWindowTitle.Contains("Lunar")
                                     && !Process.GetProcessesByName(MinecraftMainProcess)[0].MainWindowTitle.Contains("Badlion"))
                                     {
-                                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
+                                        Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
                                             $"Modified version found: {version}", "(SHA256 check from 1.8 version to 1.16.5)"));
                                     }
                                 }
@@ -538,28 +541,28 @@ namespace SMT.scanners
                         }
                         else
                         {
-                            SMT_Main.RESULTS.report_bugs.Add("MC Version title: " + Process.GetProcessesByName(MinecraftMainProcess)[0].MainWindowTitle 
+                            Auth.RESULTS.report_bugs.Add("MC Version title: " + Process.GetProcessesByName(MinecraftMainProcess)[0].MainWindowTitle 
                                 + "\n" + "Command-line error:\n\n" + o["CommandLine"].ToString());
 
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Impossible to get {o["Name"]}'s informations", $"PID: {int.Parse(o["Handle"].ToString())}"));
+                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Impossible to get {o["Name"]}'s informations", $"PID: {int.Parse(o["Handle"].ToString())}"));
                         }
                     }
                 }
 
                 if (inUsingFile > 1)
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "More than 1 version is used", "(BETA Method)"));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "More than 1 version is used", "(BETA Method)"));
                 }
                 else if (inUsingFile == 0)
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "No versions used in .minecraft", "(BETA Method)"));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "No versions used in .minecraft", "(BETA Method)"));
                 }
 
                 #endregion
 
-            }));
+            }//));
 
-            others_tasks.Add(Task.Run(() =>
+            //others_tasks.Add(Task.Run(() =>
             {
                 Parallel.ForEach(prefetchfiles, (d) =>
                 {
@@ -572,12 +575,12 @@ namespace SMT.scanners
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"{d}", "got readonly permission"));
+                        Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"{d}", "got readonly permission"));
                     }
                 });
-            }));
+            }//));
 
-            others_tasks.Add(Task.Run(() =>
+            //others_tasks.Add(Task.Run(() =>
             {
 
                 #region PcaClient e MountVol
@@ -626,7 +629,7 @@ namespace SMT.scanners
                             string d = path.Value;
                             d = d.Remove(d.Length - 1, 1) + "";
 
-                            SMT_Main.RESULTS.pcaclient.Add(d);
+                            Auth.RESULTS.pcaclient.Add(d);
                         }
                     }
                     else if (GL_Contains(index, @"\\?\volume{")
@@ -638,7 +641,7 @@ namespace SMT.scanners
 
                         if (volume.Success && volume.Value.Length > 0)
                         {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Possible basic mountvol method found", "(BETA Method)"));
+                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Possible basic mountvol method found", "(BETA Method)"));
                         }
                     }
 
@@ -676,12 +679,12 @@ namespace SMT.scanners
 
                 if (file_size == 0)
                 {
-                    SMT_Main.RESULTS.report_bugs.Add("Explorer file is empty, this error is automatically reported to developer =)");
+                    Auth.RESULTS.report_bugs.Add("Explorer file is empty, this error is automatically reported to developer =)");
                 }
 
                 #endregion
 
-            }));
+            }//));
 
             #region Metodo carattere speciale + Regedit aperto + Java/Javaw
 
@@ -695,15 +698,15 @@ namespace SMT.scanners
                     {
                         if (unicode_char)
                         {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Special char found", index));
+                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Special char found", index));
                         }
                         else if (GL_Contains(index, "regedit.exe"))
                         {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Regedit opened after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
+                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Regedit opened after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
                         }
                         else if (GL_Contains(index, "regsvc32.exe"))
                         {
-                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Regsvc32 command used after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
+                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Regsvc32 command used after Minecraft, please investigate", File.GetLastWriteTime(index).ToString()));
                         }
                     }
 
@@ -745,7 +748,7 @@ namespace SMT.scanners
 
                                                         if (GL_Contains(f, "main-class"))
                                                         {
-                                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"{trytoget_disk.Replace(@"\\", "\\")} is runnable", "Found in JAVA/JAVAW's Prefetch (Possible java -jar?)"));
+                                                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"{trytoget_disk.Replace(@"\\", "\\")} is runnable", "Found in JAVA/JAVAW's Prefetch (Possible java -jar?)"));
                                                         }
                                                     }
                                                 }
@@ -767,7 +770,7 @@ namespace SMT.scanners
 
 #if !DEBUG
 
-            Regex regex_path = new Regex(@"[A-Z]:\\.*?$");
+            /*Regex regex_path = new Regex(@"[A-Z]:\\.*?$");
             string[] CSRSS_file = File.ReadAllLines($@"C:\ProgramData\SMT-{SMTDir}\csrss.txt");
 
             Parallel.ForEach(CSRSS_file, (index) =>
@@ -778,7 +781,7 @@ namespace SMT.scanners
                 {
                     if(Path.GetExtension(Csrss_path.Value).Length > 0)
                     {
-                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
+                        Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD,
                                 $"{Csrss_path.Value} ran in USB/Volume connected today", "Volume name: " + Csrss_path.Value[0] + Csrss_path.Value[1]));
                     }
                 }
@@ -787,11 +790,11 @@ namespace SMT.scanners
                 {
                     //if (Path.GetExtension(Csrss_path.Value).Length == 0)
                     //{
-                    //    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"No extension found: {Csrss_path.Value}", Informations));
+                    //    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"No extension found: {Csrss_path.Value}", Informations));
                     //}
-                    //else if (Csrss_path.Value.Length >= 5 && Path.GetExtension(Csrss_path.Value).ToUpper() != ".DLL" /* && !suspy_extension.Contains(Path.GetExtension(index.ToUpper()))*/ && FileUtilities.isSpoofedExtension(Csrss_path.Value) && File.ReadAllText(Csrss_path.Value).Contains("AllocConsole") && File.ReadAllText(Csrss_path.Value).Contains("AdjustTokenPrivileges"))
+                    //else if (Csrss_path.Value.Length >= 5 && Path.GetExtension(Csrss_path.Value).ToUpper() != ".DLL" /* && !suspy_extension.Contains(Path.GetExtension(index.ToUpper()))/./ && FileUtilities.isSpoofedExtension(Csrss_path.Value) && File.ReadAllText(Csrss_path.Value).Contains("AllocConsole") && File.ReadAllText(Csrss_path.Value).Contains("AdjustTokenPrivileges"))
                     //{
-                    //    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Spoofed extension found: {Csrss_path.Value}", $"This file is a DLL!"));
+                    //    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Spoofed extension found: {Csrss_path.Value}", $"This file is a DLL!"));
                     //}
 
                     if (suspy_extension.Contains(Path.GetExtension(index.ToUpper())))
@@ -807,16 +810,16 @@ namespace SMT.scanners
                                     {
                                         if (!GL_Contains(Csrss_path.Value, "unprotect"))
                                         {
-                                            SMT_Main.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.UNSIGNED, Csrss_path.Value, "This file hasn't got any digital signature, please investigate"));
+                                            Auth.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.UNSIGNED, Csrss_path.Value, "This file hasn't got any digital signature, please investigate"));
                                         }
                                         else if (GL_Contains(Csrss_path.Value, "unprotect") && calcoloSHA256(new FileStream(Csrss_path.Value, FileMode.Open)) != "7c8b131c5222b69ccfd6664fb9c7d93b071e7f377d1fe8b224cf6ea4367a379f")
                                         {
-                                            SMT_Main.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, Csrss_path.Value, "This file isn't original \"unprotect\""));
+                                            Auth.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, Csrss_path.Value, "This file isn't original \"unprotect\""));
                                         }
                                     }
                                     else if (GL_Contains(Csrss_path.Value, "strings2") && calcoloSHA256(new FileStream(Csrss_path.Value, FileMode.Open)) != "736f66305b85b1ff01b735491db3fae966815ba9ae830c3fec1ab750430f5cdf")
                                     {
-                                        SMT_Main.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, Csrss_path.Value, "This file isn't original \"strings2\""));
+                                        Auth.RESULTS.suspy_files.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, Csrss_path.Value, "This file isn't original \"strings2\""));
                                     }
                                 }
                                 catch
@@ -840,7 +843,7 @@ namespace SMT.scanners
                 //            && File.ReadAllText(Csrss_path.Value).Contains("AdjustTokenPrivileges")
                 //            && FileUtilities.isInjectableDll(Csrss_path.Value))
                 //        {
-                //            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Possible DLL Injected: {Csrss_path.Value}", Informations));
+                //            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Possible DLL Injected: {Csrss_path.Value}", Informations));
                 //        }
                 //        else if (!File.Exists(Csrss_path.Value))
                 //        {
@@ -849,11 +852,11 @@ namespace SMT.scanners
                 //    }
                 //    catch { }
                 //}
-            });
+            });*/
 
 #endif
 
-            SMT_Main.RESULTS.suspy_files.Sort();
+            Auth.RESULTS.suspy_files.Sort();
 
             Task.WaitAll(others_tasks.ToArray());
 
@@ -869,7 +872,7 @@ namespace SMT.scanners
                 {
                     if (volumeStatus_Check(drive.Name))
                     {
-                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"USN Journal isn't active for {drive.Name} volume", Informations));
+                        Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"USN Journal isn't active for {drive.Name} volume", Informations));
                     }
 
                     DriveConstruct construct = new DriveConstruct(drive.Name);
@@ -893,7 +896,7 @@ namespace SMT.scanners
 
                                         if ((d.Reason == 4096 || d.Reason == 2147484160) && s != "Unavailable" && GL_Contains(s, $@"C:\Users\{username}\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine"))
                                         {
-                                            SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_MOVED_RENAMED, "Powershell history was deleted/removed/renamed", $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                            Auth.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_MOVED_RENAMED, "Powershell history was deleted/removed/renamed", $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                         }
                                     }
 
@@ -904,7 +907,7 @@ namespace SMT.scanners
 
                                         if (s == "Unavailable" && s.Contains(path) && GL_Contains(d.Name, ".pf"))
                                         {
-                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, d.Name, $"PF file was edited"));
+                                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, d.Name, $"PF file was edited"));
                                         }
                                     }
 
@@ -919,25 +922,25 @@ namespace SMT.scanners
                                                 if (TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)
                                                         >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
                                                 {
-                                                    SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, d.Name + " on: " + drive.Name + " volume (FROM JAVA.EXE Prefetch's log)", $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                    Auth.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, d.Name + " on: " + drive.Name + " volume (FROM JAVA.EXE Prefetch's log)", $"File deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                                 }
                                             }
                                         }
 
                                         if (d.Reason == 2147483652 && Path.GetExtension(d.Name).ToUpper() == ".PF")
                                         {
-                                            SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, d.Name, "PF file was edited"));
+                                            Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, d.Name, "PF file was edited"));
                                         }
 
                                         if (d.Reason == 2149581088 || d.Reason == 2147483744)
                                         {
                                             if (getPath != "Unavailable")
                                             {
-                                                SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, getPath, $"Wmic method started today at {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, getPath, $"Wmic method started today at {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                             }
                                             else if (getPath == "Unavailable")
                                             {
-                                                SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, d.Name + " on: " + drive.Name + " volume", $"Wmic method started today at {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, d.Name + " on: " + drive.Name + " volume", $"Wmic method started today at {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                             }
                                         }
 
@@ -950,11 +953,11 @@ namespace SMT.scanners
                                                     case 4096:
                                                         if (getPath != "Unavailable")
                                                         {
-                                                            SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_MOVED_RENAMED, getPath, $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                            Auth.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_MOVED_RENAMED, getPath, $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                                         }
                                                         else if (getPath == "Unavailable")
                                                         {
-                                                            SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_MOVED_RENAMED, d.Name + " on: " + drive.Name + " volume", $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                            Auth.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_MOVED_RENAMED, d.Name + " on: " + drive.Name + " volume", $"File renamed after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                                         }
 
                                                         break;
@@ -964,22 +967,22 @@ namespace SMT.scanners
                                                         {
                                                             if (getPath != "Unavailable")
                                                             {
-                                                                SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_REPLACED, getPath, $"File was replaced after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                                Auth.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_REPLACED, getPath, $"File was replaced after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                                             }
                                                             else if (getPath == "Unavailable")
                                                             {
-                                                                SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_REPLACED, d.Name + " on: " + drive.Name + " volume", $"File was replaced after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                                Auth.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_REPLACED, d.Name + " on: " + drive.Name + " volume", $"File was replaced after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                                             }
                                                         }
                                                         else
                                                         {
                                                             if (getPath != "Unavailable")
                                                             {
-                                                                SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, getPath, $"File was deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                                Auth.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, getPath, $"File was deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                                             }
                                                             else if (getPath == "Unavailable")
                                                             {
-                                                                SMT_Main.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, d.Name + " on: " + drive.Name + " volume", $"File was deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
+                                                                Auth.RESULTS.possible_replaces.Add(Detection(DETECTION_VALUES.FILE_DELETED, d.Name + " on: " + drive.Name + " volume", $"File was deleted after Minecraft {TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp)}"));
                                                             }
                                                         }
                                                         break;
@@ -987,7 +990,7 @@ namespace SMT.scanners
                                             }
                                             else if (GL_Contains(d.Name, "jnativehook") && GL_Contains(Path.GetExtension(d.Name), ".dll"))
                                             {
-                                                SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.OUT_INSTANCE, "Generic JNativeHook Clicker (deleted)", TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString()));
+                                                Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.OUT_INSTANCE, "Generic JNativeHook Clicker (deleted)", TimeZone.CurrentTimeZone.ToLocalTime(d.TimeStamp).ToString()));
                                             }
                                         }
                                     }
@@ -1007,12 +1010,12 @@ namespace SMT.scanners
                     }
                     else
                     {
-                        SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Impossible to get informations from {drive.Name}", Informations));
+                        Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"Impossible to get informations from {drive.Name}", Informations));
                     }
                 }
                 else
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"USN Journal isn't active for {drive.Name} volume", Informations));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, $"USN Journal isn't active for {drive.Name} volume", Informations));
                 }
             }
 
@@ -1022,18 +1025,18 @@ namespace SMT.scanners
                     && File.GetLastWriteTime(GetTemp_files[index])
                     >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
                 {
-                    SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.OUT_INSTANCE, "Generic JNativeHook Clicker", File.GetLastWriteTime(GetTemp_files[index]).ToString()));
+                    Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.OUT_INSTANCE, "Generic JNativeHook Clicker", File.GetLastWriteTime(GetTemp_files[index]).ToString()));
                 }
             });
 
             if (File.GetLastWriteTime($@"C:\Users\{username}\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine") >= Process.GetProcessesByName(MinecraftMainProcess)[0].StartTime)
             {
-                SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Powershell history modified or command issued after Minecraft ran", File.GetLastWriteTime($@"C:\Users\{username}\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine").ToString()));
+                Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Powershell history modified or command issued after Minecraft ran", File.GetLastWriteTime($@"C:\Users\{username}\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine").ToString()));
             }
 
             if (cacls_counter >= 3)
             {
-                SMT_Main.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Cacls method started today", Informations));
+                Auth.RESULTS.bypass_methods.Add(Detection(DETECTION_VALUES.BYPASS_METHOD, "Cacls method started today", Informations));
             }
 
             Console.WriteLine(Detection(DETECTION_VALUES.STAGE_PRC, "", "USNJournal check completed"));
@@ -1043,6 +1046,13 @@ namespace SMT.scanners
             Console.WriteLine(Detection(DETECTION_VALUES.STAGE_PRC, "", "Other checks completed"));
         } //Refractored
 
+        public static long GetCurrentMilli(DateTime date)
+        {
+            DateTime Jan1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local);
+            TimeSpan javaSpan = date - Jan1970;
+            return (long)javaSpan.TotalMilliseconds;
+        }
+
         public void DoStringScan()
         {
             List<Task> tasks = new List<Task>();
@@ -1050,8 +1060,8 @@ namespace SMT.scanners
             Task DPS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/adJN0gu4", '§', $@"C:\ProgramData\SMT-{SMTDir}\Specific.txt"); });
             DPS.Start(); tasks.Add(DPS);
 
-            Task LSASS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/1LKLuNWh", '§', $@"C:\ProgramData\SMT-{SMTDir}\Browser.txt"); });
-            LSASS.Start(); tasks.Add(LSASS);
+            //Task LSASS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/1LKLuNWh", '§', $@"C:\ProgramData\SMT-{SMTDir}\Browser.txt"); });
+            //LSASS.Start(); tasks.Add(LSASS);
 
             Task DNS = new Task(delegate { StringScannerSystem("https://pastebin.com/raw/1LKLuNWh", '§', $@"C:\ProgramData\SMT-{SMTDir}\dns.txt"); });
             DNS.Start(); tasks.Add(DNS);

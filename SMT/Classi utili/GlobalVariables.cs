@@ -112,13 +112,13 @@ namespace SMT.Helpers
 
         public static string FinalURL = "";
 
-        public static Action[] CheckActions_List = new Action[]
+        /*public static Action[] CheckActions_List = new Action[]
         {
             checks.DoStringScan,
             checks.OtherChecks,
             checks.EventVwrCheck,
             generics.GlobalGeneric_check,
-        };
+        };*/
 
     }
 }
