@@ -11,13 +11,8 @@ namespace SMT_Tests
 {
     internal class Program
     {
-        
-
         public static void Main()
         {
-            Console.WriteLine(Path.GetPathRoot(Environment.SystemDirectory));
-
-            Console.WriteLine("Finito");
             Console.ReadLine();
         }
     }

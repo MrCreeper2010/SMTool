@@ -16,12 +16,6 @@ namespace SMT
         /// - by MrCreeper2010 || @CheatReleaseItalyv2 on Telegram
         /// </summary>
 
-        /*
-         *  1. fix USB connected
-         */
-
-        
-
         private static void Main()
         {
             Application.EnableVisualStyles();

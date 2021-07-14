@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMT", "SMT\SMT.csproj", "{8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMT_Tests", "SMT_Tests\SMT_Tests.csproj", "{9CE4A872-03EA-4E29-A9AF-410F87E6443D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMT_MethodFinder", "SMT_MethodFinder\SMT_MethodFinder.csproj", "{CE8D52D7-3C64-4031-84C2-B4128057E7C1}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SMT_Website", "SMT_Website\SMT_Website.pyproj", "{D7BA0BBB-BBFC-4507-AF8B-8B84DA996C7F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,24 +39,6 @@ Global
 		{9CE4A872-03EA-4E29-A9AF-410F87E6443D}.Release|x64.Build.0 = Release|Any CPU
 		{9CE4A872-03EA-4E29-A9AF-410F87E6443D}.Release|x86.ActiveCfg = Release|Any CPU
 		{9CE4A872-03EA-4E29-A9AF-410F87E6443D}.Release|x86.Build.0 = Release|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Debug|x64.Build.0 = Debug|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Debug|x86.Build.0 = Debug|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Release|x64.ActiveCfg = Release|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Release|x64.Build.0 = Release|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Release|x86.ActiveCfg = Release|Any CPU
-		{CE8D52D7-3C64-4031-84C2-B4128057E7C1}.Release|x86.Build.0 = Release|Any CPU
-		{D7BA0BBB-BBFC-4507-AF8B-8B84DA996C7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D7BA0BBB-BBFC-4507-AF8B-8B84DA996C7F}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D7BA0BBB-BBFC-4507-AF8B-8B84DA996C7F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D7BA0BBB-BBFC-4507-AF8B-8B84DA996C7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D7BA0BBB-BBFC-4507-AF8B-8B84DA996C7F}.Release|x64.ActiveCfg = Release|Any CPU
-		{D7BA0BBB-BBFC-4507-AF8B-8B84DA996C7F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
